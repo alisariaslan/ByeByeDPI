@@ -4,11 +4,11 @@ using System.Windows.Forms;
 
 namespace ByeByeDPI
 {
-	public partial class Form1 : Form , IDisposable
+	public partial class Form1 : Form, IDisposable
 	{
 		private readonly Form1ViewModel _viewModel;
-
-		private NotifyIcon trayIcon;
+		private NotifyIcon _trayIcon;
+		private bool _updateChecksStarted;
 
 		public Form1(Form1ViewModel viewModel)
 		{
@@ -34,29 +34,88 @@ namespace ByeByeDPI
 			_viewModel.LoadCheckList();
 			_viewModel.LoadParams();
 
-			HideToTrayChbox.Checked = SettingsLoader.Current.HideToTray;
-			CheckUpdatesChbox.Checked = SettingsLoader.Current.CheckUpdates;
-			StartWithWindowsChbox.Checked = SettingsLoader.Current.StartWithWindows;
-
 			if (_viewModel.IsByeByeDPIRunning)
 			{
 				ToggleDPIBtn.Text = "Stop Access";
-				MessageWriteLine(Constants.GoodbyeDPIFileName+" is already running!");
+				MessageWriteLine(Constants.GoodbyeDPIFileName + " is already running!");
 				MessageWriteLine("Please kill the process via Task Manager.");
 				MessageWriteLine("Or try to stop in here.");
 			}
+
+			HideToTrayChbox.Checked = SettingsLoader.Current.HideToTray;
+			CheckUpdatesChbox.Checked = SettingsLoader.Current.CheckUpdates;
+			StartWithWindowsChbox.Checked = SettingsLoader.Current.StartWithWindows;
+			StartMinimizedChbox.Checked = SettingsLoader.Current.StartMinimized;
+
+			if (SettingsLoader.Current.StartMinimized)
+			{
+				this.WindowState = FormWindowState.Minimized;
+				this.ShowInTaskbar = false;
+				_trayIcon.Visible = true;
+				_trayIcon.ShowBalloonTip(1000, "ByeByeDPI", "Application minimized to tray.", ToolTipIcon.Info);
+			}
+
+			if (SettingsLoader.Current.CheckUpdates)
+			{
+				StartAutoUpdateCheck();
+			}
+		}
+
+
+		private async void StartAutoUpdateCheck()
+		{
+			if (_updateChecksStarted)
+				return;
+			_updateChecksStarted = true;
+			string currentVersion = Application.ProductVersion;
+			while (SettingsLoader.Current.CheckUpdates)
+			{
+				try
+				{
+					bool updateAvailable = await UpdateService.CheckForUpdateAsync(currentVersion);
+					if (updateAvailable)
+					{
+						CheckUpdateNow.Text = "Update Now";
+						_trayIcon.BalloonTipTitle = "ByeByeDPI Update";
+						_trayIcon.BalloonTipText = "A new version is available. Click to \"Update Now\" for update.";
+						_trayIcon.BalloonTipIcon = ToolTipIcon.Info;
+						_trayIcon.Visible = true;
+						_trayIcon.ShowBalloonTip(5000);
+						_trayIcon.BalloonTipClicked -= TrayIcon_BalloonTipClicked;
+						_trayIcon.BalloonTipClicked += TrayIcon_BalloonTipClicked;
+					} else
+					{
+						CheckUpdateNow.Text = "Check Update";
+					}
+				}
+				catch
+				{
+				}
+				await Task.Delay(TimeSpan.FromHours(1)); 
+			}
+			_updateChecksStarted = false;
+		}
+
+		private void TrayIcon_BalloonTipClicked(object sender, EventArgs e)
+		{
+			_trayIcon.Visible = false;
+			this.WindowState = FormWindowState.Normal;
+			this.ShowInTaskbar = true;
 		}
 
 		private void InitializeTray()
 		{
-			trayIcon = new NotifyIcon();
-			trayIcon.Icon = Properties.Resources.so_so_64px_ico; 
-			trayIcon.Visible = false;
-			trayIcon.DoubleClick += (s, e) => {
+			_trayIcon = new NotifyIcon();
+			_trayIcon.Icon = Properties.Resources.so_so_64px_ico;
+			_trayIcon.Visible = false;
+			_trayIcon.DoubleClick += (s, e) =>
+			{
 				this.Show();
 				this.WindowState = FormWindowState.Normal;
-				trayIcon.Visible = false;
+				this.ShowInTaskbar = true;
+				_trayIcon.Visible = false;
 			};
+
 		}
 
 		private void MessageWriteLine(string msg)
@@ -97,11 +156,6 @@ namespace ByeByeDPI
 			ToggleDPIBtn.Enabled = true;
 		}
 
-		private async void Form1_FormClosing(object sender, FormClosingEventArgs e)
-		{
-			await _viewModel.StopByeByeDPIAsync();
-		}
-
 		private void HideToTrayChbox_CheckedChanged(object sender, EventArgs e)
 		{
 			SettingsLoader.Current.HideToTray = HideToTrayChbox.Checked;
@@ -111,6 +165,15 @@ namespace ByeByeDPI
 		private void CheckUpdatesChbox_CheckedChanged(object sender, EventArgs e)
 		{
 			SettingsLoader.Current.CheckUpdates = CheckUpdatesChbox.Checked;
+			SettingsLoader.Save();
+			if (CheckUpdatesChbox.Checked)
+			{
+				StartAutoUpdateCheck();
+			}
+		}
+		private void StartMinimizedChbox_CheckedChanged(object sender, EventArgs e)
+		{
+			SettingsLoader.Current.StartMinimized = StartMinimizedChbox.Checked;
 			SettingsLoader.Save();
 		}
 
@@ -137,7 +200,7 @@ namespace ByeByeDPI
 
 				if (result == DialogResult.Yes)
 				{
-					await UpdateService.DownloadUpdateAsync();
+					await UpdateService.DownloadAndRunUpdateAsync();
 				}
 			}
 			else
@@ -201,21 +264,23 @@ namespace ByeByeDPI
 			}
 		}
 
-		private void Form1_Resize(object sender, EventArgs e)
+		private async void Form1_FormClosing(object sender, FormClosingEventArgs e)
 		{
-			if (SettingsLoader.Current.HideToTray && this.WindowState == FormWindowState.Minimized)
+			if (SettingsLoader.Current.HideToTray)
 			{
-				trayIcon.Visible = true;
-				this.Hide();
-				trayIcon.ShowBalloonTip(1000, "ByeByeDPI", "Application minimized to tray.", ToolTipIcon.Info);
+				e.Cancel = true;
+				this.WindowState = FormWindowState.Minimized;
+				this.ShowInTaskbar = false;
+				_trayIcon.Visible = true;
+				HideToTrayChbox_CheckedChanged(HideToTrayChbox, EventArgs.Empty);
+			}
+			else
+			{
+				_viewModel.Dispose();
+				_trayIcon.Dispose();
+				await _viewModel.StopByeByeDPIAsync();
+				base.OnFormClosing(e);
 			}
 		}
-
-		protected override void OnHandleDestroyed(EventArgs e)
-		{
-			_viewModel.Dispose();
-			base.OnHandleDestroyed(e);
-		}
-	
 	}
 }

@@ -41,13 +41,14 @@
 			this.ParamsBtn = new System.Windows.Forms.Button();
 			this.ClearParamBtn = new System.Windows.Forms.Button();
 			this.CheckUpdateNow = new System.Windows.Forms.Button();
+			this.StartMinimizedChbox = new System.Windows.Forms.CheckBox();
 			this.listContextMenuStrip.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// ToggleDPIBtn
 			// 
 			this.ToggleDPIBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.ToggleDPIBtn.Location = new System.Drawing.Point(163, 531);
+			this.ToggleDPIBtn.Location = new System.Drawing.Point(163, 624);
 			this.ToggleDPIBtn.Name = "ToggleDPIBtn";
 			this.ToggleDPIBtn.Size = new System.Drawing.Size(344, 58);
 			this.ToggleDPIBtn.TabIndex = 1;
@@ -57,15 +58,13 @@
 			// 
 			// ListBoxForMessages
 			// 
-			this.ListBoxForMessages.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+			this.ListBoxForMessages.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.ListBoxForMessages.ContextMenuStrip = this.listContextMenuStrip;
 			this.ListBoxForMessages.FormattingEnabled = true;
 			this.ListBoxForMessages.ItemHeight = 21;
-			this.ListBoxForMessages.Location = new System.Drawing.Point(12, 185);
+			this.ListBoxForMessages.Location = new System.Drawing.Point(12, 206);
 			this.ListBoxForMessages.Name = "ListBoxForMessages";
-			this.ListBoxForMessages.Size = new System.Drawing.Size(495, 340);
+			this.ListBoxForMessages.Size = new System.Drawing.Size(495, 403);
 			this.ListBoxForMessages.TabIndex = 0;
 			this.ListBoxForMessages.TabStop = false;
 			this.ListBoxForMessages.MouseDown += new System.Windows.Forms.MouseEventHandler(this.ListBoxForMessages_MouseDown);
@@ -89,11 +88,11 @@
 			this.HideToTrayChbox.AutoSize = true;
 			this.HideToTrayChbox.Checked = true;
 			this.HideToTrayChbox.CheckState = System.Windows.Forms.CheckState.Checked;
-			this.HideToTrayChbox.Location = new System.Drawing.Point(12, 101);
+			this.HideToTrayChbox.Location = new System.Drawing.Point(12, 105);
 			this.HideToTrayChbox.Name = "HideToTrayChbox";
-			this.HideToTrayChbox.Size = new System.Drawing.Size(355, 25);
+			this.HideToTrayChbox.Size = new System.Drawing.Size(331, 25);
 			this.HideToTrayChbox.TabIndex = 4;
-			this.HideToTrayChbox.Text = "Hide to System Tray When Minimizing";
+			this.HideToTrayChbox.Text = "Hide to System Tray When Closing";
 			this.HideToTrayChbox.UseVisualStyleBackColor = true;
 			this.HideToTrayChbox.CheckedChanged += new System.EventHandler(this.HideToTrayChbox_CheckedChanged);
 			// 
@@ -102,7 +101,7 @@
 			this.StartWithWindowsChbox.AutoSize = true;
 			this.StartWithWindowsChbox.Checked = true;
 			this.StartWithWindowsChbox.CheckState = System.Windows.Forms.CheckState.Checked;
-			this.StartWithWindowsChbox.Location = new System.Drawing.Point(12, 55);
+			this.StartWithWindowsChbox.Location = new System.Drawing.Point(12, 74);
 			this.StartWithWindowsChbox.Name = "StartWithWindowsChbox";
 			this.StartWithWindowsChbox.Size = new System.Drawing.Size(255, 25);
 			this.StartWithWindowsChbox.TabIndex = 3;
@@ -125,7 +124,7 @@
 			// 
 			// OpenCheckListBtn
 			// 
-			this.OpenCheckListBtn.Location = new System.Drawing.Point(12, 132);
+			this.OpenCheckListBtn.Location = new System.Drawing.Point(12, 153);
 			this.OpenCheckListBtn.Name = "OpenCheckListBtn";
 			this.OpenCheckListBtn.Size = new System.Drawing.Size(135, 47);
 			this.OpenCheckListBtn.TabIndex = 6;
@@ -136,7 +135,7 @@
 			// ParamsBtn
 			// 
 			this.ParamsBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.ParamsBtn.Location = new System.Drawing.Point(419, 132);
+			this.ParamsBtn.Location = new System.Drawing.Point(419, 153);
 			this.ParamsBtn.Name = "ParamsBtn";
 			this.ParamsBtn.Size = new System.Drawing.Size(88, 47);
 			this.ParamsBtn.TabIndex = 7;
@@ -147,7 +146,7 @@
 			// ClearParamBtn
 			// 
 			this.ClearParamBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.ClearParamBtn.Location = new System.Drawing.Point(12, 531);
+			this.ClearParamBtn.Location = new System.Drawing.Point(12, 624);
 			this.ClearParamBtn.Name = "ClearParamBtn";
 			this.ClearParamBtn.Size = new System.Drawing.Size(88, 58);
 			this.ClearParamBtn.TabIndex = 8;
@@ -166,11 +165,25 @@
 			this.CheckUpdateNow.UseVisualStyleBackColor = true;
 			this.CheckUpdateNow.Click += new System.EventHandler(this.CheckUpdateNow_Click);
 			// 
+			// StartMinimizedChbox
+			// 
+			this.StartMinimizedChbox.AutoSize = true;
+			this.StartMinimizedChbox.Checked = true;
+			this.StartMinimizedChbox.CheckState = System.Windows.Forms.CheckState.Checked;
+			this.StartMinimizedChbox.Location = new System.Drawing.Point(12, 43);
+			this.StartMinimizedChbox.Name = "StartMinimizedChbox";
+			this.StartMinimizedChbox.Size = new System.Drawing.Size(166, 25);
+			this.StartMinimizedChbox.TabIndex = 10;
+			this.StartMinimizedChbox.Text = "Start Minimized";
+			this.StartMinimizedChbox.UseVisualStyleBackColor = true;
+			this.StartMinimizedChbox.CheckedChanged += new System.EventHandler(this.StartMinimizedChbox_CheckedChanged);
+			// 
 			// Form1
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(11F, 21F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(521, 601);
+			this.ClientSize = new System.Drawing.Size(521, 694);
+			this.Controls.Add(this.StartMinimizedChbox);
 			this.Controls.Add(this.CheckUpdateNow);
 			this.Controls.Add(this.ClearParamBtn);
 			this.Controls.Add(this.ParamsBtn);
@@ -187,7 +200,7 @@
 			this.Name = "Form1";
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
 			this.Text = "ByeByeDPI 1.0.0";
-			this.Resize += new System.EventHandler(this.Form1_Resize);
+			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
 			this.listContextMenuStrip.ResumeLayout(false);
 			this.ResumeLayout(false);
 			this.PerformLayout();
@@ -207,6 +220,7 @@
 		private System.Windows.Forms.ContextMenuStrip listContextMenuStrip;
 		private System.Windows.Forms.ToolStripMenuItem copyToolStripMenuItem;
 		private System.Windows.Forms.Button CheckUpdateNow;
+		private System.Windows.Forms.CheckBox StartMinimizedChbox;
 	}
 }
 

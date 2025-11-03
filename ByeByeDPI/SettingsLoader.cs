@@ -11,6 +11,7 @@ namespace ByeByeDPI
 		public bool HideToTray { get; set; } = false;
 		public bool CheckUpdates { get; set; } = true;
 		public bool StartWithWindows { get; set; } = false;
+		public bool StartMinimized { get; set; } = false;
 	}
 
 	public static class SettingsLoader

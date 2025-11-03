@@ -1,6 +1,7 @@
 ﻿{
 	"ChosenParam": "",
-	"HideToTray": true,
+	"HideToTray": false,
 	"CheckUpdates": true,
-	"StartWithWindows": true
+	"StartWithWindows": false,
+	"StartMinimized": false
 }
