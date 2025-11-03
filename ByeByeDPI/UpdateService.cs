@@ -1,0 +1,60 @@
+﻿using System;
+using System.IO;
+using System.Net.Http;
+using System.Text.Json;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+namespace ByeByeDPI
+{
+
+	public class UpdateInfo
+	{
+		public string Version { get; set; }
+		public string Notes { get; set; }
+
+	}
+	public static class UpdateService
+	{
+		private const string UpdateCheckUrl = "https://raw.githubusercontent.com/<user>/<repo>/main/latest_version.json";
+		private const string UpdateDownloadUrl = "https://github.com/<user>/<repo>/releases/latest/download/ByeByeDPI_latest.exe";
+
+		public static async Task<bool> CheckForUpdateAsync(string currentVersion)
+		{
+			try
+			{
+				HttpClient client = new HttpClient();
+				var json = await client.GetStringAsync(UpdateCheckUrl);
+				var info = JsonSerializer.Deserialize<UpdateInfo>(json);
+				if (info == null) return false;
+				Version latest = new Version(info.Version);
+				Version current = new Version(currentVersion);
+				client.Dispose();
+				return latest > current;
+			}
+			catch (Exception ex)
+			{
+				MessageBox.Show($"Failed to check updates.\nError: {ex.Message}", "Update Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+				return false;
+			}
+		}
+
+		public static async Task DownloadUpdateAsync()
+		{
+			try
+			{
+				HttpClient client = new HttpClient();
+				var bytes = await client.GetByteArrayAsync(UpdateDownloadUrl);
+				string tempPath = Path.Combine(Path.GetTempPath(), "ByeByeDPI_Update.exe");
+				File.WriteAllBytes(tempPath, bytes);
+				MessageBox.Show($"Update downloaded to {tempPath}. Close the app and run this file to update.", "Update Ready", MessageBoxButtons.OK, MessageBoxIcon.Information);
+				client.Dispose();
+			}
+			catch (Exception ex)
+			{
+				MessageBox.Show($"Failed to download update.\nError: {ex.Message}", "Update Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+			}
+		}
+	}
+
+}
