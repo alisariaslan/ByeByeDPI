@@ -17,7 +17,12 @@ namespace ByeByeDPI
 	public static class UpdateService
 	{
 		private const string UpdateCheckUrl = "https://raw.githubusercontent.com/alisariaslan/ByeByeDPI/main/latest_version.json";
-		private const string UpdateDownloadUrl = "https://github.com/alisariaslan/ByeByeDPI/releases/latest/download/ByeByeDPI_latest.exe";
+		private static string UpdateDownloadUrl { get; set; }
+
+		public static void SetUpdateDownloadUrl(string partialVersionStr)
+		{
+			UpdateDownloadUrl = $"https://github.com/alisariaslan/ByeByeDPI/releases/download/v{partialVersionStr}/ByeByeDPI_v{partialVersionStr}.zip";
+		}
 
 		public static async Task<bool> CheckForUpdateAsync(string currentVersion)
 		{
@@ -27,6 +32,7 @@ namespace ByeByeDPI
 				var json = await client.GetStringAsync(UpdateCheckUrl);
 				var info = JsonSerializer.Deserialize<UpdateInfo>(json);
 				if (info == null) return false;
+				SetUpdateDownloadUrl(info.Version);
 				Version latest = new Version(info.Version);
 				Version current = new Version(currentVersion);
 				client.Dispose();
@@ -45,7 +51,10 @@ namespace ByeByeDPI
 			{
 				 HttpClient client = new HttpClient();
 				var bytes = await client.GetByteArrayAsync(UpdateDownloadUrl);
-				string tempPath = Path.Combine(Path.GetTempPath(), "ByeByeDPI_Update.exe");
+
+				string fileName = Path.GetFileName(new Uri(UpdateDownloadUrl).LocalPath);
+				string tempPath = Path.Combine(Path.GetTempPath(), fileName);
+
 				File.WriteAllBytes(tempPath, bytes);
 				MessageBox.Show($"Update downloaded to {tempPath}. The application will now close and run the update.",
 								"Update Ready", MessageBoxButtons.OK, MessageBoxIcon.Information);
