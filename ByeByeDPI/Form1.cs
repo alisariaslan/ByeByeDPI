@@ -55,6 +55,7 @@ namespace ByeByeDPI
 				_trayIcon.ShowBalloonTip(1000, "ByeByeDPI", "Application minimized to tray.", ToolTipIcon.Info);
 			}
 
+			this.Text = Application.ProductName + " v" + Application.ProductVersion;
 			if (SettingsLoader.Current.CheckUpdates)
 			{
 				StartAutoUpdateCheck();
@@ -85,7 +86,7 @@ namespace ByeByeDPI
 						_trayIcon.BalloonTipClicked += TrayIcon_BalloonTipClicked;
 					} else
 					{
-						CheckUpdateNow.Text = "Check Update";
+						CheckUpdateNow.Text = "Check Now";
 					}
 				}
 				catch
