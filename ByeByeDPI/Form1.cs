@@ -124,12 +124,17 @@ namespace ByeByeDPI
 		private async void CheckUpdateNow_Click(object sender, EventArgs e)
 		{
 			CheckUpdateNow.Enabled = false;
-			string currentVersion = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
-			MessageWriteLine("Checking for updates...");
+			string currentVersion = Application.ProductVersion;
 			bool updateAvailable = await UpdateService.CheckForUpdateAsync(currentVersion);
+
 			if (updateAvailable)
 			{
-				var result = MessageBox.Show("A new update is available. Do you want to download it now?", "Update Available", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
+				var result = MessageBox.Show(
+					"A new version is available. Do you want to download it now?",
+					"Update Available",
+					MessageBoxButtons.YesNo,
+					MessageBoxIcon.Information);
+
 				if (result == DialogResult.Yes)
 				{
 					await UpdateService.DownloadUpdateAsync();
@@ -137,7 +142,7 @@ namespace ByeByeDPI
 			}
 			else
 			{
-				MessageBox.Show("You are running the latest version.", "No Updates", MessageBoxButtons.OK, MessageBoxIcon.Information);
+				MessageBox.Show("No updates available.", "Up to date", MessageBoxButtons.OK, MessageBoxIcon.Information);
 			}
 			CheckUpdateNow.Enabled = true;
 		}
