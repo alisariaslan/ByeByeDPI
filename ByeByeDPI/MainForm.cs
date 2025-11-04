@@ -164,15 +164,35 @@ namespace ByeByeDPI
 			ListBoxForMessages.Items.Clear();
 		}
 
+		private void LockProcessButtons()
+		{
+			RunBtn.Enabled = false;
+			ToggleDPIBtn.Enabled = false;
+			ResetBtn.Enabled = false;
+		}
+
+		private void UnlockProcessButtons()
+		{
+			RunBtn.Enabled = true;
+			ToggleDPIBtn.Enabled = true;
+			ResetBtn.Enabled = true;
+		}
+
+		private async void RunBtn_Click(object sender, EventArgs e)
+		{
+			LockProcessButtons();
+			ClearMessages();
+			MessageWriteLine("CheckList started to check domains...");
+			await _viewModel.StartCheckingCheckListAsync();
+			UnlockProcessButtons();
+		}
+
 		private async void ToggleDPIBtn_Click(object sender, EventArgs e)
 		{
-			ToggleDPIBtn.Enabled = false;
+			LockProcessButtons();
 			ClearMessages();
-
 			await _viewModel.ToggleByeByeDPIAsync();
-
 			ToggleDPIBtn.Text = _viewModel.IsGoodbyeDPIRunning ? "Stop Access" : "Start Access";
-
 			if (_viewModel.IsGoodbyeDPIRunning)
 			{
 				MessageWriteLine("GoodbyeDPI is running.");
@@ -181,9 +201,8 @@ namespace ByeByeDPI
 			{
 				MessageWriteLine("GoodbyeDPI is stopped.");
 			}
-
 			await Task.Delay(3000);
-			ToggleDPIBtn.Enabled = true;
+			UnlockProcessButtons();
 		}
 
 		private void HideToTrayChbox_CheckedChanged(object sender, EventArgs e)
@@ -245,8 +264,9 @@ namespace ByeByeDPI
 			FileOpenerUtil.OpenFileInBaseDir(Constants.ParamsPath);
 		}
 
-		private void ClearParamBtn_Click(object sender, EventArgs e)
+		private async void ResetBtn_Click(object sender, EventArgs e)
 		{
+			LockProcessButtons();
 			var result = MessageBox.Show(
 				"Are you sure you want to clear the profile?\n" +
 				"This will delete the saved profile. You need to re-do profile(parameter) selection workflow after this.",
@@ -255,12 +275,14 @@ namespace ByeByeDPI
 				MessageBoxIcon.Warning);
 			if (result == DialogResult.Yes)
 			{
-				_viewModel.ClearChosenParam();
+				await _viewModel.ClearChosenParam();
 				MessageBox.Show(
 					"Chosen profile has been cleared.", "Clear Complete",
 					MessageBoxButtons.OK,
 					MessageBoxIcon.Information);
 			}
+			ToggleDPIBtn.Text = _viewModel.IsGoodbyeDPIRunning ? "Stop Access" : "Start Access";
+			UnlockProcessButtons();
 		}
 
 		private void ListBoxForMessages_MouseDown(object sender, MouseEventArgs e)

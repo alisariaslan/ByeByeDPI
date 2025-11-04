@@ -39,12 +39,13 @@
 			this.CheckUpdatesChbox = new System.Windows.Forms.CheckBox();
 			this.OpenCheckListBtn = new System.Windows.Forms.Button();
 			this.ParamsBtn = new System.Windows.Forms.Button();
-			this.ClearParamBtn = new System.Windows.Forms.Button();
+			this.ResetBtn = new System.Windows.Forms.Button();
 			this.CheckUpdateNow = new System.Windows.Forms.Button();
 			this.menuStrip1 = new System.Windows.Forms.MenuStrip();
 			this.appToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.RunBtn = new System.Windows.Forms.Button();
 			this.listContextMenuStrip.SuspendLayout();
 			this.menuStrip1.SuspendLayout();
 			this.SuspendLayout();
@@ -52,7 +53,7 @@
 			// ToggleDPIBtn
 			// 
 			this.ToggleDPIBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.ToggleDPIBtn.Location = new System.Drawing.Point(126, 611);
+			this.ToggleDPIBtn.Location = new System.Drawing.Point(286, 611);
 			this.ToggleDPIBtn.Name = "ToggleDPIBtn";
 			this.ToggleDPIBtn.Size = new System.Drawing.Size(326, 58);
 			this.ToggleDPIBtn.TabIndex = 1;
@@ -69,7 +70,7 @@
 			this.ListBoxForMessages.ItemHeight = 21;
 			this.ListBoxForMessages.Location = new System.Drawing.Point(12, 181);
 			this.ListBoxForMessages.Name = "ListBoxForMessages";
-			this.ListBoxForMessages.Size = new System.Drawing.Size(438, 424);
+			this.ListBoxForMessages.Size = new System.Drawing.Size(598, 424);
 			this.ListBoxForMessages.TabIndex = 0;
 			this.ListBoxForMessages.TabStop = false;
 			this.ListBoxForMessages.MouseDown += new System.Windows.Forms.MouseEventHandler(this.ListBoxForMessages_MouseDown);
@@ -130,7 +131,7 @@
 			// OpenCheckListBtn
 			// 
 			this.OpenCheckListBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.OpenCheckListBtn.Location = new System.Drawing.Point(12, 128);
+			this.OpenCheckListBtn.Location = new System.Drawing.Point(83, 128);
 			this.OpenCheckListBtn.Name = "OpenCheckListBtn";
 			this.OpenCheckListBtn.Size = new System.Drawing.Size(135, 47);
 			this.OpenCheckListBtn.TabIndex = 6;
@@ -141,7 +142,7 @@
 			// ParamsBtn
 			// 
 			this.ParamsBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.ParamsBtn.Location = new System.Drawing.Point(341, 128);
+			this.ParamsBtn.Location = new System.Drawing.Point(501, 128);
 			this.ParamsBtn.Name = "ParamsBtn";
 			this.ParamsBtn.Size = new System.Drawing.Size(109, 47);
 			this.ParamsBtn.TabIndex = 7;
@@ -149,23 +150,23 @@
 			this.ParamsBtn.UseVisualStyleBackColor = true;
 			this.ParamsBtn.Click += new System.EventHandler(this.ParamsBtn_Click);
 			// 
-			// ClearParamBtn
+			// ResetBtn
 			// 
-			this.ClearParamBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.ClearParamBtn.Location = new System.Drawing.Point(12, 611);
-			this.ClearParamBtn.Name = "ClearParamBtn";
-			this.ClearParamBtn.Size = new System.Drawing.Size(108, 58);
-			this.ClearParamBtn.TabIndex = 8;
-			this.ClearParamBtn.Text = "Reset";
-			this.ClearParamBtn.UseVisualStyleBackColor = true;
-			this.ClearParamBtn.Click += new System.EventHandler(this.ClearParamBtn_Click);
+			this.ResetBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+			this.ResetBtn.Location = new System.Drawing.Point(12, 611);
+			this.ResetBtn.Name = "ResetBtn";
+			this.ResetBtn.Size = new System.Drawing.Size(108, 58);
+			this.ResetBtn.TabIndex = 8;
+			this.ResetBtn.Text = "Reset";
+			this.ResetBtn.UseVisualStyleBackColor = true;
+			this.ResetBtn.Click += new System.EventHandler(this.ResetBtn_Click);
 			// 
 			// CheckUpdateNow
 			// 
 			this.CheckUpdateNow.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.CheckUpdateNow.Location = new System.Drawing.Point(290, 71);
+			this.CheckUpdateNow.Location = new System.Drawing.Point(481, 34);
 			this.CheckUpdateNow.Name = "CheckUpdateNow";
-			this.CheckUpdateNow.Size = new System.Drawing.Size(160, 34);
+			this.CheckUpdateNow.Size = new System.Drawing.Size(129, 34);
 			this.CheckUpdateNow.TabIndex = 9;
 			this.CheckUpdateNow.Text = "Check Now";
 			this.CheckUpdateNow.UseVisualStyleBackColor = true;
@@ -178,7 +179,7 @@
             this.appToolStripMenuItem});
 			this.menuStrip1.Location = new System.Drawing.Point(0, 0);
 			this.menuStrip1.Name = "menuStrip1";
-			this.menuStrip1.Size = new System.Drawing.Size(464, 25);
+			this.menuStrip1.Size = new System.Drawing.Size(624, 25);
 			this.menuStrip1.TabIndex = 11;
 			this.menuStrip1.Text = "menuStrip1";
 			// 
@@ -205,14 +206,26 @@
 			this.helpToolStripMenuItem.Text = "Help";
 			this.helpToolStripMenuItem.Click += new System.EventHandler(this.helpToolStripMenuItem_Click);
 			// 
+			// RunBtn
+			// 
+			this.RunBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+			this.RunBtn.Location = new System.Drawing.Point(12, 128);
+			this.RunBtn.Name = "RunBtn";
+			this.RunBtn.Size = new System.Drawing.Size(65, 47);
+			this.RunBtn.TabIndex = 12;
+			this.RunBtn.Text = "Run";
+			this.RunBtn.UseVisualStyleBackColor = true;
+			this.RunBtn.Click += new System.EventHandler(this.RunBtn_Click);
+			// 
 			// MainForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(11F, 21F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(464, 681);
+			this.ClientSize = new System.Drawing.Size(624, 681);
+			this.Controls.Add(this.RunBtn);
 			this.Controls.Add(this.menuStrip1);
 			this.Controls.Add(this.CheckUpdateNow);
-			this.Controls.Add(this.ClearParamBtn);
+			this.Controls.Add(this.ResetBtn);
 			this.Controls.Add(this.ParamsBtn);
 			this.Controls.Add(this.OpenCheckListBtn);
 			this.Controls.Add(this.CheckUpdatesChbox);
@@ -224,7 +237,7 @@
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.MainMenuStrip = this.menuStrip1;
 			this.Margin = new System.Windows.Forms.Padding(6, 5, 6, 5);
-			this.MinimumSize = new System.Drawing.Size(480, 720);
+			this.MinimumSize = new System.Drawing.Size(640, 720);
 			this.Name = "MainForm";
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
 			this.Text = "ByeByeDPI";
@@ -246,7 +259,7 @@
 		private System.Windows.Forms.CheckBox CheckUpdatesChbox;
 		private System.Windows.Forms.Button OpenCheckListBtn;
 		private System.Windows.Forms.Button ParamsBtn;
-		private System.Windows.Forms.Button ClearParamBtn;
+		private System.Windows.Forms.Button ResetBtn;
 		private System.Windows.Forms.ContextMenuStrip listContextMenuStrip;
 		private System.Windows.Forms.ToolStripMenuItem copyToolStripMenuItem;
 		private System.Windows.Forms.Button CheckUpdateNow;
@@ -254,6 +267,7 @@
 		private System.Windows.Forms.ToolStripMenuItem appToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem aboutToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem helpToolStripMenuItem;
+		private System.Windows.Forms.Button RunBtn;
 	}
 }
 

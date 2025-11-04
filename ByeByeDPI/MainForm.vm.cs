@@ -17,6 +17,8 @@ namespace ByeByeDPI
 		public List<CheckListModel> CheckList { get; private set; } = new List<CheckListModel>();
 		public List<ParamModel> ParamList { get; private set; } = new List<ParamModel>();
 		public bool IsGoodbyeDPIRunning => _dpiManager.IsRunning;
+		private bool _isWorkflowRunning = false;
+		private bool _isCheckListRunnig = false;
 
 		public void SetFormView(MainForm view)
 		{
@@ -42,14 +44,15 @@ namespace ByeByeDPI
 			OnMessage?.Invoke("Parameters loaded.");
 		}
 
-		public void ClearChosenParam()
+		public async Task ClearChosenParam()
 		{
 			try
 			{
-				SettingsLoader.Current.ChosenParam = "";
+				await _dpiManager.StopAsync();
 				_dpiManager.DeleteTask();
-				OnMessage?.Invoke($"Chosen profile cleared successfully.");
+				SettingsLoader.Current.ChosenParam = "";
 				SettingsLoader.Save();
+				OnMessage?.Invoke($"Chosen profile cleared successfully.");
 			}
 			catch (Exception ex)
 			{
@@ -59,6 +62,10 @@ namespace ByeByeDPI
 
 		public async Task StartCheckingCheckListAsync()
 		{
+			if (_isCheckListRunnig)
+				return;
+
+			_isCheckListRunnig = true;
 			 HttpClient client = new HttpClient();
 			foreach (var item in CheckList)
 			{
@@ -76,6 +83,7 @@ namespace ByeByeDPI
 				OnMessage?.Invoke($"Is {item.Name} accessible? {statusEmoji}");
 			}
 			client.Dispose();
+			_isCheckListRunnig = false;
 		}
 
 
@@ -97,15 +105,16 @@ namespace ByeByeDPI
 			}
 				
 		}
-
-
-	
-
+		
 		public async Task RunParamSelectionWorkflowAsync()
 		{
 			if (!PrivilegesHelper.EnsureAdministrator(OnMessage))
 				return;
 
+			if (_isWorkflowRunning || _isCheckListRunnig)
+					return;
+
+			_isWorkflowRunning = true;
 			foreach (var item in ParamList)
 			{
 				OnMessage?.Invoke($"Trying parameter '{item.Name}'...");
@@ -138,8 +147,8 @@ namespace ByeByeDPI
 					break;
 				}
 			}
-
 			OnMessage?.Invoke("Parameter selection workflow completed.");
+			_isWorkflowRunning = false;
 		}
 
 		public void ToggleAutoStartWithWindows(bool newState)
