@@ -139,7 +139,6 @@ namespace ByeByeDPI
 				OnMessage?.Invoke("Error: Administrator privileges are required to delete the task.");
 				return false;
 			}
-
 			try
 			{
 				using (TaskService ts = new TaskService())
@@ -165,8 +164,6 @@ namespace ByeByeDPI
 			}
 		}
 
-	
-
 		private void CreateGoodbyeDPIRunnerTask(TaskService ts, string exePath)
 		{
 			if (!PrivilegesHelper.IsAdministrator())
@@ -174,16 +171,13 @@ namespace ByeByeDPI
 				OnMessage?.Invoke("Error: Administrator privileges are required to create the task.");
 				return;
 			}
-
 			TaskDefinition td = ts.NewTask();
 			td.RegistrationInfo.Description = "Used to run GoodbyeDPI with administrator privileges.";
-
 			td.Triggers.Add(new LogonTrigger()
 			{
 				UserId = null,
 				Delay = TimeSpan.FromSeconds(5)
 			});
-
 			td.Principal.RunLevel = TaskRunLevel.Highest;
 			td.Principal.LogonType = TaskLogonType.ServiceAccount;
 			td.Principal.UserId = "SYSTEM";
@@ -192,9 +186,6 @@ namespace ByeByeDPI
 			td.Settings.AllowDemandStart = true;
 			td.Settings.MultipleInstances = TaskInstancesPolicy.IgnoreNew;
 			td.Settings.Hidden = false;
-
-			// **StartWithWindows kontrolü StartAsync metodu içinde yapılmalıdır**
-			// Varsayılan olarak tetikleyiciyi ekledik. Daha sonra StartAsync içinde bu tetikleyiciyi aktif/pasif yapacağız.
 			ts.RootFolder.RegisterTaskDefinition(GoodbyeDPITaskName, td);
 		}
 
