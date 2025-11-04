@@ -1,7 +1,6 @@
 ﻿using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -154,38 +153,27 @@ namespace ByeByeDPI
 		public void ToggleAutoStartWithWindows(bool newState)
 		{
 			string appName = Constants.RegistryAppName;
-			string exePath = Application.ExecutablePath;
-			string batPath = Constants.DelayStartPath;
-
+			string exePath = $"\"{Application.ExecutablePath}\"";
 			try
 			{
-				if (newState)
+				using (RegistryKey key = Registry.CurrentUser.OpenSubKey(
+						   @"Software\Microsoft\Windows\CurrentVersion\Run", writable: true))
 				{
-					File.WriteAllText(batPath,
-						$"@echo off{Environment.NewLine}" +
-						$"timeout /t 10 /nobreak{Environment.NewLine}" +
-						$"start \"\" \"{exePath}\"");
-					using (RegistryKey key = Registry.CurrentUser.OpenSubKey(
-							   @"Software\Microsoft\Windows\CurrentVersion\Run", writable: true))
+					if (newState)
 					{
-						key.SetValue(appName, $"\"{batPath}\"");
+						key.SetValue(appName, exePath);
 					}
-				}
-				else
-				{
-					using (RegistryKey key = Registry.CurrentUser.OpenSubKey(
-							   @"Software\Microsoft\Windows\CurrentVersion\Run", writable: true))
+					else
 					{
 						if (key.GetValue(appName) != null)
 							key.DeleteValue(appName);
 					}
-					if (File.Exists(batPath))
-						File.Delete(batPath);
 				}
 			}
 			catch (Exception ex)
 			{
-				OnMessage?.Invoke($"Failed to update startup setting: {ex.Message}");
+				MessageBox.Show($"Failed to update Windows startup.\nError: {ex.Message}",
+								"Startup Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
 			}
 		}
 

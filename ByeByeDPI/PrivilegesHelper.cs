@@ -24,12 +24,18 @@ namespace ByeByeDPI
 		public static bool EnsureAdministrator(Action<string> onMessage)
 		{
 			if (IsAdministrator())
+			{
+				TempConfigLoader.Reset_AdminPriviligesRequested();
 				return true;
+			}
 
 			onMessage?.Invoke("Administrator privileges are required to continue.");
 
 			try
 			{
+				TempConfigLoader.Current.AdminPriviligesRequested = true;
+				TempConfigLoader.Save();
+
 				var psi = new ProcessStartInfo
 				{
 					FileName = Application.ExecutablePath,
@@ -44,6 +50,7 @@ namespace ByeByeDPI
 			catch
 			{
 				onMessage?.Invoke("User declined to grant administrator privileges.");
+				TempConfigLoader.Reset_AdminPriviligesRequested();
 			}
 
 			return false;

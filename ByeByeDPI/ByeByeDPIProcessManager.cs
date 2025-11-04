@@ -7,7 +7,7 @@ using Task = Microsoft.Win32.TaskScheduler.Task;
 
 namespace ByeByeDPI
 {
-	public class GoodbyeDPIProcessManager 
+	public class GoodbyeDPIProcessManager
 	{
 		private const string GoodbyeDPITaskName = "GoodbyeDPI_Runner";
 
@@ -57,12 +57,23 @@ namespace ByeByeDPI
 							{
 								trigger.Enabled = SettingsLoader.Current.StartWithWindows;
 							}
-							OnMessage?.Invoke($"Logon trigger updated to: {SettingsLoader.Current.StartWithWindows}");
+							if(SettingsLoader.Current.StartWithWindows)
+							{
+								OnMessage?.Invoke($"GoodbyeDPI windows startup enabled.");
+							} else
+							{
+								OnMessage?.Invoke($"GoodbyeDPI windows startup disabled.");
+							}
 						}
 						else if (SettingsLoader.Current.StartWithWindows)
 						{
-							td.Triggers.Add(new LogonTrigger() { UserId = null, Delay = TimeSpan.FromSeconds(5), Enabled = true });
-							OnMessage?.Invoke("Logon trigger added.");
+							td.Triggers.Add(new LogonTrigger()
+							{
+								UserId = null,
+								//Delay = TimeSpan.FromSeconds(5),
+								Enabled = true
+							});
+							OnMessage?.Invoke("GoodbyeDPI logon trigger added.");
 						}
 						ts.RootFolder.RegisterTaskDefinition(GoodbyeDPITaskName, td);
 						OnMessage?.Invoke($"GoodbyeDPI parameters updated: {arguments}");
@@ -106,7 +117,14 @@ namespace ByeByeDPI
 								trigger.Enabled = SettingsLoader.Current.StartWithWindows;
 							}
 							ts.RootFolder.RegisterTaskDefinition(GoodbyeDPITaskName, td);
-							OnMessage?.Invoke($"Logon trigger updated to: {SettingsLoader.Current.StartWithWindows}");
+							if (SettingsLoader.Current.StartWithWindows)
+							{
+								OnMessage?.Invoke($"GoodbyeDPI windows startup enabled.");
+							}
+							else
+							{
+								OnMessage?.Invoke($"GoodbyeDPI windows startup disabled.");
+							}
 						}
 
 						if (task.State == TaskState.Running)
@@ -131,7 +149,7 @@ namespace ByeByeDPI
 					try
 					{
 						p.Kill();
-						OnMessage?.Invoke("Remaining GoodbyeDPI process terminated.");
+						OnMessage?.Invoke("GoodbyeDPI remaining processes terminated.");
 					}
 					catch { }
 					finally
@@ -192,7 +210,7 @@ namespace ByeByeDPI
 			td.Triggers.Add(new LogonTrigger()
 			{
 				UserId = null,
-				Delay = TimeSpan.FromSeconds(5)
+				//Delay = TimeSpan.FromSeconds(5)
 			});
 			td.Principal.RunLevel = TaskRunLevel.Highest;
 			td.Principal.LogonType = TaskLogonType.ServiceAccount;

@@ -16,20 +16,20 @@ namespace ByeByeDPI
 		private const string _checkListFileName = "checklist.json";
 		private const string _paramsFileName = "params.json";
 		private const string _appSettingsFileName = "settings.json";
-		private const string _delayStartFileName = "delaystart.bat";
+		private const string _tempConfigsFileName = "tempconfigs.json";
 
 
 		public static string GoodbyeDPIPath => Path.Combine(AppBaseDir, _goodbyeDPIFileName);
 		public static string CheckListPath => Path.Combine(AppBaseDir, _checkListFileName);
 		public static string ParamsPath => Path.Combine(AppBaseDir, _paramsFileName);
 		public static string AppSettingsPath => Path.Combine(AppBaseDir, _appSettingsFileName);
-		public static string DelayStartPath => Path.Combine(AppBaseDir, _delayStartFileName);
+		public static string TempConfigsPath => Path.Combine(AppBaseDir, _tempConfigsFileName);
 
 
 		public static string GoodbyeDPIFileName => _goodbyeDPIFileName;
 		public static string CheckListFileName => _checkListFileName;
 		public static string ParamsFileName => _paramsFileName;
 		public static string AppSettingsFileName => _appSettingsFileName;
-		public static string DelayStartFileName => _delayStartFileName;
+		public static string TempConfigsFileName => _tempConfigsFileName;
 	}
 }

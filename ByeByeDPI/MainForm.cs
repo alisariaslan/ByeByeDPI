@@ -31,23 +31,17 @@ namespace ByeByeDPI
 				}
 			});
 
+			this.Text = Application.ProductName + " v" + Application.ProductVersion;
+
 			_viewModel.LoadSettings();
 			_viewModel.LoadCheckList();
 			_viewModel.LoadParams();
-
-			if (_viewModel.IsGoodbyeDPIRunning)
-			{
-				ToggleDPIBtn.Text = "Stop Access";
-				MessageWriteLine("GoodbyeDPI is already running!");
-				MessageWriteLine("Please kill the process via Task Manager.");
-				MessageWriteLine("Or try to stop in here.");
-			}
 
 			HideToTrayChbox.Checked = SettingsLoader.Current.HideToTray;
 			CheckUpdatesChbox.Checked = SettingsLoader.Current.CheckUpdates;
 			StartWithWindowsChbox.Checked = SettingsLoader.Current.StartWithWindows;
 
-			if (SettingsLoader.Current.HideToTray)
+			if (SettingsLoader.Current.HideToTray && !TempConfigLoader.Current.AdminPriviligesRequested)
 			{
 				this.WindowState = FormWindowState.Minimized;
 				this.ShowInTaskbar = false;
@@ -55,11 +49,19 @@ namespace ByeByeDPI
 				_trayIcon.ShowBalloonTip(1000, "ByeByeDPI", "Application minimized to tray.", ToolTipIcon.Info);
 			}
 
-			this.Text = Application.ProductName + " v" + Application.ProductVersion;
 			if (SettingsLoader.Current.CheckUpdates)
 			{
 				StartAutoUpdateCheck();
 			}
+
+			ToggleDPIBtnTextSync();
+
+			if (_viewModel.IsGoodbyeDPIRunning)
+			{
+				MessageWriteLine("GoodbyeDPI is already running!");
+			}
+
+			StartStateSync();
 		}
 
 
@@ -191,19 +193,28 @@ namespace ByeByeDPI
 		{
 			LockProcessButtons();
 			ClearMessages();
-			await _viewModel.ToggleByeByeDPIAsync();
-			ToggleDPIBtn.Text = _viewModel.IsGoodbyeDPIRunning ? "Stop Access" : "Start Access";
-			if (_viewModel.IsGoodbyeDPIRunning)
+
+			if (ToggleDPIBtn.Text != GetToggleDPIBtnExpectedText())
 			{
-				MessageWriteLine("GoodbyeDPI is running.");
+				MessageBox.Show(
+					"The state has changed and is not in sync with the UI. Please wait a moment and try again.",
+					"Warning",
+					MessageBoxButtons.OK,
+					MessageBoxIcon.Warning
+				);
 			}
 			else
 			{
-				MessageWriteLine("GoodbyeDPI is stopped.");
+				await _viewModel.ToggleByeByeDPIAsync();
 			}
+
+			ToggleDPIBtnTextSync();
+			MessageWriteLine(_viewModel.IsGoodbyeDPIRunning ? "GoodbyeDPI is running." : "GoodbyeDPI is stopped.");
+
 			await Task.Delay(3000);
 			UnlockProcessButtons();
 		}
+
 
 		private void HideToTrayChbox_CheckedChanged(object sender, EventArgs e)
 		{
@@ -281,7 +292,7 @@ namespace ByeByeDPI
 					MessageBoxButtons.OK,
 					MessageBoxIcon.Information);
 			}
-			ToggleDPIBtn.Text = _viewModel.IsGoodbyeDPIRunning ? "Stop Access" : "Start Access";
+			ToggleDPIBtnTextSync();
 			UnlockProcessButtons();
 		}
 
@@ -370,6 +381,7 @@ namespace ByeByeDPI
         <li><strong>Stop Access</strong> — Stops goodbyedpi.exe process.</li>
         <li><strong>Params</strong> — Open and edit parameter file for launching goodbyedpi with arguments.</li>
         <li><strong>Checklist</strong> — Open checklist file to add or remove domains.</li>
+        <li><strong>Run</strong> — Begins to check domains from checklist.</li>
         <li><strong>Update</strong> — Checks GitHub for newer versions.</li>
         <li><strong>Reset</strong> — Clears chosen profile.</li>
       </ul>
@@ -381,6 +393,36 @@ namespace ByeByeDPI
 			using (var dlg = new InfoDialog("Help - ByeByeDPI", helpHtml))
 			{
 				dlg.ShowDialog(this);
+			}
+		}
+
+		private string GetToggleDPIBtnExpectedText()
+		{
+			return _viewModel.IsGoodbyeDPIRunning ? "Stop Access" : "Start Access";
+		}
+
+		private void ToggleDPIBtnTextSync()
+		{
+			string expectedText = GetToggleDPIBtnExpectedText();
+			if (ToggleDPIBtn.Text != expectedText)
+			{
+				ToggleDPIBtn.Text = expectedText;
+			}
+		}
+
+		private async void StartStateSync()
+		{
+			while (!this.IsDisposed)
+			{
+				try
+				{
+					ToggleDPIBtnTextSync();
+				}
+				catch
+				{
+					break;
+				}
+				await Task.Delay(2000);
 			}
 		}
 
