@@ -10,7 +10,7 @@ namespace ByeByeDPI
 {
 	public class Form1ViewModel : IDisposable
 	{
-		private Form1 _view;
+		private MainForm _view;
 
 		public event Action<string> OnMessage;
 		private readonly ByeByeDPIProcessManager _dpiManager = new ByeByeDPIProcessManager();
@@ -18,7 +18,7 @@ namespace ByeByeDPI
 		public List<ParamModel> ParamList { get; private set; } = new List<ParamModel>();
 		public bool IsByeByeDPIRunning => _dpiManager.IsRunning;
 
-		public void SetFormView(Form1 view)
+		public void SetFormView(MainForm view)
 		{
 			_view = view;
 		}
@@ -46,12 +46,12 @@ namespace ByeByeDPI
 			try
 			{
 				SettingsLoader.Current.ChosenParam = "";
-				OnMessage?.Invoke($"Chosen parameter cleared successfully.");
+				OnMessage?.Invoke($"Chosen profile cleared successfully.");
 				SettingsLoader.Save();
 			}
 			catch (Exception ex)
 			{
-				OnMessage?.Invoke($"Failed to delete chosen parameter file.\nError: {ex.Message}");
+				OnMessage?.Invoke($"Failed to clear chosen profile file.\nError: {ex.Message}");
 			}
 		}
 

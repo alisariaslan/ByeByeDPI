@@ -4,14 +4,14 @@ using System.Windows.Forms;
 
 namespace ByeByeDPI
 {
-	public partial class Form1 : Form, IDisposable
+	public partial class MainForm : Form, IDisposable
 	{
 		private readonly Form1ViewModel _viewModel;
 		private NotifyIcon _trayIcon;
 		private bool _updateChecksStarted;
 		private bool _closeWithoutTray;
 
-		public Form1(Form1ViewModel viewModel)
+		public MainForm(Form1ViewModel viewModel)
 		{
 			InitializeComponent();
 			InitializeTray();
@@ -46,9 +46,8 @@ namespace ByeByeDPI
 			HideToTrayChbox.Checked = SettingsLoader.Current.HideToTray;
 			CheckUpdatesChbox.Checked = SettingsLoader.Current.CheckUpdates;
 			StartWithWindowsChbox.Checked = SettingsLoader.Current.StartWithWindows;
-			StartMinimizedChbox.Checked = SettingsLoader.Current.StartMinimized;
 
-			if (SettingsLoader.Current.StartMinimized)
+			if (SettingsLoader.Current.HideToTray)
 			{
 				this.WindowState = FormWindowState.Minimized;
 				this.ShowInTaskbar = false;
@@ -60,6 +59,11 @@ namespace ByeByeDPI
 			if (SettingsLoader.Current.CheckUpdates)
 			{
 				StartAutoUpdateCheck();
+			}
+
+			if(SettingsLoader.Current.StartWithWindows)
+			{
+				ToggleDPIBtn_Click(this,new EventArgs());
 			}
 		}
 
@@ -202,11 +206,6 @@ namespace ByeByeDPI
 				StartAutoUpdateCheck();
 			}
 		}
-		private void StartMinimizedChbox_CheckedChanged(object sender, EventArgs e)
-		{
-			SettingsLoader.Current.StartMinimized = StartMinimizedChbox.Checked;
-			SettingsLoader.Save();
-		}
 
 		private void StartWithWindowsChbox_CheckedChanged(object sender, EventArgs e)
 		{
@@ -254,16 +253,16 @@ namespace ByeByeDPI
 		private void ClearParamBtn_Click(object sender, EventArgs e)
 		{
 			var result = MessageBox.Show(
-				"Are you sure you want to clear the chosen parameter?\n" +
-				"This will delete the saved parameter. You need to re-do param selection workflow after this.",
-				"Clear Chosen Parameter",
+				"Are you sure you want to clear the profile?\n" +
+				"This will delete the saved profile. You need to re-do profile(parameter) selection workflow after this.",
+				"Clear Profile",
 				MessageBoxButtons.YesNo,
 				MessageBoxIcon.Warning);
 			if (result == DialogResult.Yes)
 			{
 				_viewModel.ClearChosenParam();
 				MessageBox.Show(
-					"Chosen parameter has been cleared.", "Clear Complete",
+					"Chosen profile has been cleared.", "Clear Complete",
 					MessageBoxButtons.OK,
 					MessageBoxIcon.Information);
 			}
@@ -292,6 +291,79 @@ namespace ByeByeDPI
 			if (ListBoxForMessages.SelectedItem != null)
 			{
 				Clipboard.SetText(ListBoxForMessages.SelectedItem.ToString());
+			}
+		}
+
+
+		private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			string aboutHtml = $@"
+    <!doctype html>
+    <html>
+    <head>
+      <meta charset='utf-8'/>
+      <title>About ByeByeDPI</title>
+      <style>
+        body {{ font-family: Segoe UI, Tahoma, Arial; padding: 16px; color:#222; }}
+        h1 {{ margin-top:0; }}
+        a {{ color:#1a73e8; text-decoration:none; }}
+        a:hover {{ text-decoration:underline; }}
+        .meta {{ margin-top:12px; color:#555; }}
+        .footer {{ margin-top:20px; font-size:90%; color:#666; }}
+      </style>
+    </head>
+    <body>
+      <h1>ByeByeDPI GUI</h1>
+      <div class='meta'>Version: {Application.ProductVersion}</div>
+      <p>A lightweight graphical interface for controlling GoodbyeDPI.</p>
+      <p>Developed by <strong>Ali SARIASLAN</strong></p>
+      <p>Contact: <a href='mailto:dev@alisariaslan.com'>dev@alisariaslan.com</a></p>
+      <div class='footer'>
+        GitHub: <a href='https://github.com/alisariaslan/ByeByeDPI' target='_blank'>https://github.com/alisariaslan/ByeByeDPI</a>
+      </div>
+    </body>
+    </html>";
+
+			using (var dlg = new InfoDialog("About ByeByeDPI", aboutHtml))
+			{
+				dlg.ShowDialog(this);
+			}
+		}
+
+		private void helpToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			string helpHtml = @"
+    <!doctype html>
+    <html>
+    <head>
+      <meta charset='utf-8'/>
+      <title>Help - ByeByeDPI</title>
+      <style>
+        body { font-family: Segoe UI, Tahoma, Arial; padding:16px; color:#222; }
+        h1 { margin-top:0; }
+        ul { line-height:1.6; }
+        a { color:#1a73e8; text-decoration:none; }
+        .note { margin-top:12px; color:#555; }
+      </style>
+    </head>
+    <body>
+      <h1>Help - ByeByeDPI GUI</h1>
+      <ul>
+        <li><strong>Start Access</strong> — Starts the DPI bypass process (goodbyedpi.exe).</li>
+        <li><strong>Stop Access</strong> — Stops goodbyedpi.exe process.</li>
+        <li><strong>Params</strong> — Open and edit parameter file for launching goodbyedpi with arguments.</li>
+        <li><strong>Checklist</strong> — Open checklist file to add or remove domains.</li>
+        <li><strong>Update</strong> — Checks GitHub for newer versions.</li>
+        <li><strong>Reset</strong> — Clears chosen profile.</li>
+      </ul>
+      <p class='note'>If something goes wrong, open an issue on the GitHub page or contact <a href='mailto:dev@alisariaslan.com'>dev@alisariaslan.com</a>.</p>
+      <p>GitHub: <a href='https://github.com/alisariaslan/ByeByeDPI' target='_blank'>https://github.com/alisariaslan/ByeByeDPI</a></p>
+    </body>
+    </html>";
+
+			using (var dlg = new InfoDialog("Help - ByeByeDPI", helpHtml))
+			{
+				dlg.ShowDialog(this);
 			}
 		}
 
