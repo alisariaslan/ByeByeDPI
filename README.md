@@ -8,7 +8,7 @@ This graphical interface allows you to start, stop, and manage the DPI bypass pr
 ## 🧩 Features
 
 - ✅ Start and stop **GoodbyeDPI** with one click
-- ⚙️ Edit parameters (`params.txt`) and domain checklists (`checklist.txt`) directly
+- ⚙️ Edit parameters (`params.json`) and domain checklists (`checklist.json`) directly
 - 🔔 Background update checks with GitHub integration
 - 🪟 Option to start automatically with Windows
 - 📥 Minimize to tray and run silently
