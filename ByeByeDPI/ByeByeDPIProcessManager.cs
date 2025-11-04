@@ -57,12 +57,12 @@ namespace ByeByeDPI
 							{
 								trigger.Enabled = SettingsLoader.Current.StartWithWindows;
 							}
-							OnMessage?.Invoke($"Start with Windows setting updated to: {SettingsLoader.Current.StartWithWindows}");
+							OnMessage?.Invoke($"Logon trigger updated to: {SettingsLoader.Current.StartWithWindows}");
 						}
 						else if (SettingsLoader.Current.StartWithWindows)
 						{
 							td.Triggers.Add(new LogonTrigger() { UserId = null, Delay = TimeSpan.FromSeconds(5), Enabled = true });
-							OnMessage?.Invoke("Logon trigger added for Start with Windows.");
+							OnMessage?.Invoke("Logon trigger added.");
 						}
 						ts.RootFolder.RegisterTaskDefinition(GoodbyeDPITaskName, td);
 						OnMessage?.Invoke($"GoodbyeDPI parameters updated: {arguments}");
@@ -95,14 +95,33 @@ namespace ByeByeDPI
 				{
 					Task task = ts.GetTask(GoodbyeDPITaskName);
 
-					if (task != null && task.State == TaskState.Running)
+					if (task != null)
 					{
-						task.Stop();
-						OnMessage?.Invoke("GoodbyeDPI task stopped.");
+						var td = task.Definition;
+						var logonTriggers = td.Triggers.OfType<LogonTrigger>().ToList();
+						if (logonTriggers.Any())
+						{
+							foreach (var trigger in logonTriggers)
+							{
+								trigger.Enabled = SettingsLoader.Current.StartWithWindows;
+							}
+							ts.RootFolder.RegisterTaskDefinition(GoodbyeDPITaskName, td);
+							OnMessage?.Invoke($"Logon trigger updated to: {SettingsLoader.Current.StartWithWindows}");
+						}
+
+						if (task.State == TaskState.Running)
+						{
+							task.Stop();
+							OnMessage?.Invoke("GoodbyeDPI task stopped.");
+						}
+						else
+						{
+							OnMessage?.Invoke("GoodbyeDPI task is not running. Checking for any running processes...");
+						}
 					}
 					else
 					{
-						OnMessage?.Invoke("GoodbyeDPI task is not running or not found. Checking for any running processes...");
+						OnMessage?.Invoke("GoodbyeDPI task not found. Checking for any running processes...");
 					}
 				}
 
