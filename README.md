@@ -20,9 +20,7 @@ This graphical interface allows you to start, stop, and manage the DPI bypass pr
 
 *(You can add screenshots here later, for example after your first GitHub release)*
 
-```md
 <img width="490" height="740" alt="image" src="https://github.com/user-attachments/assets/2c44c829-ddba-43c5-8c1c-b175f1f8817f" />
-```
 
 ## Contact
 
