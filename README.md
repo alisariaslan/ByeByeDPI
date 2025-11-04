@@ -23,6 +23,10 @@ This graphical interface allows you to start, stop, and manage the DPI bypass pr
 ```md
 ![Main Window](assets/screenshot_main.png)
 ![Tray Menu](assets/screenshot_tray.png)
-
 ```
+
+## Contact
+
+Report bugs or request features via GitHub Issues: https://github.com/alisariaslan/ByeByeDPI/issues
+For other inquiries: [dev@alisariaslan.com](mailto:dev@alisariaslan.com)
 
