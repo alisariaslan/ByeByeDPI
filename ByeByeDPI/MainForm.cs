@@ -60,11 +60,6 @@ namespace ByeByeDPI
 			{
 				StartAutoUpdateCheck();
 			}
-
-			if(SettingsLoader.Current.StartWithWindows)
-			{
-				ToggleDPIBtn_Click(this,new EventArgs());
-			}
 		}
 
 

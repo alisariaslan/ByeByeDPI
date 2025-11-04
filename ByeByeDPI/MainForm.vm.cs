@@ -13,7 +13,7 @@ namespace ByeByeDPI
 		private MainForm _view;
 
 		public event Action<string> OnMessage;
-		private readonly ByeByeDPIProcessManager _dpiManager = new ByeByeDPIProcessManager();
+		private readonly GoodbyeDPIProcessManager _dpiManager = new GoodbyeDPIProcessManager();
 		public List<CheckListModel> CheckList { get; private set; } = new List<CheckListModel>();
 		public List<ParamModel> ParamList { get; private set; } = new List<ParamModel>();
 		public bool IsGoodbyeDPIRunning => _dpiManager.IsRunning;
@@ -21,6 +21,7 @@ namespace ByeByeDPI
 		public void SetFormView(MainForm view)
 		{
 			_view = view;
+			_dpiManager.OnMessage += (msg) => _view.Invoke(new Action(() => OnMessage?.Invoke(msg)));	
 		}
 
 		public void LoadSettings()
@@ -46,6 +47,7 @@ namespace ByeByeDPI
 			try
 			{
 				SettingsLoader.Current.ChosenParam = "";
+				_dpiManager.DeleteTask();
 				OnMessage?.Invoke($"Chosen profile cleared successfully.");
 				SettingsLoader.Save();
 			}
@@ -93,6 +95,8 @@ namespace ByeByeDPI
 			}
 				
 		}
+
+
 	
 
 		public async Task RunParamSelectionWorkflowAsync()
@@ -136,33 +140,47 @@ namespace ByeByeDPI
 		public void ToggleAutoStartWithWindows(bool newState)
 		{
 			string appName = Constants.RegistryAppName;
-			string exePath = $"\"{Application.ExecutablePath}\"";
+			string exePath = Application.ExecutablePath;
+			string batPath = Constants.DelayStartPath;
+
 			try
 			{
-				using (RegistryKey key = Registry.CurrentUser.OpenSubKey(
-						   @"Software\Microsoft\Windows\CurrentVersion\Run", writable: true))
+				if (newState)
 				{
-					if (newState)
+					File.WriteAllText(batPath,
+						$"@echo off{Environment.NewLine}" +
+						$"timeout /t 10 /nobreak{Environment.NewLine}" +
+						$"start \"\" \"{exePath}\"");
+					using (RegistryKey key = Registry.CurrentUser.OpenSubKey(
+							   @"Software\Microsoft\Windows\CurrentVersion\Run", writable: true))
 					{
-						key.SetValue(appName, exePath);
+						key.SetValue(appName, $"\"{batPath}\"");
+						OnMessage?.Invoke("Application will start with Windows (delayed).");
 					}
-					else
+				}
+				else
+				{
+					using (RegistryKey key = Registry.CurrentUser.OpenSubKey(
+							   @"Software\Microsoft\Windows\CurrentVersion\Run", writable: true))
 					{
 						if (key.GetValue(appName) != null)
 							key.DeleteValue(appName);
+						OnMessage?.Invoke("Application removed from Windows startup.");
 					}
+					if (File.Exists(batPath))
+						File.Delete(batPath);
 				}
 			}
 			catch (Exception ex)
 			{
-				MessageBox.Show($"Failed to update Windows startup.\nError: {ex.Message}",
-								"Startup Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+				OnMessage?.Invoke($"Failed to update startup setting: {ex.Message}");
 			}
 		}
 
+
 		public void Dispose()
 		{
-			_dpiManager.Dispose();
+			// Dispose of unmanaged resources if any
 		}
 	}
 

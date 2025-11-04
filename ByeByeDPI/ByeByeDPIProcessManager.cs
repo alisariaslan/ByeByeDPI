@@ -1,147 +1,202 @@
-﻿using System;
+﻿using Microsoft.Win32.TaskScheduler;
+using System;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
+using Task = Microsoft.Win32.TaskScheduler.Task;
 
 namespace ByeByeDPI
 {
-	public class ByeByeDPIProcessManager : IDisposable
+	public class GoodbyeDPIProcessManager 
 	{
-		private Process _process;
+		private const string GoodbyeDPITaskName = "GoodbyeDPI_Runner";
+
 		public event Action<string> OnMessage;
 
-		/// <summary>
-		/// Checks if the process is running either via local reference or via process list
-		/// </summary>
 		public bool IsRunning
 		{
 			get
 			{
-				// If local process exists and not exited
-				if (_process != null && !_process.HasExited)
-					return true;
-
-				// Check system process list
-				var running = Process.GetProcessesByName("goodbyedpi").Any();
-				return running;
+				return Process.GetProcessesByName("goodbyedpi").Any();
 			}
 		}
 
-		public async Task StartAsync(string exePath, string arguments = "")
+		public async System.Threading.Tasks.Task StartAsync(string exePath, string arguments = "")
 		{
 			if (IsRunning)
 			{
-				OnMessage?.Invoke("ByeByeDPI is already running.");
+				OnMessage?.Invoke("GoodbyeDPI is already running.");
 				return;
 			}
 
-			await Task.Run(() =>
+			try
 			{
-				try
+				using (TaskService ts = new TaskService())
 				{
-					var psi = new ProcessStartInfo
+					TaskDefinition td;
+					Task task = ts.GetTask(GoodbyeDPITaskName);
+					if (task == null)
 					{
-						FileName = exePath,
-						Arguments = arguments,
-						WorkingDirectory = AppDomain.CurrentDomain.BaseDirectory,
-						UseShellExecute = false,
-						RedirectStandardOutput = true,
-						RedirectStandardError = true,
-						CreateNoWindow = true
-					};
-
-					_process = new Process
+						CreateGoodbyeDPIRunnerTask(ts, exePath);
+						task = ts.GetTask(GoodbyeDPITaskName);
+					}
+					if (task == null)
 					{
-						StartInfo = psi,
-						EnableRaisingEvents = true
-					};
-
-					_process.Exited += (s, e) =>
+						OnMessage?.Invoke("Error: Cannot find or create the GoodbyeDPI task.");
+						return;
+					}
+					td = task.Definition;
+					if (td.Actions.OfType<ExecAction>().FirstOrDefault() is ExecAction action)
 					{
-						OnMessage?.Invoke("ByeByeDPI exited.");
-						try { _process?.Dispose(); } catch { }
-						_process = null;
-					};
-
-					bool started = _process.Start();
-					if (started)
-					{
-						_process.BeginOutputReadLine();
-						_process.BeginErrorReadLine();
-						_process.OutputDataReceived += (s, e) => { /* silent */ };
-						_process.ErrorDataReceived += (s, e) => { /* silent */ };
-
-						OnMessage?.Invoke($"ByeByeDPI started (hidden): {arguments}");
+						action.Path = exePath;
+						action.Arguments = arguments;
+						var logonTriggers = td.Triggers.OfType<LogonTrigger>().ToList();
+						if (logonTriggers.Any())
+						{
+							foreach (var trigger in logonTriggers)
+							{
+								trigger.Enabled = SettingsLoader.Current.StartWithWindows;
+							}
+							OnMessage?.Invoke($"Start with Windows setting updated to: {SettingsLoader.Current.StartWithWindows}");
+						}
+						else if (SettingsLoader.Current.StartWithWindows)
+						{
+							td.Triggers.Add(new LogonTrigger() { UserId = null, Delay = TimeSpan.FromSeconds(5), Enabled = true });
+							OnMessage?.Invoke("Logon trigger added for Start with Windows.");
+						}
+						ts.RootFolder.RegisterTaskDefinition(GoodbyeDPITaskName, td);
+						OnMessage?.Invoke($"GoodbyeDPI parameters updated: {arguments}");
 					}
 					else
 					{
-						OnMessage?.Invoke("Failed to start ByeByeDPI process.");
+						OnMessage?.Invoke("Error: Task action not found.");
+						return;
 					}
+					task.Run();
+					OnMessage?.Invoke($"GoodbyeDPI task started: {arguments}");
 				}
-				catch (Exception ex)
-				{
-					OnMessage?.Invoke("ByeByeDPI couldn't run: " + ex.Message);
-				}
-			});
-		}
-
-		public async Task StopAsync()
-		{
-			await Task.Run(() =>
+			}
+			catch (Exception ex)
 			{
-				try
-				{
-					// Stop local process if exists
-					if (_process != null && !_process.HasExited)
-					{
-						try { _process.CloseMainWindow(); } catch { }
-						if (!_process.WaitForExit(2000))
-						{
-							_process.Kill();
-							_process.WaitForExit(3000);
-						}
-						OnMessage?.Invoke("ByeByeDPI stopped.");
-						try { _process?.Dispose(); } catch { }
-						_process = null;
-					}
+				OnMessage?.Invoke("Failed to start GoodbyeDPI (Task Scheduler error): " + ex.Message);
+			}
 
-					// Also stop any other running GoodbyeDPI processes from system
-					var others = Process.GetProcessesByName("goodbyedpi");
-					foreach (var p in others)
-					{
-						try
-						{
-							p.Kill();
-							p.WaitForExit(3000);
-							OnMessage?.Invoke("ByeByeDPI process from system stopped.");
-						}
-						catch { }
-						finally
-						{
-							try { p.Dispose(); } catch { }
-						}
-					}
-				}
-				catch (Exception ex)
-				{
-					OnMessage?.Invoke("Failed to stop ByeByeDPI: " + ex.Message);
-				}
-			});
+			await System.Threading.Tasks.Task.CompletedTask;
 		}
 
-		public void Dispose()
+		public async System.Threading.Tasks.Task StopAsync()
 		{
+			if (!PrivilegesHelper.IsAdministrator())
+			{
+				OnMessage?.Invoke("Error: Administrator privileges are required to stop the task.");
+				return;
+			}
+
 			try
 			{
-				if (_process != null && !_process.HasExited)
-					_process.Kill();
+				using (TaskService ts = new TaskService())
+				{
+					Task task = ts.GetTask(GoodbyeDPITaskName);
+
+					if (task != null && task.State == TaskState.Running)
+					{
+						task.Stop();
+						OnMessage?.Invoke("GoodbyeDPI task stopped.");
+					}
+					else
+					{
+						OnMessage?.Invoke("GoodbyeDPI task is not running or not found. Checking for any running processes...");
+					}
+				}
+
+				var others = Process.GetProcessesByName("goodbyedpi");
+				foreach (var p in others)
+				{
+					try
+					{
+						p.Kill();
+						OnMessage?.Invoke("Remaining GoodbyeDPI process terminated.");
+					}
+					catch { }
+					finally
+					{
+						try { p.Dispose(); } catch { }
+					}
+				}
 			}
-			catch { }
-			finally
+			catch (Exception ex)
 			{
-				try { _process?.Dispose(); } catch { }
-				_process = null;
+				OnMessage?.Invoke("Failed to stop GoodbyeDPI: " + ex.Message);
+			}
+
+			await System.Threading.Tasks.Task.CompletedTask;
+		}
+
+		public bool DeleteTask()
+		{
+			if (!PrivilegesHelper.IsAdministrator())
+			{
+				OnMessage?.Invoke("Error: Administrator privileges are required to delete the task.");
+				return false;
+			}
+
+			try
+			{
+				using (TaskService ts = new TaskService())
+				{
+					Task task = ts.GetTask(GoodbyeDPITaskName);
+					if (task != null)
+					{
+						ts.RootFolder.DeleteTask(GoodbyeDPITaskName);
+						OnMessage?.Invoke($"'{GoodbyeDPITaskName}' task successfully deleted from Task Scheduler.");
+						return true;
+					}
+					else
+					{
+						OnMessage?.Invoke($"'{GoodbyeDPITaskName}' task does not exist in Task Scheduler.");
+						return true;
+					}
+				}
+			}
+			catch (Exception ex)
+			{
+				OnMessage?.Invoke($"Error: Failed to delete the task: {ex.Message}");
+				return false;
 			}
 		}
+
+	
+
+		private void CreateGoodbyeDPIRunnerTask(TaskService ts, string exePath)
+		{
+			if (!PrivilegesHelper.IsAdministrator())
+			{
+				OnMessage?.Invoke("Error: Administrator privileges are required to create the task.");
+				return;
+			}
+
+			TaskDefinition td = ts.NewTask();
+			td.RegistrationInfo.Description = "Used to run GoodbyeDPI with administrator privileges.";
+
+			td.Triggers.Add(new LogonTrigger()
+			{
+				UserId = null,
+				Delay = TimeSpan.FromSeconds(5)
+			});
+
+			td.Principal.RunLevel = TaskRunLevel.Highest;
+			td.Principal.LogonType = TaskLogonType.ServiceAccount;
+			td.Principal.UserId = "SYSTEM";
+			string workingDir = Path.GetDirectoryName(exePath) ?? AppDomain.CurrentDomain.BaseDirectory;
+			td.Actions.Add(new ExecAction(exePath, "", workingDir));
+			td.Settings.AllowDemandStart = true;
+			td.Settings.MultipleInstances = TaskInstancesPolicy.IgnoreNew;
+			td.Settings.Hidden = false;
+
+			// **StartWithWindows kontrolü StartAsync metodu içinde yapılmalıdır**
+			// Varsayılan olarak tetikleyiciyi ekledik. Daha sonra StartAsync içinde bu tetikleyiciyi aktif/pasif yapacağız.
+			ts.RootFolder.RegisterTaskDefinition(GoodbyeDPITaskName, td);
+		}
+
 	}
 }
