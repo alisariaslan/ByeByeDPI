@@ -114,7 +114,7 @@ namespace ByeByeDPI
 		private void InitializeTray()
 		{
 			_trayIcon = new NotifyIcon();
-			_trayIcon.Icon = Properties.Resources.so_so_64px_ico;
+			_trayIcon.Icon = Properties.Resources.icons8_so_so;
 			_trayIcon.Visible = false;
 
 			var trayMenu = new ContextMenuStrip();
