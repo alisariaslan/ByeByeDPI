@@ -16,7 +16,7 @@ namespace ByeByeDPI
 		private readonly ByeByeDPIProcessManager _dpiManager = new ByeByeDPIProcessManager();
 		public List<CheckListModel> CheckList { get; private set; } = new List<CheckListModel>();
 		public List<ParamModel> ParamList { get; private set; } = new List<ParamModel>();
-		public bool IsByeByeDPIRunning => _dpiManager.IsRunning;
+		public bool IsGoodbyeDPIRunning => _dpiManager.IsRunning;
 
 		public void SetFormView(MainForm view)
 		{
@@ -31,13 +31,13 @@ namespace ByeByeDPI
 
 		public void LoadCheckList()
 		{
-			CheckList = CheckListLoader.LoadCheckList(Constants.CheckListFileName);
+			CheckList = CheckListLoader.LoadCheckList(Constants.CheckListPath);
 			OnMessage?.Invoke("Check list loaded.");
 		}
 
 		public void LoadParams()
 		{
-			ParamList = ParamsLoader.LoadParams(Constants.ParamsFileName);
+			ParamList = ParamsLoader.LoadParams(Constants.ParamsPath);
 			OnMessage?.Invoke("Parameters loaded.");
 		}
 
@@ -79,13 +79,13 @@ namespace ByeByeDPI
 
 		public async Task ToggleByeByeDPIAsync()
 		{
-			if (IsByeByeDPIRunning)
+			if (IsGoodbyeDPIRunning)
 				await _dpiManager.StopAsync();
 			else
 			{
 				if (!String.IsNullOrWhiteSpace(SettingsLoader.Current.ChosenParam))
 				{
-					await _dpiManager.StartAsync(Constants.GoodbyeDPIFileName, SettingsLoader.Current.ChosenParam);
+					await _dpiManager.StartAsync(Constants.GoodbyeDPIPath, SettingsLoader.Current.ChosenParam);
 				} else
 				{
 					await RunParamSelectionWorkflowAsync();
@@ -101,7 +101,7 @@ namespace ByeByeDPI
 			{
 				OnMessage?.Invoke($"Trying parameter '{item.Name}'...");
 
-				await _dpiManager.StartAsync(Constants.GoodbyeDPIFileName, item.Value);
+				await _dpiManager.StartAsync(Constants.GoodbyeDPIPath, item.Value);
 				await StartCheckingCheckListAsync();
 
 				var result = MessageBox.Show(

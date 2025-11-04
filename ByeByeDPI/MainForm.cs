@@ -35,10 +35,10 @@ namespace ByeByeDPI
 			_viewModel.LoadCheckList();
 			_viewModel.LoadParams();
 
-			if (_viewModel.IsByeByeDPIRunning)
+			if (_viewModel.IsGoodbyeDPIRunning)
 			{
 				ToggleDPIBtn.Text = "Stop Access";
-				MessageWriteLine(Constants.GoodbyeDPIFileName + " is already running!");
+				MessageWriteLine("GoodbyeDPI is already running!");
 				MessageWriteLine("Please kill the process via Task Manager.");
 				MessageWriteLine("Or try to stop in here.");
 			}
@@ -176,15 +176,15 @@ namespace ByeByeDPI
 
 			await _viewModel.ToggleByeByeDPIAsync();
 
-			ToggleDPIBtn.Text = _viewModel.IsByeByeDPIRunning ? "Stop Access" : "Start Access";
+			ToggleDPIBtn.Text = _viewModel.IsGoodbyeDPIRunning ? "Stop Access" : "Start Access";
 
-			if (_viewModel.IsByeByeDPIRunning)
+			if (_viewModel.IsGoodbyeDPIRunning)
 			{
-				MessageWriteLine(Constants.GoodbyeDPIFileName + " is running.");
+				MessageWriteLine("GoodbyeDPI is running.");
 			}
 			else
 			{
-				MessageWriteLine(Constants.GoodbyeDPIFileName + " is stopped.");
+				MessageWriteLine("GoodbyeDPI is stopped.");
 			}
 
 			await Task.Delay(3000);
@@ -242,12 +242,12 @@ namespace ByeByeDPI
 
 		private void OpenCheckListBtn_Click(object sender, EventArgs e)
 		{
-			FileOpenerUtil.OpenFileInBaseDir(Constants.CheckListFileName);
+			FileOpenerUtil.OpenFileInBaseDir(Constants.CheckListPath);
 		}
 
 		private void ParamsBtn_Click(object sender, EventArgs e)
 		{
-			FileOpenerUtil.OpenFileInBaseDir(Constants.ParamsFileName);
+			FileOpenerUtil.OpenFileInBaseDir(Constants.ParamsPath);
 		}
 
 		private void ClearParamBtn_Click(object sender, EventArgs e)

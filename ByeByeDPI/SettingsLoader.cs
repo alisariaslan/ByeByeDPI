@@ -21,7 +21,7 @@ namespace ByeByeDPI
 		{
 			try
 			{
-				string json = File.ReadAllText(Constants.AppSettingsFileName);
+				string json = File.ReadAllText(Constants.AppSettingsPath);
 				Current =  JsonSerializer.Deserialize<SettingsModel>(json) ?? new SettingsModel();
 				return;
 			}
@@ -37,7 +37,7 @@ namespace ByeByeDPI
 				{
 					try
 					{
-						File.Delete(Constants.AppSettingsFileName);
+						File.Delete(Constants.AppSettingsPath);
 						MessageBox.Show("Settings file deleted. Please restart the application.", "File Deleted", MessageBoxButtons.OK, MessageBoxIcon.Information);
 					}
 					catch (Exception deleteEx)
@@ -58,7 +58,7 @@ namespace ByeByeDPI
 			try
 			{
 				string json = JsonSerializer.Serialize(Current, new JsonSerializerOptions { WriteIndented = true });
-				File.WriteAllText(Constants.AppSettingsFileName, json);
+				File.WriteAllText(Constants.AppSettingsPath, json);
 			}
 			catch (Exception ex)
 			{
