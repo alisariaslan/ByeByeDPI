@@ -82,7 +82,9 @@ namespace ByeByeDPI
 		public async Task ToggleByeByeDPIAsync()
 		{
 			if (IsGoodbyeDPIRunning)
+			{
 				await _dpiManager.StopAsync();
+			}
 			else
 			{
 				if (!String.IsNullOrWhiteSpace(SettingsLoader.Current.ChosenParam))
@@ -101,6 +103,9 @@ namespace ByeByeDPI
 
 		public async Task RunParamSelectionWorkflowAsync()
 		{
+			if (!PrivilegesHelper.EnsureAdministrator(OnMessage))
+				return;
+
 			foreach (var item in ParamList)
 			{
 				OnMessage?.Invoke($"Trying parameter '{item.Name}'...");
@@ -155,7 +160,6 @@ namespace ByeByeDPI
 							   @"Software\Microsoft\Windows\CurrentVersion\Run", writable: true))
 					{
 						key.SetValue(appName, $"\"{batPath}\"");
-						OnMessage?.Invoke("Application will start with Windows (delayed).");
 					}
 				}
 				else
@@ -165,7 +169,6 @@ namespace ByeByeDPI
 					{
 						if (key.GetValue(appName) != null)
 							key.DeleteValue(appName);
-						OnMessage?.Invoke("Application removed from Windows startup.");
 					}
 					if (File.Exists(batPath))
 						File.Delete(batPath);

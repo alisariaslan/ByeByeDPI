@@ -86,11 +86,8 @@ namespace ByeByeDPI
 
 		public async System.Threading.Tasks.Task StopAsync()
 		{
-			if (!PrivilegesHelper.IsAdministrator())
-			{
-				OnMessage?.Invoke("Error: Administrator privileges are required to stop the task.");
+			if (!PrivilegesHelper.EnsureAdministrator(OnMessage))
 				return;
-			}
 
 			try
 			{
