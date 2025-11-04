@@ -9,6 +9,7 @@ namespace ByeByeDPI
 		private readonly Form1ViewModel _viewModel;
 		private NotifyIcon _trayIcon;
 		private bool _updateChecksStarted;
+		private bool _closeWithoutTray;
 
 		public Form1(Form1ViewModel viewModel)
 		{
@@ -84,7 +85,8 @@ namespace ByeByeDPI
 						_trayIcon.ShowBalloonTip(5000);
 						_trayIcon.BalloonTipClicked -= TrayIcon_BalloonTipClicked;
 						_trayIcon.BalloonTipClicked += TrayIcon_BalloonTipClicked;
-					} else
+					}
+					else
 					{
 						CheckUpdateNow.Text = "Check Now";
 					}
@@ -92,7 +94,7 @@ namespace ByeByeDPI
 				catch
 				{
 				}
-				await Task.Delay(TimeSpan.FromHours(1)); 
+				await Task.Delay(TimeSpan.FromHours(1));
 			}
 			_updateChecksStarted = false;
 		}
@@ -109,14 +111,42 @@ namespace ByeByeDPI
 			_trayIcon = new NotifyIcon();
 			_trayIcon.Icon = Properties.Resources.so_so_64px_ico;
 			_trayIcon.Visible = false;
+
+			var trayMenu = new ContextMenuStrip();
+			trayMenu.Items.Add("Show", null, (s, e) => ShowMainWindow());
+			trayMenu.Items.Add("Close", null, (s, e) =>
+			{
+				_closeWithoutTray = true;
+				this.Close();
+			});
+			_trayIcon.ContextMenuStrip = trayMenu;
+
 			_trayIcon.DoubleClick += (s, e) =>
 			{
-				this.Show();
-				this.WindowState = FormWindowState.Normal;
-				this.ShowInTaskbar = true;
-				_trayIcon.Visible = false;
+				if (this.Visible && this.WindowState != FormWindowState.Minimized)
+				{
+					HideMainWindow();
+				}
+				else
+				{
+					ShowMainWindow();
+				}
 			};
+		}
 
+		private void ShowMainWindow()
+		{
+			this.Show();
+			this.WindowState = FormWindowState.Normal;
+			this.ShowInTaskbar = true;
+			_trayIcon.Visible = false;
+		}
+
+		private void HideMainWindow()
+		{
+			this.Hide();
+			this.ShowInTaskbar = false;
+			_trayIcon.Visible = true;
 		}
 
 		private void MessageWriteLine(string msg)
@@ -265,9 +295,9 @@ namespace ByeByeDPI
 			}
 		}
 
-		private async void Form1_FormClosing(object sender, FormClosingEventArgs e)
+		private void Form1_FormClosing(object sender, FormClosingEventArgs e)
 		{
-			if (SettingsLoader.Current.HideToTray)
+			if (SettingsLoader.Current.HideToTray && !_closeWithoutTray)
 			{
 				e.Cancel = true;
 				this.WindowState = FormWindowState.Minimized;
@@ -279,9 +309,8 @@ namespace ByeByeDPI
 			{
 				_viewModel.Dispose();
 				_trayIcon.Dispose();
-				await _viewModel.StopByeByeDPIAsync();
-				base.OnFormClosing(e);
 			}
 		}
+
 	}
 }

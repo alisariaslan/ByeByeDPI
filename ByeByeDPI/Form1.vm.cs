@@ -93,12 +93,7 @@ namespace ByeByeDPI
 			}
 				
 		}
-
-		public async Task StopByeByeDPIAsync()
-		{
-			await _dpiManager.StopAsync();
-		}
-
+	
 
 		public async Task RunParamSelectionWorkflowAsync()
 		{
