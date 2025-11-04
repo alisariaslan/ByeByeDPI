@@ -428,7 +428,7 @@ namespace ByeByeDPI
 
 		private void Form1_FormClosing(object sender, FormClosingEventArgs e)
 		{
-			if (SettingsLoader.Current.HideToTray && !_closeWithoutTray)
+			if (SettingsLoader.Current.HideToTray && !_closeWithoutTray && !TempConfigLoader.Current.AdminPriviligesRequested)
 			{
 				e.Cancel = true;
 				this.WindowState = FormWindowState.Minimized;
