@@ -25,7 +25,6 @@ namespace ByeByeDPI
 		{
 			if (IsAdministrator())
 			{
-				TempConfigLoader.Reset_AdminPriviligesRequested();
 				return true;
 			}
 
