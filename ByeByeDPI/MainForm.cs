@@ -63,11 +63,9 @@ namespace ByeByeDPI
 
 			StartStateSync();
 
-			Task.Run(async () =>
-			{
-				await Task.Delay(1000);
-				TempConfigLoader.Reset_AdminPriviligesRequested();
-			});
+
+			TempConfigLoader.Reset_AdminPriviligesRequested();
+
 		}
 
 

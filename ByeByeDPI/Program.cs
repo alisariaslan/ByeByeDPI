@@ -20,12 +20,6 @@ namespace ByeByeDPI
 					return;
 				}
 
-				if (skipMutexCheck)
-				{
-					TempConfigLoader.Current.AdminPriviligesRequested = false;
-					TempConfigLoader.Save();
-				}
-
 				Application.EnableVisualStyles();
 				Application.SetCompatibleTextRenderingDefault(false);
 
