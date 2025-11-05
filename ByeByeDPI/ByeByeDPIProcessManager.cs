@@ -29,6 +29,12 @@ namespace ByeByeDPI
 				return;
 			}
 
+			if (!PrivilegesHelper.EnsureAdministrator(OnMessage))
+			{
+				OnMessage?.Invoke("Error: Administrator privileges are required to start the task.");
+				return;
+			}
+
 			try
 			{
 				using (TaskService ts = new TaskService())
@@ -98,7 +104,10 @@ namespace ByeByeDPI
 		public async System.Threading.Tasks.Task StopAsync()
 		{
 			if (!PrivilegesHelper.EnsureAdministrator(OnMessage))
+			{
+				OnMessage?.Invoke("Error: Administrator privileges are required to stop the task.");
 				return;
+			}
 
 			try
 			{
@@ -168,7 +177,7 @@ namespace ByeByeDPI
 
 		public bool DeleteTask()
 		{
-			if (!PrivilegesHelper.IsAdministrator())
+			if (!PrivilegesHelper.EnsureAdministrator(onMessage: OnMessage))
 			{
 				OnMessage?.Invoke("Error: Administrator privileges are required to delete the task.");
 				return false;
@@ -200,7 +209,7 @@ namespace ByeByeDPI
 
 		private void CreateGoodbyeDPIRunnerTask(TaskService ts, string exePath)
 		{
-			if (!PrivilegesHelper.IsAdministrator())
+			if (!PrivilegesHelper.EnsureAdministrator(onMessage: OnMessage))
 			{
 				OnMessage?.Invoke("Error: Administrator privileges are required to create the task.");
 				return;

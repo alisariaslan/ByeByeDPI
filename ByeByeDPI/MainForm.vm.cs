@@ -9,20 +9,18 @@ namespace ByeByeDPI
 {
 	public class Form1ViewModel : IDisposable
 	{
-		private MainForm _view;
-
 		public event Action<string> OnMessage;
+
 		private readonly GoodbyeDPIProcessManager _dpiManager = new GoodbyeDPIProcessManager();
-		public List<CheckListModel> CheckList { get; private set; } = new List<CheckListModel>();
-		public List<ParamModel> ParamList { get; private set; } = new List<ParamModel>();
+		private List<CheckListModel> CheckList { get;  set; } = new List<CheckListModel>();
+		private List<ParamModel> ParamList { get;  set; } = new List<ParamModel>();
 		public bool IsGoodbyeDPIRunning => _dpiManager.IsRunning;
 		private bool _isWorkflowRunning = false;
 		private bool _isCheckListRunnig = false;
 
-		public void SetFormView(MainForm view)
+		public Form1ViewModel(MainForm mainForm)
 		{
-			_view = view;
-			_dpiManager.OnMessage += (msg) => _view.Invoke(new Action(() => OnMessage?.Invoke(msg)));	
+			_dpiManager.OnMessage += (msg) => OnMessage?.Invoke(msg);
 		}
 
 		public void LoadSettings()
@@ -102,17 +100,14 @@ namespace ByeByeDPI
 					await RunParamSelectionWorkflowAsync();
 				}
 			}
-				
 		}
 		
 		public async Task RunParamSelectionWorkflowAsync()
 		{
 			if (!PrivilegesHelper.EnsureAdministrator(OnMessage))
 				return;
-
 			if (_isWorkflowRunning || _isCheckListRunnig)
 					return;
-
 			_isWorkflowRunning = true;
 			foreach (var item in ParamList)
 			{
@@ -177,10 +172,9 @@ namespace ByeByeDPI
 			}
 		}
 
-
 		public void Dispose()
 		{
-			// Dispose of unmanaged resources if any
+			// Dispose resources if any
 		}
 	}
 

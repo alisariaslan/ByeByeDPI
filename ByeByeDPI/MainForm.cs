@@ -6,18 +6,15 @@ namespace ByeByeDPI
 {
 	public partial class MainForm : Form, IDisposable
 	{
+		private readonly TrayApplicationContext _trayApplicationContext;
 		private readonly Form1ViewModel _viewModel;
-		private NotifyIcon _trayIcon;
-		private bool _updateChecksStarted;
-		private bool _closeWithoutTray;
 
-		public MainForm(Form1ViewModel viewModel)
+		public MainForm(TrayApplicationContext trayApplicationContext)
 		{
 			InitializeComponent();
-			InitializeTray();
 
-			_viewModel = viewModel;
-			_viewModel.SetFormView(this);
+			_trayApplicationContext = trayApplicationContext;
+			_viewModel = new Form1ViewModel(this);
 
 			_viewModel.OnMessage += new Action<string>(msg =>
 			{
@@ -41,129 +38,32 @@ namespace ByeByeDPI
 			CheckUpdatesChbox.Checked = SettingsLoader.Current.CheckUpdates;
 			StartWithWindowsChbox.Checked = SettingsLoader.Current.StartWithWindows;
 
-			if (SettingsLoader.Current.HideToTray && !TempConfigLoader.Current.AdminPriviligesRequested)
-			{
-				this.WindowState = FormWindowState.Minimized;
-				this.ShowInTaskbar = false;
-				_trayIcon.Visible = true;
-				_trayIcon.ShowBalloonTip(1000, "ByeByeDPI", "Application minimized to tray.", ToolTipIcon.Info);
-			}
-
-			if (SettingsLoader.Current.CheckUpdates)
-			{
-				StartAutoUpdateCheck();
-			}
-
-			ToggleDPIBtnTextSync();
+			StartStateSync();
 
 			if (_viewModel.IsGoodbyeDPIRunning)
 			{
-				MessageWriteLine("GoodbyeDPI is already running!");
+				MessageWriteLine("GoodbyeDPI is running!");
+			} else
+			{
+				MessageWriteLine("GoodbyeDPI is stopped!");
 			}
-
-			StartStateSync();
-
-
-			TempConfigLoader.Reset_AdminPriviligesRequested();
-
-		}
-
-
-		private async void StartAutoUpdateCheck()
-		{
-			if (_updateChecksStarted)
-				return;
-			_updateChecksStarted = true;
-			string currentVersion = Application.ProductVersion;
-			while (SettingsLoader.Current.CheckUpdates)
-			{
-				try
-				{
-					bool updateAvailable = await UpdateService.CheckForUpdateAsync(currentVersion);
-					if (updateAvailable)
-					{
-						CheckUpdateNow.Text = "Update Now";
-						_trayIcon.BalloonTipTitle = "ByeByeDPI Update";
-						_trayIcon.BalloonTipText = "A new version is available. Click to \"Update Now\" for update.";
-						_trayIcon.BalloonTipIcon = ToolTipIcon.Info;
-						_trayIcon.Visible = true;
-						_trayIcon.ShowBalloonTip(5000);
-						_trayIcon.BalloonTipClicked -= TrayIcon_BalloonTipClicked;
-						_trayIcon.BalloonTipClicked += TrayIcon_BalloonTipClicked;
-					}
-					else
-					{
-						CheckUpdateNow.Text = "Check Now";
-					}
-				}
-				catch
-				{
-				}
-				await Task.Delay(TimeSpan.FromHours(1));
-			}
-			_updateChecksStarted = false;
-		}
-
-		private void TrayIcon_BalloonTipClicked(object sender, EventArgs e)
-		{
-			_trayIcon.Visible = false;
-			this.WindowState = FormWindowState.Normal;
-			this.ShowInTaskbar = true;
-		}
-
-		private void InitializeTray()
-		{
-			_trayIcon = new NotifyIcon();
-			_trayIcon.Icon = Properties.Resources.icons8_so_so;
-			_trayIcon.Visible = false;
-
-			var trayMenu = new ContextMenuStrip();
-			trayMenu.Items.Add("Show", null, (s, e) => ShowMainWindow());
-			trayMenu.Items.Add("Close", null, (s, e) =>
-			{
-				_closeWithoutTray = true;
-				this.Close();
-			});
-			_trayIcon.ContextMenuStrip = trayMenu;
-
-			_trayIcon.DoubleClick += (s, e) =>
-			{
-				if (this.Visible && this.WindowState != FormWindowState.Minimized)
-				{
-					HideMainWindow();
-				}
-				else
-				{
-					ShowMainWindow();
-				}
-			};
-		}
-
-		private void ShowMainWindow()
-		{
-			this.Show();
-			this.WindowState = FormWindowState.Normal;
-			this.ShowInTaskbar = true;
-			_trayIcon.Visible = false;
-		}
-
-		private void HideMainWindow()
-		{
-			this.Hide();
-			this.ShowInTaskbar = false;
-			_trayIcon.Visible = true;
 		}
 
 		private void MessageWriteLine(string msg)
 		{
 			ListBoxForMessages.Items.Add(msg);
-
 			int lastIndex = ListBoxForMessages.Items.Count - 1;
 			if (lastIndex >= 0)
 			{
 				ListBoxForMessages.TopIndex = lastIndex;
 			}
 		}
+
+		public void UpdateCheckUpdateBtnText(string newString)
+		{
+			OpenCheckListBtn.Text = newString;
+		}
+
 
 		private void ClearMessages()
 		{
@@ -184,11 +84,41 @@ namespace ByeByeDPI
 			ResetBtn.Enabled = true;
 		}
 
+		private string GetToggleDPIBtnExpectedText()
+		{
+			return _viewModel.IsGoodbyeDPIRunning ? "Stop Access" : "Start Access";
+		}
+
+		private void ToggleDPIBtnTextSync()
+		{
+			string expectedText = GetToggleDPIBtnExpectedText();
+			if (ToggleDPIBtn.Text != expectedText)
+			{
+				ToggleDPIBtn.Text = expectedText;
+			}
+		}
+
+		private async void StartStateSync()
+		{
+			while (!this.IsDisposed)
+			{
+				try
+				{
+					ToggleDPIBtnTextSync();
+				}
+				catch
+				{
+					break;
+				}
+				await Task.Delay(3000);
+			}
+		}
+
 		private async void RunBtn_Click(object sender, EventArgs e)
 		{
 			LockProcessButtons();
 			ClearMessages();
-			MessageWriteLine("CheckList started to check domains...");
+			MessageWriteLine("Starting to check urls from check list...");
 			await _viewModel.StartCheckingCheckListAsync();
 			UnlockProcessButtons();
 		}
@@ -197,7 +127,6 @@ namespace ByeByeDPI
 		{
 			LockProcessButtons();
 			ClearMessages();
-
 			if (ToggleDPIBtn.Text != GetToggleDPIBtnExpectedText())
 			{
 				MessageBox.Show(
@@ -211,10 +140,8 @@ namespace ByeByeDPI
 			{
 				await _viewModel.ToggleByeByeDPIAsync();
 			}
-
 			ToggleDPIBtnTextSync();
 			MessageWriteLine(_viewModel.IsGoodbyeDPIRunning ? "GoodbyeDPI is running." : "GoodbyeDPI is stopped.");
-
 			await Task.Delay(3000);
 			UnlockProcessButtons();
 		}
@@ -232,7 +159,7 @@ namespace ByeByeDPI
 			SettingsLoader.Save();
 			if (CheckUpdatesChbox.Checked)
 			{
-				StartAutoUpdateCheck();
+				_trayApplicationContext.StartAutoUpdateCheck();
 			}
 		}
 
@@ -248,7 +175,6 @@ namespace ByeByeDPI
 			CheckUpdateNow.Enabled = false;
 			string currentVersion = Application.ProductVersion;
 			bool updateAvailable = await UpdateService.CheckForUpdateAsync(currentVersion);
-
 			if (updateAvailable)
 			{
 				var result = MessageBox.Show(
@@ -256,7 +182,6 @@ namespace ByeByeDPI
 					"Update Available",
 					MessageBoxButtons.YesNo,
 					MessageBoxIcon.Information);
-
 				if (result == DialogResult.Yes)
 				{
 					await UpdateService.DownloadAndRunUpdateAsync();
@@ -325,7 +250,6 @@ namespace ByeByeDPI
 				Clipboard.SetText(ListBoxForMessages.SelectedItem.ToString());
 			}
 		}
-
 
 		private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
 		{
@@ -400,50 +324,13 @@ namespace ByeByeDPI
 			}
 		}
 
-		private string GetToggleDPIBtnExpectedText()
+		protected override void OnHandleDestroyed(EventArgs e)
 		{
-			return _viewModel.IsGoodbyeDPIRunning ? "Stop Access" : "Start Access";
-		}
+			base.OnHandleDestroyed(e);
 
-		private void ToggleDPIBtnTextSync()
-		{
-			string expectedText = GetToggleDPIBtnExpectedText();
-			if (ToggleDPIBtn.Text != expectedText)
+			if (!SettingsLoader.Current.HideToTray || TempConfigLoader.Current.AdminPriviligesRequested)
 			{
-				ToggleDPIBtn.Text = expectedText;
-			}
-		}
-
-		private async void StartStateSync()
-		{
-			while (!this.IsDisposed)
-			{
-				try
-				{
-					ToggleDPIBtnTextSync();
-				}
-				catch
-				{
-					break;
-				}
-				await Task.Delay(2000);
-			}
-		}
-
-		private void Form1_FormClosing(object sender, FormClosingEventArgs e)
-		{
-			if (SettingsLoader.Current.HideToTray && !_closeWithoutTray && !TempConfigLoader.Current.AdminPriviligesRequested)
-			{
-				e.Cancel = true;
-				this.WindowState = FormWindowState.Minimized;
-				this.ShowInTaskbar = false;
-				_trayIcon.Visible = true;
-				HideToTrayChbox_CheckedChanged(HideToTrayChbox, EventArgs.Empty);
-			}
-			else
-			{
-				_viewModel.Dispose();
-				_trayIcon.Dispose();
+				_trayApplicationContext.ExitApplication();
 			}
 		}
 

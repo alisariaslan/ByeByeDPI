@@ -16,6 +16,8 @@
 			if (disposing && (components != null))
 			{
 				components.Dispose();
+				_viewModel.Dispose();
+
 			}
 			base.Dispose(disposing);
 		}
@@ -241,7 +243,6 @@
 			this.Name = "MainForm";
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
 			this.Text = "ByeByeDPI";
-			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
 			this.listContextMenuStrip.ResumeLayout(false);
 			this.menuStrip1.ResumeLayout(false);
 			this.menuStrip1.PerformLayout();

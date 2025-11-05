@@ -23,9 +23,7 @@ namespace ByeByeDPI
 				Application.EnableVisualStyles();
 				Application.SetCompatibleTextRenderingDefault(false);
 
-				var viewModel = new Form1ViewModel();
-				var view = new MainForm(viewModel);
-				Application.Run(view);
+				Application.Run(new TrayApplicationContext());
 			}
 		}
 	}
