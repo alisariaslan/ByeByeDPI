@@ -49,25 +49,27 @@ namespace ByeByeDPI
 			OnMessage?.Invoke("Parameters loaded.");
 		}
 
-		public async Task ClearChosenParam()
+		public async Task ClearSelectedParam()
 		{
 			try
 			{
 				await _dpiManager.StopAsync();
+				#region Prevent secondary admin request
 				if (!PrivilegesHelper.IsAdministrator())
 					return;
+				#endregion
 				await _dpiManager.DeleteTask();
 				SettingsLoader.Current.ChosenParam = "";
 				SettingsLoader.Save();
-				OnMessage?.Invoke($"Chosen profile cleared successfully.");
+				OnMessage?.Invoke($"Selected parameter cleared successfully.");
 			}
 			catch (Exception ex)
 			{
-				OnMessage?.Invoke($"Failed to clear chosen profile file.\nError: {ex.Message}");
+				OnMessage?.Invoke($"Failed to clear selected parameter.\nError: {ex.Message}");
 			}
 		}
 
-		public async Task StartCheckingCheckListAsync()
+		public async Task BeginCheckDomainListAsync()
 		{
 			if (_isCheckListRunnig) return;
 			_isCheckListRunnig = true;
@@ -104,7 +106,7 @@ namespace ByeByeDPI
 			_isCheckListRunnig = false;
 		}
 
-		public async Task ToggleByeByeDPIAsync()
+		public async Task ToggleGoodbyeDPIAsync()
 		{
 			if (IsGoodbyeDPIRunning)
 			{
@@ -133,10 +135,10 @@ namespace ByeByeDPI
 				OnMessage?.Invoke($"Trying parameter '{item.Name}'...");
 
 				await _dpiManager.StartAsync(Constants.GoodbyeDPIPath, item.Value);
-				await StartCheckingCheckListAsync();
+				await BeginCheckDomainListAsync();
 
 				var result = MessageBox.Show(
-					$"Parameter set '{item.Name}' applied.\n\nCan you access the desired content correctly?",
+					$"Parameter set '{item.Name}' applied.\n\nCan you access the desired content correctly? \n\n'Yes' for OK, 'No' for next parameter.",
 					"Test Parameter",
 					MessageBoxButtons.YesNoCancel,
 					MessageBoxIcon.Question);
@@ -164,7 +166,7 @@ namespace ByeByeDPI
 			_isWorkflowRunning = false;
 		}
 
-		public void ToggleAutoStartWithWindows(bool newState)
+		public void ToggleStartWithWindows(bool newState)
 		{
 			string appName = Constants.RegistryAppName;
 			string exePath = $"\"{Application.ExecutablePath}\"";

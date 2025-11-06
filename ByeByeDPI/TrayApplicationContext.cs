@@ -63,7 +63,10 @@ namespace ByeByeDPI
 					bool updateAvailable = await UpdateService.CheckForUpdateAsync(Application.ProductVersion);
 					if (updateAvailable)
 					{
-						_form.UpdateCheckUpdateNowBtnText("Update Now");
+						if (!_form.IsDisposed)
+						{
+							_form.UpdateCheckUpdateNowBtnText("Update Now");
+						}
 						_trayIcon.BalloonTipTitle = "ByeByeDPI Update";
 						_trayIcon.BalloonTipText = "A new version is available. Click to \"Update Now\" for update.";
 						_trayIcon.BalloonTipIcon = ToolTipIcon.Info;
@@ -74,7 +77,10 @@ namespace ByeByeDPI
 					}
 					else
 					{
-						_form.UpdateCheckUpdateNowBtnText("Check Now");
+						if(!_form.IsDisposed)
+						{
+							_form.UpdateCheckUpdateNowBtnText("Check Update");
+						}
 					}
 				}
 				catch
@@ -103,15 +109,21 @@ namespace ByeByeDPI
 
 		public void HideMainWindow()
 		{
-			_form.Hide();
-			_form.ShowInTaskbar = false;
+			if (_form.IsDisposed)
+			{
+				_form.Hide();
+				_form.ShowInTaskbar = false;
+			}
 			_trayIcon.ShowBalloonTip(1000, "ByeByeDPI", "Application minimized to tray.", ToolTipIcon.Info);
 		}
 
 		public void ExitApplication()
 		{
 			_trayIcon.Visible = false;
-			_form.Close();
+			if (!_form.IsDisposed)
+			{
+				_form.Close();
+			}
 			Application.Exit();
 		}
 	}

@@ -42,6 +42,7 @@ namespace ByeByeDPI
 
 			if (_viewModel.IsGoodbyeDPIRunning)
 			{
+				MessageWriteLine("Selected parameter: " + SettingsLoader.Current.ChosenParam);
 				MessageWriteLine("GoodbyeDPI is running!");
 			} else
 			{
@@ -118,8 +119,8 @@ namespace ByeByeDPI
 		{
 			LockProcessButtons();
 			ClearMessages();
-			MessageWriteLine("Starting to check urls from check list...");
-			await _viewModel.StartCheckingCheckListAsync();
+			MessageWriteLine("Starting to check domains from domain list...");
+			await _viewModel.BeginCheckDomainListAsync();
 			UnlockProcessButtons();
 		}
 
@@ -138,7 +139,7 @@ namespace ByeByeDPI
 			}
 			else
 			{
-				await _viewModel.ToggleByeByeDPIAsync();
+				await _viewModel.ToggleGoodbyeDPIAsync();
 			}
 			ToggleDPIBtnTextSync();
 			MessageWriteLine(_viewModel.IsGoodbyeDPIRunning ? "GoodbyeDPI is running." : "GoodbyeDPI is stopped.");
@@ -167,7 +168,7 @@ namespace ByeByeDPI
 		{
 			SettingsLoader.Current.StartWithWindows = StartWithWindowsChbox.Checked;
 			SettingsLoader.Save();
-			_viewModel.ToggleAutoStartWithWindows(StartWithWindowsChbox.Checked);
+			_viewModel.ToggleStartWithWindows(StartWithWindowsChbox.Checked);
 		}
 
 		private async void CheckUpdateNow_Click(object sender, EventArgs e)
@@ -208,16 +209,16 @@ namespace ByeByeDPI
 		{
 			LockProcessButtons();
 			var result = MessageBox.Show(
-				"Are you sure you want to clear the profile?\n" +
-				"This will delete the saved profile. You need to re-do profile(parameter) selection workflow after this.",
-				"Clear Profile",
+				"Are you sure you want to reset?\n" +
+				"This will reset the selected parameter and stops the GoodbyeDPI. After that if you want to run again, you need to re-do parameter selection workflow.",
+				"Clear Selected Parameter",
 				MessageBoxButtons.YesNo,
 				MessageBoxIcon.Warning);
 			if (result == DialogResult.Yes)
 			{
-				await _viewModel.ClearChosenParam();
+				await _viewModel.ClearSelectedParam();
 				MessageBox.Show(
-					"Chosen profile has been cleared.", "Clear Complete",
+					"Selected parameter has been cleared. GoodbyeDPI stopped.", "Clear Complete",
 					MessageBoxButtons.OK,
 					MessageBoxIcon.Information);
 			}

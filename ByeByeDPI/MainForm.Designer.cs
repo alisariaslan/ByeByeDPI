@@ -55,7 +55,7 @@
 			// ToggleDPIBtn
 			// 
 			this.ToggleDPIBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.ToggleDPIBtn.Location = new System.Drawing.Point(286, 611);
+			this.ToggleDPIBtn.Location = new System.Drawing.Point(286, 659);
 			this.ToggleDPIBtn.Name = "ToggleDPIBtn";
 			this.ToggleDPIBtn.Size = new System.Drawing.Size(326, 58);
 			this.ToggleDPIBtn.TabIndex = 1;
@@ -65,12 +65,13 @@
 			// 
 			// ListBoxForMessages
 			// 
-			this.ListBoxForMessages.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+			this.ListBoxForMessages.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.ListBoxForMessages.ContextMenuStrip = this.listContextMenuStrip;
 			this.ListBoxForMessages.FormattingEnabled = true;
 			this.ListBoxForMessages.ItemHeight = 21;
-			this.ListBoxForMessages.Location = new System.Drawing.Point(12, 181);
+			this.ListBoxForMessages.Location = new System.Drawing.Point(12, 223);
 			this.ListBoxForMessages.Name = "ListBoxForMessages";
 			this.ListBoxForMessages.Size = new System.Drawing.Size(598, 424);
 			this.ListBoxForMessages.TabIndex = 0;
@@ -94,7 +95,7 @@
 			// HideToTrayChbox
 			// 
 			this.HideToTrayChbox.AutoSize = true;
-			this.HideToTrayChbox.Location = new System.Drawing.Point(12, 71);
+			this.HideToTrayChbox.Location = new System.Drawing.Point(12, 102);
 			this.HideToTrayChbox.Name = "HideToTrayChbox";
 			this.HideToTrayChbox.Size = new System.Drawing.Size(209, 25);
 			this.HideToTrayChbox.TabIndex = 4;
@@ -105,11 +106,11 @@
 			// StartWithWindowsChbox
 			// 
 			this.StartWithWindowsChbox.AutoSize = true;
-			this.StartWithWindowsChbox.Location = new System.Drawing.Point(12, 40);
+			this.StartWithWindowsChbox.Location = new System.Drawing.Point(12, 71);
 			this.StartWithWindowsChbox.Name = "StartWithWindowsChbox";
-			this.StartWithWindowsChbox.Size = new System.Drawing.Size(206, 25);
+			this.StartWithWindowsChbox.Size = new System.Drawing.Size(205, 25);
 			this.StartWithWindowsChbox.TabIndex = 3;
-			this.StartWithWindowsChbox.Text = "Start With Windows";
+			this.StartWithWindowsChbox.Text = "Start with Windows";
 			this.StartWithWindowsChbox.UseVisualStyleBackColor = true;
 			this.StartWithWindowsChbox.CheckedChanged += new System.EventHandler(this.StartWithWindowsChbox_CheckedChanged);
 			// 
@@ -118,7 +119,7 @@
 			this.CheckUpdatesChbox.AutoSize = true;
 			this.CheckUpdatesChbox.Checked = true;
 			this.CheckUpdatesChbox.CheckState = System.Windows.Forms.CheckState.Checked;
-			this.CheckUpdatesChbox.Location = new System.Drawing.Point(290, 40);
+			this.CheckUpdatesChbox.Location = new System.Drawing.Point(12, 40);
 			this.CheckUpdatesChbox.Name = "CheckUpdatesChbox";
 			this.CheckUpdatesChbox.Size = new System.Drawing.Size(162, 25);
 			this.CheckUpdatesChbox.TabIndex = 2;
@@ -128,8 +129,7 @@
 			// 
 			// OpenDomainListBtn
 			// 
-			this.OpenDomainListBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.OpenDomainListBtn.Location = new System.Drawing.Point(178, 128);
+			this.OpenDomainListBtn.Location = new System.Drawing.Point(178, 170);
 			this.OpenDomainListBtn.Name = "OpenDomainListBtn";
 			this.OpenDomainListBtn.Size = new System.Drawing.Size(179, 47);
 			this.OpenDomainListBtn.TabIndex = 6;
@@ -139,8 +139,8 @@
 			// 
 			// OpenParamsBtn
 			// 
-			this.OpenParamsBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.OpenParamsBtn.Location = new System.Drawing.Point(467, 128);
+			this.OpenParamsBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.OpenParamsBtn.Location = new System.Drawing.Point(469, 170);
 			this.OpenParamsBtn.Name = "OpenParamsBtn";
 			this.OpenParamsBtn.Size = new System.Drawing.Size(143, 47);
 			this.OpenParamsBtn.TabIndex = 7;
@@ -151,7 +151,7 @@
 			// ResetBtn
 			// 
 			this.ResetBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.ResetBtn.Location = new System.Drawing.Point(12, 611);
+			this.ResetBtn.Location = new System.Drawing.Point(12, 659);
 			this.ResetBtn.Name = "ResetBtn";
 			this.ResetBtn.Size = new System.Drawing.Size(100, 58);
 			this.ResetBtn.TabIndex = 8;
@@ -162,11 +162,11 @@
 			// CheckUpdateNowBtn
 			// 
 			this.CheckUpdateNowBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.CheckUpdateNowBtn.Location = new System.Drawing.Point(481, 34);
+			this.CheckUpdateNowBtn.Location = new System.Drawing.Point(460, 34);
 			this.CheckUpdateNowBtn.Name = "CheckUpdateNowBtn";
-			this.CheckUpdateNowBtn.Size = new System.Drawing.Size(129, 34);
+			this.CheckUpdateNowBtn.Size = new System.Drawing.Size(150, 34);
 			this.CheckUpdateNowBtn.TabIndex = 9;
-			this.CheckUpdateNowBtn.Text = "Check Now";
+			this.CheckUpdateNowBtn.Text = "Check Update";
 			this.CheckUpdateNowBtn.UseVisualStyleBackColor = true;
 			this.CheckUpdateNowBtn.Click += new System.EventHandler(this.CheckUpdateNow_Click);
 			// 
@@ -206,8 +206,7 @@
 			// 
 			// CheckDomainsBtn
 			// 
-			this.CheckDomainsBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.CheckDomainsBtn.Location = new System.Drawing.Point(12, 128);
+			this.CheckDomainsBtn.Location = new System.Drawing.Point(12, 170);
 			this.CheckDomainsBtn.Name = "CheckDomainsBtn";
 			this.CheckDomainsBtn.Size = new System.Drawing.Size(160, 47);
 			this.CheckDomainsBtn.TabIndex = 12;
@@ -219,7 +218,7 @@
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(11F, 21F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(624, 681);
+			this.ClientSize = new System.Drawing.Size(624, 729);
 			this.Controls.Add(this.CheckDomainsBtn);
 			this.Controls.Add(this.menuStrip1);
 			this.Controls.Add(this.CheckUpdateNowBtn);
@@ -235,7 +234,7 @@
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.MainMenuStrip = this.menuStrip1;
 			this.Margin = new System.Windows.Forms.Padding(6, 5, 6, 5);
-			this.MinimumSize = new System.Drawing.Size(640, 720);
+			this.MinimumSize = new System.Drawing.Size(640, 768);
 			this.Name = "MainForm";
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
 			this.Text = "ByeByeDPI";
