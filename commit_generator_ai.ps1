@@ -7,7 +7,6 @@ Write-Host "-----------------------------------------------`n"
 # Check if git is installed
 if (-not (Get-Command git -ErrorAction SilentlyContinue)) {
     Write-Host "❌ Git is not installed or not in PATH."
-    Read-Host "Press Enter to exit"
     exit
 }
 
@@ -27,12 +26,10 @@ if (-not $staged) {
             $staged = git diff --cached --name-only
         } else {
             Write-Host "`n❌ No files staged. Exiting."
-            Read-Host "Press Enter to exit"
             exit
         }
     } else {
         Write-Host "⚠️  No modified or staged files found. Nothing to commit."
-        Read-Host "Press Enter to exit"
         exit
     }
 }
@@ -52,7 +49,6 @@ if (-not $commit_message) {
 
 if (-not $commit_message) {
     Write-Host "`n❌ Failed to get response from Ollama."
-    Read-Host "Press Enter to exit"
     exit
 }
 
