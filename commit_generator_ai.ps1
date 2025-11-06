@@ -71,5 +71,3 @@ if ($answer -eq "y") {
 } else {
     Write-Host "`nCommit cancelled."
 }
-
-Read-Host "`nPress Enter to exit"
