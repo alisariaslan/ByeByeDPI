@@ -39,15 +39,15 @@
 			this.HideToTrayChbox = new System.Windows.Forms.CheckBox();
 			this.StartWithWindowsChbox = new System.Windows.Forms.CheckBox();
 			this.CheckUpdatesChbox = new System.Windows.Forms.CheckBox();
-			this.OpenCheckListBtn = new System.Windows.Forms.Button();
-			this.ParamsBtn = new System.Windows.Forms.Button();
+			this.OpenDomainListBtn = new System.Windows.Forms.Button();
+			this.OpenParamsBtn = new System.Windows.Forms.Button();
 			this.ResetBtn = new System.Windows.Forms.Button();
-			this.CheckUpdateNow = new System.Windows.Forms.Button();
+			this.CheckUpdateNowBtn = new System.Windows.Forms.Button();
 			this.menuStrip1 = new System.Windows.Forms.MenuStrip();
 			this.appToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.RunBtn = new System.Windows.Forms.Button();
+			this.CheckDomainsBtn = new System.Windows.Forms.Button();
 			this.listContextMenuStrip.SuspendLayout();
 			this.menuStrip1.SuspendLayout();
 			this.SuspendLayout();
@@ -94,8 +94,6 @@
 			// HideToTrayChbox
 			// 
 			this.HideToTrayChbox.AutoSize = true;
-			this.HideToTrayChbox.Checked = true;
-			this.HideToTrayChbox.CheckState = System.Windows.Forms.CheckState.Checked;
 			this.HideToTrayChbox.Location = new System.Drawing.Point(12, 71);
 			this.HideToTrayChbox.Name = "HideToTrayChbox";
 			this.HideToTrayChbox.Size = new System.Drawing.Size(209, 25);
@@ -107,8 +105,6 @@
 			// StartWithWindowsChbox
 			// 
 			this.StartWithWindowsChbox.AutoSize = true;
-			this.StartWithWindowsChbox.Checked = true;
-			this.StartWithWindowsChbox.CheckState = System.Windows.Forms.CheckState.Checked;
 			this.StartWithWindowsChbox.Location = new System.Drawing.Point(12, 40);
 			this.StartWithWindowsChbox.Name = "StartWithWindowsChbox";
 			this.StartWithWindowsChbox.Size = new System.Drawing.Size(206, 25);
@@ -130,49 +126,49 @@
 			this.CheckUpdatesChbox.UseVisualStyleBackColor = true;
 			this.CheckUpdatesChbox.CheckedChanged += new System.EventHandler(this.CheckUpdatesChbox_CheckedChanged);
 			// 
-			// OpenCheckListBtn
+			// OpenDomainListBtn
 			// 
-			this.OpenCheckListBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.OpenCheckListBtn.Location = new System.Drawing.Point(83, 128);
-			this.OpenCheckListBtn.Name = "OpenCheckListBtn";
-			this.OpenCheckListBtn.Size = new System.Drawing.Size(135, 47);
-			this.OpenCheckListBtn.TabIndex = 6;
-			this.OpenCheckListBtn.Text = "Check List";
-			this.OpenCheckListBtn.UseVisualStyleBackColor = true;
-			this.OpenCheckListBtn.Click += new System.EventHandler(this.OpenCheckListBtn_Click);
+			this.OpenDomainListBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+			this.OpenDomainListBtn.Location = new System.Drawing.Point(178, 128);
+			this.OpenDomainListBtn.Name = "OpenDomainListBtn";
+			this.OpenDomainListBtn.Size = new System.Drawing.Size(179, 47);
+			this.OpenDomainListBtn.TabIndex = 6;
+			this.OpenDomainListBtn.Text = "Open Domain List";
+			this.OpenDomainListBtn.UseVisualStyleBackColor = true;
+			this.OpenDomainListBtn.Click += new System.EventHandler(this.OpenDomainListBtn_Click);
 			// 
-			// ParamsBtn
+			// OpenParamsBtn
 			// 
-			this.ParamsBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.ParamsBtn.Location = new System.Drawing.Point(501, 128);
-			this.ParamsBtn.Name = "ParamsBtn";
-			this.ParamsBtn.Size = new System.Drawing.Size(109, 47);
-			this.ParamsBtn.TabIndex = 7;
-			this.ParamsBtn.Text = "Params";
-			this.ParamsBtn.UseVisualStyleBackColor = true;
-			this.ParamsBtn.Click += new System.EventHandler(this.ParamsBtn_Click);
+			this.OpenParamsBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.OpenParamsBtn.Location = new System.Drawing.Point(467, 128);
+			this.OpenParamsBtn.Name = "OpenParamsBtn";
+			this.OpenParamsBtn.Size = new System.Drawing.Size(143, 47);
+			this.OpenParamsBtn.TabIndex = 7;
+			this.OpenParamsBtn.Text = "Open Params";
+			this.OpenParamsBtn.UseVisualStyleBackColor = true;
+			this.OpenParamsBtn.Click += new System.EventHandler(this.OpenParamsBtn_Click);
 			// 
 			// ResetBtn
 			// 
 			this.ResetBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.ResetBtn.Location = new System.Drawing.Point(12, 611);
 			this.ResetBtn.Name = "ResetBtn";
-			this.ResetBtn.Size = new System.Drawing.Size(108, 58);
+			this.ResetBtn.Size = new System.Drawing.Size(100, 58);
 			this.ResetBtn.TabIndex = 8;
 			this.ResetBtn.Text = "Reset";
 			this.ResetBtn.UseVisualStyleBackColor = true;
 			this.ResetBtn.Click += new System.EventHandler(this.ResetBtn_Click);
 			// 
-			// CheckUpdateNow
+			// CheckUpdateNowBtn
 			// 
-			this.CheckUpdateNow.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.CheckUpdateNow.Location = new System.Drawing.Point(481, 34);
-			this.CheckUpdateNow.Name = "CheckUpdateNow";
-			this.CheckUpdateNow.Size = new System.Drawing.Size(129, 34);
-			this.CheckUpdateNow.TabIndex = 9;
-			this.CheckUpdateNow.Text = "Check Now";
-			this.CheckUpdateNow.UseVisualStyleBackColor = true;
-			this.CheckUpdateNow.Click += new System.EventHandler(this.CheckUpdateNow_Click);
+			this.CheckUpdateNowBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.CheckUpdateNowBtn.Location = new System.Drawing.Point(481, 34);
+			this.CheckUpdateNowBtn.Name = "CheckUpdateNowBtn";
+			this.CheckUpdateNowBtn.Size = new System.Drawing.Size(129, 34);
+			this.CheckUpdateNowBtn.TabIndex = 9;
+			this.CheckUpdateNowBtn.Text = "Check Now";
+			this.CheckUpdateNowBtn.UseVisualStyleBackColor = true;
+			this.CheckUpdateNowBtn.Click += new System.EventHandler(this.CheckUpdateNow_Click);
 			// 
 			// menuStrip1
 			// 
@@ -208,28 +204,28 @@
 			this.helpToolStripMenuItem.Text = "Help";
 			this.helpToolStripMenuItem.Click += new System.EventHandler(this.helpToolStripMenuItem_Click);
 			// 
-			// RunBtn
+			// CheckDomainsBtn
 			// 
-			this.RunBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.RunBtn.Location = new System.Drawing.Point(12, 128);
-			this.RunBtn.Name = "RunBtn";
-			this.RunBtn.Size = new System.Drawing.Size(65, 47);
-			this.RunBtn.TabIndex = 12;
-			this.RunBtn.Text = "Run";
-			this.RunBtn.UseVisualStyleBackColor = true;
-			this.RunBtn.Click += new System.EventHandler(this.RunBtn_Click);
+			this.CheckDomainsBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+			this.CheckDomainsBtn.Location = new System.Drawing.Point(12, 128);
+			this.CheckDomainsBtn.Name = "CheckDomainsBtn";
+			this.CheckDomainsBtn.Size = new System.Drawing.Size(160, 47);
+			this.CheckDomainsBtn.TabIndex = 12;
+			this.CheckDomainsBtn.Text = "Check Domains";
+			this.CheckDomainsBtn.UseVisualStyleBackColor = true;
+			this.CheckDomainsBtn.Click += new System.EventHandler(this.CheckDomainsBtn_Click);
 			// 
 			// MainForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(11F, 21F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.ClientSize = new System.Drawing.Size(624, 681);
-			this.Controls.Add(this.RunBtn);
+			this.Controls.Add(this.CheckDomainsBtn);
 			this.Controls.Add(this.menuStrip1);
-			this.Controls.Add(this.CheckUpdateNow);
+			this.Controls.Add(this.CheckUpdateNowBtn);
 			this.Controls.Add(this.ResetBtn);
-			this.Controls.Add(this.ParamsBtn);
-			this.Controls.Add(this.OpenCheckListBtn);
+			this.Controls.Add(this.OpenParamsBtn);
+			this.Controls.Add(this.OpenDomainListBtn);
 			this.Controls.Add(this.CheckUpdatesChbox);
 			this.Controls.Add(this.StartWithWindowsChbox);
 			this.Controls.Add(this.HideToTrayChbox);
@@ -258,17 +254,17 @@
 		private System.Windows.Forms.CheckBox HideToTrayChbox;
 		private System.Windows.Forms.CheckBox StartWithWindowsChbox;
 		private System.Windows.Forms.CheckBox CheckUpdatesChbox;
-		private System.Windows.Forms.Button OpenCheckListBtn;
-		private System.Windows.Forms.Button ParamsBtn;
+		private System.Windows.Forms.Button OpenDomainListBtn;
+		private System.Windows.Forms.Button OpenParamsBtn;
 		private System.Windows.Forms.Button ResetBtn;
 		private System.Windows.Forms.ContextMenuStrip listContextMenuStrip;
 		private System.Windows.Forms.ToolStripMenuItem copyToolStripMenuItem;
-		private System.Windows.Forms.Button CheckUpdateNow;
+		private System.Windows.Forms.Button CheckUpdateNowBtn;
 		private System.Windows.Forms.MenuStrip menuStrip1;
 		private System.Windows.Forms.ToolStripMenuItem appToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem aboutToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem helpToolStripMenuItem;
-		private System.Windows.Forms.Button RunBtn;
+		private System.Windows.Forms.Button CheckDomainsBtn;
 	}
 }
 

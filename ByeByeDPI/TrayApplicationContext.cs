@@ -63,7 +63,7 @@ namespace ByeByeDPI
 					bool updateAvailable = await UpdateService.CheckForUpdateAsync(Application.ProductVersion);
 					if (updateAvailable)
 					{
-						_form.UpdateCheckUpdateBtnText("Update Now");
+						_form.UpdateCheckUpdateNowBtnText("Update Now");
 						_trayIcon.BalloonTipTitle = "ByeByeDPI Update";
 						_trayIcon.BalloonTipText = "A new version is available. Click to \"Update Now\" for update.";
 						_trayIcon.BalloonTipIcon = ToolTipIcon.Info;
@@ -74,7 +74,7 @@ namespace ByeByeDPI
 					}
 					else
 					{
-						_form.UpdateCheckUpdateBtnText("Check Now");
+						_form.UpdateCheckUpdateNowBtnText("Check Now");
 					}
 				}
 				catch

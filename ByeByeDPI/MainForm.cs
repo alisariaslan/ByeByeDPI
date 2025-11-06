@@ -59,9 +59,9 @@ namespace ByeByeDPI
 			}
 		}
 
-		public void UpdateCheckUpdateBtnText(string newString)
+		public void UpdateCheckUpdateNowBtnText(string newString)
 		{
-			OpenCheckListBtn.Text = newString;
+			CheckUpdateNowBtn.Text = newString;
 		}
 
 
@@ -72,14 +72,14 @@ namespace ByeByeDPI
 
 		private void LockProcessButtons()
 		{
-			RunBtn.Enabled = false;
+			CheckDomainsBtn.Enabled = false;
 			ToggleDPIBtn.Enabled = false;
 			ResetBtn.Enabled = false;
 		}
 
 		private void UnlockProcessButtons()
 		{
-			RunBtn.Enabled = true;
+			CheckDomainsBtn.Enabled = true;
 			ToggleDPIBtn.Enabled = true;
 			ResetBtn.Enabled = true;
 		}
@@ -114,7 +114,7 @@ namespace ByeByeDPI
 			}
 		}
 
-		private async void RunBtn_Click(object sender, EventArgs e)
+		private async void CheckDomainsBtn_Click(object sender, EventArgs e)
 		{
 			LockProcessButtons();
 			ClearMessages();
@@ -172,7 +172,7 @@ namespace ByeByeDPI
 
 		private async void CheckUpdateNow_Click(object sender, EventArgs e)
 		{
-			CheckUpdateNow.Enabled = false;
+			CheckUpdateNowBtn.Enabled = false;
 			string currentVersion = Application.ProductVersion;
 			bool updateAvailable = await UpdateService.CheckForUpdateAsync(currentVersion);
 			if (updateAvailable)
@@ -191,15 +191,15 @@ namespace ByeByeDPI
 			{
 				MessageBox.Show("No updates available.", "Up to date", MessageBoxButtons.OK, MessageBoxIcon.Information);
 			}
-			CheckUpdateNow.Enabled = true;
+			CheckUpdateNowBtn.Enabled = true;
 		}
 
-		private void OpenCheckListBtn_Click(object sender, EventArgs e)
+		private void OpenDomainListBtn_Click(object sender, EventArgs e)
 		{
 			FileOpenerUtil.OpenFileInBaseDir(Constants.CheckListPath);
 		}
 
-		private void ParamsBtn_Click(object sender, EventArgs e)
+		private void OpenParamsBtn_Click(object sender, EventArgs e)
 		{
 			FileOpenerUtil.OpenFileInBaseDir(Constants.ParamsPath);
 		}
@@ -334,5 +334,6 @@ namespace ByeByeDPI
 			}
 		}
 
+	
 	}
 }
