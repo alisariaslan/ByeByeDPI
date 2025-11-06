@@ -137,23 +137,23 @@
     <Compile Include="InfoDialog.Designer.cs">
       <DependentUpon>InfoDialog.cs</DependentUpon>
     </Compile>
-    <Compile Include="PrivilegesHelper.cs" />
-    <Compile Include="SettingsLoader.cs" />
-    <Compile Include="ByeByeDPIProcessManager.cs" />
+    <Compile Include="Utils\PrivilegesHelper.cs" />
+    <Compile Include="Loaders\SettingsLoader.cs" />
+    <Compile Include="GoodbyeDPIProcessManager.cs" />
     <Compile Include="Constants.cs" />
-    <Compile Include="FileOpenerUtil.cs" />
+    <Compile Include="Utils\FileOpener.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="MainForm.Designer.cs">
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="ParamsLoader.cs" />
+    <Compile Include="Loaders\ParamsLoader.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="MainForm.vm.cs" />
-    <Compile Include="CheckListLoader.cs" />
-    <Compile Include="TempConfigLoader.cs" />
+    <Compile Include="Loaders\CheckListLoader.cs" />
+    <Compile Include="Loaders\TempConfigLoader.cs" />
     <Compile Include="TrayApplicationContext.cs" />
     <Compile Include="UpdateService.cs" />
     <EmbeddedResource Include="MainForm.resx">

@@ -5,7 +5,7 @@ using System.Windows.Forms;
 
 namespace ByeByeDPI
 {
-	public static class FileOpenerUtil
+	public static class FileOpener
 	{
 		/// <summary>
 		/// Opens the specified file with the default application.

@@ -7,14 +7,14 @@ namespace ByeByeDPI
 	public partial class MainForm : Form, IDisposable
 	{
 		private readonly TrayApplicationContext _trayApplicationContext;
-		private readonly Form1ViewModel _viewModel;
+		private readonly MainFormViewModel _viewModel;
 
 		public MainForm(TrayApplicationContext trayApplicationContext)
 		{
 			InitializeComponent();
 
 			_trayApplicationContext = trayApplicationContext;
-			_viewModel = new Form1ViewModel(this);
+			_viewModel = new MainFormViewModel(this);
 
 			_viewModel.OnMessage += new Action<string>(msg =>
 			{
@@ -197,12 +197,12 @@ namespace ByeByeDPI
 
 		private void OpenDomainListBtn_Click(object sender, EventArgs e)
 		{
-			FileOpenerUtil.OpenFileInBaseDir(Constants.CheckListPath);
+			FileOpener.OpenFileInBaseDir(Constants.CheckListPath);
 		}
 
 		private void OpenParamsBtn_Click(object sender, EventArgs e)
 		{
-			FileOpenerUtil.OpenFileInBaseDir(Constants.ParamsPath);
+			FileOpener.OpenFileInBaseDir(Constants.ParamsPath);
 		}
 
 		private async void ResetBtn_Click(object sender, EventArgs e)

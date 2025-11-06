@@ -7,7 +7,7 @@ using System.Windows.Forms;
 
 namespace ByeByeDPI
 {
-	public class Form1ViewModel : IDisposable
+	public class MainFormViewModel : IDisposable
 	{
 		public event Action<string> OnMessage;
 		public bool IsGoodbyeDPIRunning => _dpiManager.IsRunning;
@@ -20,7 +20,7 @@ namespace ByeByeDPI
 		private bool _isCheckListRunnig = false;
 		private bool _isDisposed = false;
 
-		public Form1ViewModel(MainForm mainForm)
+		public MainFormViewModel(MainForm mainForm)
 		{
 			_dpiManager.OnMessage += (msg) => OnMessage?.Invoke(msg);
 			_httpClient.Timeout = TimeSpan.FromSeconds(5);

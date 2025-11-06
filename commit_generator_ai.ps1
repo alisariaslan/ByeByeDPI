@@ -24,11 +24,13 @@ if (-not $staged) {
             git add -A
             Write-Host "`n✅ All changes staged."
             $staged = git diff --cached --name-only
-        } else {
+        }
+        else {
             Write-Host "`n❌ No files staged. Exiting."
             exit
         }
-    } else {
+    }
+    else {
         Write-Host "⚠️  No modified or staged files found. Nothing to commit."
         exit
     }
@@ -36,7 +38,7 @@ if (-not $staged) {
 
 # Prepare prompt
 $changes = ($staged) -join ", "
-$prompt = "Generate a concise git commit message for the following changed files: $changes"
+$prompt = "Generate git commit message for these: $changes"
 
 # Try with 'generate', fallback to 'run' if needed
 Write-Host "`n🤖 Generating commit message with CodeLlama..."
@@ -72,12 +74,15 @@ if ($answer -eq "y") {
         git push
         if ($LASTEXITCODE -eq 0) {
             Write-Host "`n✅ Push completed successfully."
-        } else {
+        }
+        else {
             Write-Host "`n⚠️ Push failed. Please check your connection or credentials."
         }
-    } else {
+    }
+    else {
         Write-Host "`nPush skipped."
     }
-} else {
+}
+else {
     Write-Host "`nCommit cancelled."
 }
