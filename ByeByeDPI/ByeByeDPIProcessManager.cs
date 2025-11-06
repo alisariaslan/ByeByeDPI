@@ -3,6 +3,7 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using Task = Microsoft.Win32.TaskScheduler.Task;
 
 namespace ByeByeDPI
@@ -29,7 +30,7 @@ namespace ByeByeDPI
 				return;
 			}
 
-			if (!PrivilegesHelper.EnsureAdministrator(OnMessage))
+			if (!await PrivilegesHelper.EnsureAdministrator(OnMessage))
 			{
 				OnMessage?.Invoke("Error: Administrator privileges are required to start the task.");
 				return;
@@ -43,7 +44,7 @@ namespace ByeByeDPI
 					Task task = ts.GetTask(GoodbyeDPITaskName);
 					if (task == null)
 					{
-						CreateGoodbyeDPIRunnerTask(ts, exePath);
+						await CreateGoodbyeDPIRunnerTask(ts, exePath);
 						task = ts.GetTask(GoodbyeDPITaskName);
 					}
 					if (task == null)
@@ -103,7 +104,7 @@ namespace ByeByeDPI
 
 		public async System.Threading.Tasks.Task StopAsync()
 		{
-			if (!PrivilegesHelper.EnsureAdministrator(OnMessage))
+			if (!await PrivilegesHelper.EnsureAdministrator(OnMessage))
 			{
 				OnMessage?.Invoke("Error: Administrator privileges are required to stop the task.");
 				return;
@@ -175,9 +176,9 @@ namespace ByeByeDPI
 			await System.Threading.Tasks.Task.CompletedTask;
 		}
 
-		public bool DeleteTask()
+		public async Task<bool> DeleteTask()
 		{
-			if (!PrivilegesHelper.EnsureAdministrator(onMessage: OnMessage))
+			if (!await PrivilegesHelper.EnsureAdministrator(onMessage: OnMessage))
 			{
 				OnMessage?.Invoke("Error: Administrator privileges are required to delete the task.");
 				return false;
@@ -207,12 +208,12 @@ namespace ByeByeDPI
 			}
 		}
 
-		private void CreateGoodbyeDPIRunnerTask(TaskService ts, string exePath)
+		private async Task<bool> CreateGoodbyeDPIRunnerTask(TaskService ts, string exePath)
 		{
-			if (!PrivilegesHelper.EnsureAdministrator(onMessage: OnMessage))
+			if (!await PrivilegesHelper.EnsureAdministrator(onMessage: OnMessage))
 			{
 				OnMessage?.Invoke("Error: Administrator privileges are required to create the task.");
-				return;
+				return false;
 			}
 			TaskDefinition td = ts.NewTask();
 			td.RegistrationInfo.Description = "Used to run GoodbyeDPI with administrator privileges.";
@@ -230,6 +231,7 @@ namespace ByeByeDPI
 			td.Settings.MultipleInstances = TaskInstancesPolicy.IgnoreNew;
 			td.Settings.Hidden = false;
 			ts.RootFolder.RegisterTaskDefinition(GoodbyeDPITaskName, td);
+			return true;
 		}
 
 	}

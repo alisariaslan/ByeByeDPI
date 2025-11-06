@@ -10,17 +10,25 @@ namespace ByeByeDPI
 	public class Form1ViewModel : IDisposable
 	{
 		public event Action<string> OnMessage;
+		public bool IsGoodbyeDPIRunning => _dpiManager.IsRunning;
 
 		private readonly GoodbyeDPIProcessManager _dpiManager = new GoodbyeDPIProcessManager();
-		private List<CheckListModel> CheckList { get;  set; } = new List<CheckListModel>();
-		private List<ParamModel> ParamList { get;  set; } = new List<ParamModel>();
-		public bool IsGoodbyeDPIRunning => _dpiManager.IsRunning;
+		private readonly HttpClient _httpClient = new HttpClient();
+		private List<CheckListModel> _checkList { get; set; } = new List<CheckListModel>();
+		private List<ParamModel> _paramList { get; set; } = new List<ParamModel>();
 		private bool _isWorkflowRunning = false;
 		private bool _isCheckListRunnig = false;
+		private bool _isDisposed = false;
 
 		public Form1ViewModel(MainForm mainForm)
 		{
 			_dpiManager.OnMessage += (msg) => OnMessage?.Invoke(msg);
+			_httpClient.Timeout = TimeSpan.FromSeconds(5);
+			_httpClient.DefaultRequestHeaders.UserAgent.ParseAdd("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36");
+			_httpClient.DefaultRequestHeaders.Accept.ParseAdd("text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8");
+			_httpClient.DefaultRequestHeaders.AcceptLanguage.ParseAdd("en-US,en;q=0.9");
+			_httpClient.DefaultRequestHeaders.AcceptEncoding.ParseAdd("gzip, deflate, br");
+			_httpClient.DefaultRequestHeaders.Connection.ParseAdd("keep-alive");
 		}
 
 		public void LoadSettings()
@@ -31,13 +39,13 @@ namespace ByeByeDPI
 
 		public void LoadCheckList()
 		{
-			CheckList = CheckListLoader.LoadCheckList(Constants.CheckListPath);
+			_checkList = CheckListLoader.LoadCheckList(Constants.CheckListPath);
 			OnMessage?.Invoke("Check list loaded.");
 		}
 
 		public void LoadParams()
 		{
-			ParamList = ParamsLoader.LoadParams(Constants.ParamsPath);
+			_paramList = ParamsLoader.LoadParams(Constants.ParamsPath);
 			OnMessage?.Invoke("Parameters loaded.");
 		}
 
@@ -46,7 +54,9 @@ namespace ByeByeDPI
 			try
 			{
 				await _dpiManager.StopAsync();
-				_dpiManager.DeleteTask();
+				if (!PrivilegesHelper.IsAdministrator())
+					return;
+				await _dpiManager.DeleteTask();
 				SettingsLoader.Current.ChosenParam = "";
 				SettingsLoader.Save();
 				OnMessage?.Invoke($"Chosen profile cleared successfully.");
@@ -59,30 +69,40 @@ namespace ByeByeDPI
 
 		public async Task StartCheckingCheckListAsync()
 		{
-			if (_isCheckListRunnig)
-				return;
-
+			if (_isCheckListRunnig) return;
 			_isCheckListRunnig = true;
-			 HttpClient client = new HttpClient();
-			foreach (var item in CheckList)
+			foreach (var item in _checkList)
 			{
+				if (_isDisposed)
+					break;
 				try
 				{
-					var response = await client.GetAsync("https://" + item.Url);
-					item.Accessible = response.IsSuccessStatusCode;
+					var url = item.Url.StartsWith("www.") ? item.Url : "www." + item.Url;
+					bool accessible = false;
+					try
+					{
+						var headRequest = new HttpRequestMessage(HttpMethod.Head, "https://" + url);
+						var headResponse = await _httpClient.SendAsync(headRequest);
+						accessible = headResponse.IsSuccessStatusCode;
+					}
+					catch { accessible = false; }
+					if (!accessible)
+					{
+						try
+						{
+							var getResponse = await _httpClient.GetAsync("https://" + url);
+							accessible = getResponse.IsSuccessStatusCode;
+						}
+						catch { accessible = false; }
+					}
+					item.Accessible = accessible;
 				}
-				catch
-				{
-					item.Accessible = false;
-				}
-
+				catch { item.Accessible = false; }
 				string statusEmoji = item.Accessible ? "✅" : "❌";
 				OnMessage?.Invoke($"Is {item.Name} accessible? {statusEmoji}");
 			}
-			client.Dispose();
 			_isCheckListRunnig = false;
 		}
-
 
 		public async Task ToggleByeByeDPIAsync()
 		{
@@ -95,21 +115,20 @@ namespace ByeByeDPI
 				if (!String.IsNullOrWhiteSpace(SettingsLoader.Current.ChosenParam))
 				{
 					await _dpiManager.StartAsync(Constants.GoodbyeDPIPath, SettingsLoader.Current.ChosenParam);
-				} else
+				}
+				else
 				{
 					await RunParamSelectionWorkflowAsync();
 				}
 			}
 		}
-		
+
 		public async Task RunParamSelectionWorkflowAsync()
 		{
-			if (!PrivilegesHelper.EnsureAdministrator(OnMessage))
-				return;
 			if (_isWorkflowRunning || _isCheckListRunnig)
-					return;
+				return;
 			_isWorkflowRunning = true;
-			foreach (var item in ParamList)
+			foreach (var item in _paramList)
 			{
 				OnMessage?.Invoke($"Trying parameter '{item.Name}'...");
 
@@ -174,7 +193,8 @@ namespace ByeByeDPI
 
 		public void Dispose()
 		{
-			// Dispose resources if any
+			_httpClient.Dispose();
+			_isDisposed = true;
 		}
 	}
 

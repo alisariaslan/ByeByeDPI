@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Security.Principal;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace ByeByeDPI
@@ -21,11 +22,12 @@ namespace ByeByeDPI
 			}
 		}
 
-		public static bool EnsureAdministrator(Action<string> onMessage)
+		public static Task<bool> EnsureAdministrator(Action<string> onMessage)
 		{
 			if (IsAdministrator())
 			{
-				return true;
+				Task.Delay(1000);
+				return Task.FromResult(true);
 			}
 
 			onMessage?.Invoke("Administrator privileges are required to continue.");
@@ -52,7 +54,7 @@ namespace ByeByeDPI
 				TempConfigLoader.Reset_AdminPriviligesRequested();
 			}
 
-			return false;
+			return Task.FromResult(false);
 		}
 	}
 }
