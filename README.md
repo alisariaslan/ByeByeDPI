@@ -20,13 +20,14 @@ This graphical interface allows you to start, stop, and manage the DPI bypass pr
 
 <img width="490" height="740" alt="image" src="https://github.com/user-attachments/assets/2c44c829-ddba-43c5-8c1c-b175f1f8817f" />
 
-⚙️ Installation Notes
-Extract all files from the .zip archive to a regular folder. Do not run the installer directly from inside the compressed archive.
-Run ByeByeDPI.application as Administrator.
-If installation fails with an error about WinDivert64.sys being in use, stop the driver first:
-sc stop WinDivert
-Then rerun the installer.
-The WinDivert driver runs in the background and won’t appear in Task Manager — this is normal.
+## ⚙️ Installation Notes
+
+- Extract all files from the .zip archive to a regular folder. Do not run the installer directly from inside the compressed archive.
+- Run setup.exe
+- If installation fails with an error about WinDivert64.sys being in use, stop the driver first with using cmd (as an Admin):
+- sc stop WinDivert
+- Then rerun the installer.
+
 ## Contact
 
 Report bugs or request features via GitHub Issues: https://github.com/alisariaslan/ByeByeDPI/issues
