@@ -68,6 +68,20 @@ $answer = Read-Host "Do you want to commit with this message? (y/n)"
 if ($answer -eq "y") {
     git commit -m "$($commit_message)"
     Write-Host "`n✅ Commit created successfully."
+
+    # Ask to push
+    $pushAnswer = Read-Host "`nDo you want to push the commit to remote? (y/n)"
+    if ($pushAnswer -eq "y") {
+        Write-Host "`n🚀 Pushing to remote..."
+        git push
+        if ($LASTEXITCODE -eq 0) {
+            Write-Host "`n✅ Push completed successfully."
+        } else {
+            Write-Host "`n⚠️ Push failed. Please check your connection or credentials."
+        }
+    } else {
+        Write-Host "`nPush skipped."
+    }
 } else {
     Write-Host "`nCommit cancelled."
 }
