@@ -59,7 +59,7 @@
 			this.ToggleDPIBtn.Margin = new System.Windows.Forms.Padding(2, 3, 2, 3);
 			this.ToggleDPIBtn.Name = "ToggleDPIBtn";
 			this.ToggleDPIBtn.Size = new System.Drawing.Size(267, 58);
-			this.ToggleDPIBtn.TabIndex = 1;
+			this.ToggleDPIBtn.TabIndex = 0;
 			this.ToggleDPIBtn.Text = "Start Access";
 			this.ToggleDPIBtn.UseVisualStyleBackColor = true;
 			this.ToggleDPIBtn.Click += new System.EventHandler(this.ToggleDPIBtn_Click);
@@ -76,7 +76,7 @@
 			this.ListBoxForMessages.Margin = new System.Windows.Forms.Padding(2, 3, 2, 3);
 			this.ListBoxForMessages.Name = "ListBoxForMessages";
 			this.ListBoxForMessages.Size = new System.Drawing.Size(490, 424);
-			this.ListBoxForMessages.TabIndex = 0;
+			this.ListBoxForMessages.TabIndex = 999;
 			this.ListBoxForMessages.TabStop = false;
 			this.ListBoxForMessages.MouseDown += new System.Windows.Forms.MouseEventHandler(this.ListBoxForMessages_MouseDown);
 			// 
@@ -101,7 +101,7 @@
 			this.HideToTrayChbox.Margin = new System.Windows.Forms.Padding(2, 3, 2, 3);
 			this.HideToTrayChbox.Name = "HideToTrayChbox";
 			this.HideToTrayChbox.Size = new System.Drawing.Size(167, 25);
-			this.HideToTrayChbox.TabIndex = 4;
+			this.HideToTrayChbox.TabIndex = 8;
 			this.HideToTrayChbox.Text = "Hide to System Tray";
 			this.HideToTrayChbox.UseVisualStyleBackColor = true;
 			this.HideToTrayChbox.CheckedChanged += new System.EventHandler(this.HideToTrayChbox_CheckedChanged);
@@ -113,7 +113,7 @@
 			this.StartWithWindowsChbox.Margin = new System.Windows.Forms.Padding(2, 3, 2, 3);
 			this.StartWithWindowsChbox.Name = "StartWithWindowsChbox";
 			this.StartWithWindowsChbox.Size = new System.Drawing.Size(164, 25);
-			this.StartWithWindowsChbox.TabIndex = 3;
+			this.StartWithWindowsChbox.TabIndex = 7;
 			this.StartWithWindowsChbox.Text = "Start with Windows";
 			this.StartWithWindowsChbox.UseVisualStyleBackColor = true;
 			this.StartWithWindowsChbox.CheckedChanged += new System.EventHandler(this.StartWithWindowsChbox_CheckedChanged);
@@ -125,7 +125,7 @@
 			this.CheckUpdatesChbox.Margin = new System.Windows.Forms.Padding(2, 3, 2, 3);
 			this.CheckUpdatesChbox.Name = "CheckUpdatesChbox";
 			this.CheckUpdatesChbox.Size = new System.Drawing.Size(132, 25);
-			this.CheckUpdatesChbox.TabIndex = 2;
+			this.CheckUpdatesChbox.TabIndex = 6;
 			this.CheckUpdatesChbox.Text = "Check Updates";
 			this.CheckUpdatesChbox.UseVisualStyleBackColor = true;
 			this.CheckUpdatesChbox.CheckedChanged += new System.EventHandler(this.CheckUpdatesChbox_CheckedChanged);
@@ -136,7 +136,7 @@
 			this.OpenDomainListBtn.Margin = new System.Windows.Forms.Padding(2, 3, 2, 3);
 			this.OpenDomainListBtn.Name = "OpenDomainListBtn";
 			this.OpenDomainListBtn.Size = new System.Drawing.Size(146, 47);
-			this.OpenDomainListBtn.TabIndex = 6;
+			this.OpenDomainListBtn.TabIndex = 3;
 			this.OpenDomainListBtn.Text = "Open Domain List";
 			this.OpenDomainListBtn.UseVisualStyleBackColor = true;
 			this.OpenDomainListBtn.Click += new System.EventHandler(this.OpenDomainListBtn_Click);
@@ -148,7 +148,7 @@
 			this.OpenParamsBtn.Margin = new System.Windows.Forms.Padding(2, 3, 2, 3);
 			this.OpenParamsBtn.Name = "OpenParamsBtn";
 			this.OpenParamsBtn.Size = new System.Drawing.Size(117, 47);
-			this.OpenParamsBtn.TabIndex = 7;
+			this.OpenParamsBtn.TabIndex = 4;
 			this.OpenParamsBtn.Text = "Open Params";
 			this.OpenParamsBtn.UseVisualStyleBackColor = true;
 			this.OpenParamsBtn.Click += new System.EventHandler(this.OpenParamsBtn_Click);
@@ -160,7 +160,7 @@
 			this.ResetBtn.Margin = new System.Windows.Forms.Padding(2, 3, 2, 3);
 			this.ResetBtn.Name = "ResetBtn";
 			this.ResetBtn.Size = new System.Drawing.Size(82, 58);
-			this.ResetBtn.TabIndex = 8;
+			this.ResetBtn.TabIndex = 1;
 			this.ResetBtn.Text = "Reset";
 			this.ResetBtn.UseVisualStyleBackColor = true;
 			this.ResetBtn.Click += new System.EventHandler(this.ResetBtn_Click);
@@ -172,7 +172,7 @@
 			this.CheckUpdateNowBtn.Margin = new System.Windows.Forms.Padding(2, 3, 2, 3);
 			this.CheckUpdateNowBtn.Name = "CheckUpdateNowBtn";
 			this.CheckUpdateNowBtn.Size = new System.Drawing.Size(123, 34);
-			this.CheckUpdateNowBtn.TabIndex = 9;
+			this.CheckUpdateNowBtn.TabIndex = 5;
 			this.CheckUpdateNowBtn.Text = "Check Update";
 			this.CheckUpdateNowBtn.UseVisualStyleBackColor = true;
 			this.CheckUpdateNowBtn.Click += new System.EventHandler(this.CheckUpdateNow_Click);
@@ -201,14 +201,14 @@
 			// aboutToolStripMenuItem
 			// 
 			this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-			this.aboutToolStripMenuItem.Size = new System.Drawing.Size(122, 26);
+			this.aboutToolStripMenuItem.Size = new System.Drawing.Size(180, 26);
 			this.aboutToolStripMenuItem.Text = "About";
 			this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
 			// 
 			// helpToolStripMenuItem
 			// 
 			this.helpToolStripMenuItem.Name = "helpToolStripMenuItem";
-			this.helpToolStripMenuItem.Size = new System.Drawing.Size(122, 26);
+			this.helpToolStripMenuItem.Size = new System.Drawing.Size(180, 26);
 			this.helpToolStripMenuItem.Text = "Help";
 			this.helpToolStripMenuItem.Click += new System.EventHandler(this.helpToolStripMenuItem_Click);
 			// 
@@ -218,7 +218,7 @@
 			this.CheckDomainsBtn.Margin = new System.Windows.Forms.Padding(2, 3, 2, 3);
 			this.CheckDomainsBtn.Name = "CheckDomainsBtn";
 			this.CheckDomainsBtn.Size = new System.Drawing.Size(131, 47);
-			this.CheckDomainsBtn.TabIndex = 12;
+			this.CheckDomainsBtn.TabIndex = 2;
 			this.CheckDomainsBtn.Text = "Check Domains";
 			this.CheckDomainsBtn.UseVisualStyleBackColor = true;
 			this.CheckDomainsBtn.Click += new System.EventHandler(this.CheckDomainsBtn_Click);

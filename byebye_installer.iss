@@ -11,10 +11,13 @@ SolidCompression=yes
 PrivilegesRequired=admin
 
 [Files]
-; Main executable and config
+; Main executables and config
 Source: "C:\Users\yearn\source\repos\ByeByeDPI\ByeByeDPI\bin\Release\ByeByeDPI.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "C:\Users\yearn\source\repos\ByeByeDPI\ByeByeDPI\bin\Release\ByeByeDPI.exe.config"; DestDir: "{app}"; Flags: ignoreversion
 Source: "C:\Users\yearn\source\repos\ByeByeDPI\ByeByeDPI\bin\Release\ByeByeDPI.exe.manifest"; DestDir: "{app}"; Flags: ignoreversion
+
+; GoodbyeDPI executable
+Source: "C:\Users\yearn\source\repos\ByeByeDPI\ByeByeDPI\bin\Release\goodbyedpi.exe"; DestDir: "{app}"; Flags: ignoreversion
 
 ; DLLs and support files
 Source: "C:\Users\yearn\source\repos\ByeByeDPI\ByeByeDPI\bin\Release\*.dll"; DestDir: "{app}"; Flags: ignoreversion
