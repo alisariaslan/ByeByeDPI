@@ -5,8 +5,7 @@ Write-Host "Automatically generate a git commit message using Ollama AI"
 Write-Host "-----------------------------------------------`n"
 
 # --- CONFIGURATION ---
-# Model to use
-$model = "codellama:7b"
+$model = "mistral:latest"
 # ----------------------
 
 # Check if git is installed
@@ -17,10 +16,10 @@ if (-not (Get-Command git -ErrorAction SilentlyContinue)) {
 
 # Get unstaged and staged files
 $unstaged = git diff --name-only
-$staged = git diff --cached
+$staged_files = git diff --cached --name-only
 
 # If nothing staged, ask user if they want to stage all
-if (-not $staged) {
+if (-not $staged_files) {
     if ($unstaged) {
         Write-Host "⚠️  No staged changes found, but there are unstaged files:`n"
         Write-Host $unstaged -ForegroundColor Yellow
@@ -28,7 +27,7 @@ if (-not $staged) {
         if ($stageAnswer -eq "y") {
             git add -A
             Write-Host "`n✅ All changes staged."
-            $staged = git diff --cached --name-only
+            $staged_files = git diff --cached --name-only
         }
         else {
             Write-Host "`n❌ No files staged. Exiting."
@@ -41,9 +40,12 @@ if (-not $staged) {
     }
 }
 
-# Prepare prompt
-$changes = ($staged) -join ", "
-$prompt = "Generate git commit message for these: $changes"
+# Get staged diff content
+$staged_diff = git diff --cached
+$diff_string = ($staged_diff | Out-String).Trim()
+
+# Prepare AI prompt
+$prompt = "Generate a concise git commit message based on the following staged diff:`n$diff_string"
 
 # Generate commit message using Ollama
 $commit_message = & ollama run $model "$prompt" 2>$null
@@ -63,7 +65,12 @@ Write-Host "--------------------------------------------`n"
 # Confirm commit
 $answer = Read-Host "Do you want to commit with this message? (y/n)"
 if ($answer -eq "y") {
-    git commit -m "$($commit_message)"
+    # Convert multi-line response to a single line and escape quotes
+    $commit_message = $commit_message -replace "`r`n"," "
+    $commit_message = $commit_message -replace '"', '\"'
+
+    # Commit
+    git commit -m "$commit_message"
     Write-Host "`n✅ Commit created successfully."
 
     # Ask to push
