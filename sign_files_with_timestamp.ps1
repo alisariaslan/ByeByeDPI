@@ -3,7 +3,7 @@ param(
     [string] $releasePath = "ByeByeDPI\bin\Release",
     [string] $pfxPasswordFile = "pfx_password.txt",
     [string] $pfxOut = "ByeByeDPI_files_codesign.pfx",
-    [string] $certSubject = "CN=ByeByeDPI Code Signing",
+    [string] $certSubject = "CN=Ali SARIASLAN",
     [string] $signtoolPath = "signtool",   # or full path to signtool.exe
     [string] $timestampUrl = "http://timestamp.sectigo.com", # or http://timestamp.digicert.com
     [int] $delaySeconds = 20

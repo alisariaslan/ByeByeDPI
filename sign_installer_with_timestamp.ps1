@@ -3,7 +3,7 @@ param(
     [string] $installerPath = "Output\ByeByeDPI_Installer.exe",
     [string] $pfxPasswordFile = "pfx_password.txt",
     [string] $pfxOut = "ByeByeDPI_Installer_codesign.pfx",
-    [string] $certSubject = "CN=ByeByeDPI Code Signing",
+    [string] $certSubject = "CN=Ali SARIASLAN",
     [string] $signtoolPath = "signtool",   # veya signtool.exe tam yolu
     [string] $timestampUrl = "http://timestamp.sectigo.com", 
     [int] $delaySeconds = 5
