@@ -17,8 +17,7 @@ This graphical interface allows you to start, stop, and manage the DPI bypass pr
 ---
 
 ## 🖼️ Screenshots
-
-<img width="704" height="796" alt="image" src="https://github.com/user-attachments/assets/d95f10b1-0665-430d-815c-c6fa68031802" />
+<img width="536" height="799" alt="image" src="https://github.com/user-attachments/assets/c263e152-6b36-4227-bfe5-6b2b4516950d" />
 
 ## ⚙️ Installation Notes
 
