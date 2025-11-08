@@ -45,7 +45,10 @@ $staged_diff = git diff --cached
 $diff_string = ($staged_diff | Out-String).Trim()
 
 # Prepare AI prompt
-$prompt = "Generate a concise git commit message based on the following staged diff:`n$diff_string"
+# Use only filenames + first few lines of diff
+$diff_preview = git diff --cached --stat
+$prompt = "Generate a concise git commit message for the following staged changes:`n$diff_preview"
+
 
 # Generate commit message using Ollama
 $commit_message = & ollama run $model "$prompt" 2>$null
@@ -65,12 +68,15 @@ Write-Host "--------------------------------------------`n"
 # Confirm commit
 $answer = Read-Host "Do you want to commit with this message? (y/n)"
 if ($answer -eq "y") {
-    # Convert multi-line response to a single line and escape quotes
-    $commit_message = $commit_message -replace "`r`n"," "
-    $commit_message = $commit_message -replace '"', '\"'
+	# Trim and remove leading/trailing quotes
+	$commit_message = $commit_message.Trim('"')
 
-    # Commit
-    git commit -m "$commit_message"
+	# Escape any remaining double quotes just in case
+	$commit_message = $commit_message -replace '"','\"'
+
+	# Commit
+	git commit -m "$commit_message"
+
     Write-Host "`n✅ Commit created successfully."
 
     # Ask to push
