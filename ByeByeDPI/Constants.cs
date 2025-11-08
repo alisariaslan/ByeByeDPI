@@ -6,10 +6,12 @@ namespace ByeByeDPI
 	public static class Constants
 	{
 
-		public static readonly string RegistryAppName = "ByeByeDPI";
-
+		public static readonly string AppName = "ByeByeDPI";
 
 		public static readonly string AppBaseDir = AppDomain.CurrentDomain.BaseDirectory;
+
+		public static readonly string UserDataDir =
+	   Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), AppName);
 
 
 		private const string _goodbyeDPIFileName = "goodbyedpi.exe";
@@ -20,10 +22,10 @@ namespace ByeByeDPI
 
 
 		public static string GoodbyeDPIPath => Path.Combine(AppBaseDir, _goodbyeDPIFileName);
-		public static string CheckListPath => Path.Combine(AppBaseDir, _checkListFileName);
-		public static string ParamsPath => Path.Combine(AppBaseDir, _paramsFileName);
-		public static string AppSettingsPath => Path.Combine(AppBaseDir, _appSettingsFileName);
-		public static string TempConfigsPath => Path.Combine(AppBaseDir, _tempConfigsFileName);
+		public static string CheckListPath => Path.Combine(UserDataDir, _checkListFileName);
+		public static string ParamsPath => Path.Combine(UserDataDir, _paramsFileName);
+		public static string AppSettingsPath => Path.Combine(UserDataDir, _appSettingsFileName);
+		public static string TempConfigsPath => Path.Combine(UserDataDir, _tempConfigsFileName);
 
 
 		public static string GoodbyeDPIFileName => _goodbyeDPIFileName;

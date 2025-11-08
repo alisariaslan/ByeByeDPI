@@ -1,4 +1,5 @@
-﻿using Microsoft.Win32;
+﻿using ByeByeDPI.Loaders;
+using Microsoft.Win32;
 using Microsoft.Win32.TaskScheduler;
 using System;
 using System.Collections.Generic;
@@ -16,7 +17,7 @@ namespace ByeByeDPI
 
 		private readonly GoodbyeDPIProcessManager _dpiManager = new GoodbyeDPIProcessManager();
 		private readonly HttpClient _httpClient = new HttpClient();
-		private List<CheckListModel> _checkList { get; set; } = new List<CheckListModel>();
+		private List<CheckListWrapperModel> _checkList { get; set; } = new List<CheckListWrapperModel>();
 		private List<ParamModel> _paramList { get; set; } = new List<ParamModel>();
 		private bool _isWorkflowRunning = false;
 		private bool _isCheckListRunnig = false;
@@ -41,13 +42,15 @@ namespace ByeByeDPI
 
 		public void LoadCheckList()
 		{
-			_checkList = CheckListLoader.LoadCheckList(Constants.CheckListPath);
+			var rawList = CheckListLoader.LoadCheckList();
+			_checkList = rawList.Select(x => new CheckListWrapperModel { Item = x, IsAccesible = false }).ToList();
 			OnMessage?.Invoke("Check list loaded.");
 		}
 
+
 		public void LoadParams()
 		{
-			_paramList = ParamsLoader.LoadParams(Constants.ParamsPath);
+			_paramList = ParamsLoader.LoadParams();
 			OnMessage?.Invoke("Parameters loaded.");
 		}
 
@@ -75,14 +78,19 @@ namespace ByeByeDPI
 		{
 			if (_isCheckListRunnig) return;
 			_isCheckListRunnig = true;
-			foreach (var item in _checkList)
+
+			foreach (var wrapper in _checkList)
 			{
 				if (_isDisposed)
 					break;
+
+				var item = wrapper.Item;
+
 				try
 				{
 					var url = item.Url.StartsWith("www.") ? item.Url : "www." + item.Url;
 					bool accessible = false;
+
 					try
 					{
 						var headRequest = new HttpRequestMessage(HttpMethod.Head, "https://" + url);
@@ -90,6 +98,7 @@ namespace ByeByeDPI
 						accessible = headResponse.IsSuccessStatusCode;
 					}
 					catch { accessible = false; }
+
 					if (!accessible)
 					{
 						try
@@ -99,14 +108,21 @@ namespace ByeByeDPI
 						}
 						catch { accessible = false; }
 					}
-					item.Accessible = accessible;
+
+					wrapper.IsAccesible = accessible;
 				}
-				catch { item.Accessible = false; }
-				string statusEmoji = item.Accessible ? "✅" : "❌";
+				catch
+				{
+					wrapper.IsAccesible = false;
+				}
+
+				string statusEmoji = wrapper.IsAccesible ? "✅" : "❌";
 				OnMessage?.Invoke($"Is {item.Name} accessible? {statusEmoji}");
 			}
+
 			_isCheckListRunnig = false;
 		}
+
 
 		public async System.Threading.Tasks.Task ToggleGoodbyeDPIAsync()
 		{
@@ -136,7 +152,7 @@ namespace ByeByeDPI
 			{
 				OnMessage?.Invoke($"Trying parameter '{item.Name}'...");
 
-				await _dpiManager.StartAsync(Constants.GoodbyeDPIPath, item.Value);
+				await _dpiManager.StartAsync(Constants.GoodbyeDPIPath, item.Param);
 				await BeginCheckDomainListAsync();
 
 				var result = MessageBox.Show(
@@ -174,7 +190,7 @@ namespace ByeByeDPI
 				return;
 			SettingsLoader.Current.StartWithWindows = newState;
 			SettingsLoader.Save();
-			string appName = Constants.RegistryAppName;
+			string appName = Constants.AppName;
 			string exePath = $"\"{Application.ExecutablePath}\"";
 			try
 			{

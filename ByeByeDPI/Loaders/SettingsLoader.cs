@@ -19,37 +19,23 @@ namespace ByeByeDPI
 
 		public static void LoadSettings()
 		{
-			try
+			string path = Constants.AppSettingsPath;
+
+			if (!File.Exists(path))
 			{
-				string json = File.ReadAllText(Constants.AppSettingsPath);
-				Current =  JsonSerializer.Deserialize<SettingsModel>(json) ?? new SettingsModel();
+				Current = new SettingsModel();
+				Save();
 				return;
 			}
-			catch (Exception ex)
+			try
 			{
-				var result = MessageBox.Show(
-					$"Failed to load settings.\nError: {ex.Message}\n\nDo you want to delete the corrupted settings file and restart the application?",
-					"Settings Load Error",
-					MessageBoxButtons.YesNo,
-					MessageBoxIcon.Error);
-
-				if (result == DialogResult.Yes)
-				{
-					try
-					{
-						File.Delete(Constants.AppSettingsPath);
-						MessageBox.Show("Settings file deleted. Please restart the application.", "File Deleted", MessageBoxButtons.OK, MessageBoxIcon.Information);
-					}
-					catch (Exception deleteEx)
-					{
-						MessageBox.Show($"Failed to delete settings file.\nError: {deleteEx.Message}", "Delete Failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
-					}
-
-					Application.Exit();
-				}
-
+				string json = File.ReadAllText(path);
+				Current = JsonSerializer.Deserialize<SettingsModel>(json) ?? new SettingsModel();
+			}
+			catch
+			{
 				Current = new SettingsModel();
-				return;
+				Save();
 			}
 		}
 
@@ -57,8 +43,14 @@ namespace ByeByeDPI
 		{
 			try
 			{
+				string path = Constants.AppSettingsPath;
+				string folder = Path.GetDirectoryName(path);
+
+				if (!Directory.Exists(folder))
+					Directory.CreateDirectory(folder);
+
 				string json = JsonSerializer.Serialize(Current, new JsonSerializerOptions { WriteIndented = true });
-				File.WriteAllText(Constants.AppSettingsPath, json);
+				File.WriteAllText(path, json);
 			}
 			catch (Exception ex)
 			{

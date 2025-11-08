@@ -50,7 +50,8 @@ namespace ByeByeDPI
 				StartAutoUpdateCheck();
 			}
 
-			TempConfigLoader.Reset_AdminPriviliges_Request();
+			TempConfigLoader.Current.AdminPriviligesRequested = false;
+			TempConfigLoader.Save();
 		}
 
 		public async void StartAutoUpdateCheck()

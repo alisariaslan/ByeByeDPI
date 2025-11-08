@@ -51,7 +51,8 @@ namespace ByeByeDPI
 			catch
 			{
 				onMessage?.Invoke("User declined to grant administrator privileges.");
-				TempConfigLoader.Reset_AdminPriviliges_Request();
+				TempConfigLoader.Current.AdminPriviligesRequested = false;
+				TempConfigLoader.Save();
 			}
 
 			return Task.FromResult(false);

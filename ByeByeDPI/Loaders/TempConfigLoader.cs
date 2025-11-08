@@ -3,58 +3,38 @@ using System.IO;
 using System.Text.Json;
 using System.Windows.Forms;
 
-
 namespace ByeByeDPI
 {
 	public class TempConfigModel
 	{
 		public bool AdminPriviligesRequested { get; set; } = false;
-
 	}
 
 	public static class TempConfigLoader
 	{
 		public static TempConfigModel Current { get; set; }
 
-		public static void Reset_AdminPriviliges_Request()
-		{
-			Current.AdminPriviligesRequested = new TempConfigModel().AdminPriviligesRequested;
-			Save();
-		}
-
 		public static void LoadSettings()
 		{
-			try
+			string path = Constants.TempConfigsPath;
+
+			if (!File.Exists(path))
 			{
-				string json = File.ReadAllText(Constants.TempConfigsPath);
-				Current = JsonSerializer.Deserialize<TempConfigModel>(json) ?? new TempConfigModel();
+				Current = new TempConfigModel();
+				Save();
 				return;
 			}
-			catch (Exception ex)
+
+			try
 			{
-				var result = MessageBox.Show(
-					$"Failed to load temp configs.\nError: {ex.Message}\n\nDo you want to delete the corrupted temp configs file and restart the application?",
-					"Temp Configs Load Error",
-					MessageBoxButtons.YesNo,
-					MessageBoxIcon.Error);
-
-				if (result == DialogResult.Yes)
-				{
-					try
-					{
-						File.Delete(Constants.TempConfigsPath);
-						MessageBox.Show("Temp configs deleted. Please restart the application.", "File Deleted", MessageBoxButtons.OK, MessageBoxIcon.Information);
-					}
-					catch (Exception deleteEx)
-					{
-						MessageBox.Show($"Failed to delete temp configs.\nError: {deleteEx.Message}", "Delete Failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
-					}
-
-					Application.Exit();
-				}
-
+				string json = File.ReadAllText(path);
+				Current = JsonSerializer.Deserialize<TempConfigModel>(json) ?? new TempConfigModel();
+			}
+			catch
+			{
+				// Dosya bozuksa default ile oluştur
 				Current = new TempConfigModel();
-				return;
+				Save();
 			}
 		}
 
@@ -62,8 +42,14 @@ namespace ByeByeDPI
 		{
 			try
 			{
+				string path = Constants.TempConfigsPath;
+				string folder = Path.GetDirectoryName(path);
+
+				if (!Directory.Exists(folder))
+					Directory.CreateDirectory(folder);
+
 				string json = JsonSerializer.Serialize(Current, new JsonSerializerOptions { WriteIndented = true });
-				File.WriteAllText(Constants.TempConfigsPath, json);
+				File.WriteAllText(path, json);
 			}
 			catch (Exception ex)
 			{

@@ -10,67 +10,83 @@ namespace ByeByeDPI
 	{
 		public string Name { get; set; }
 		public string Url { get; set; }
-		public bool Accessible { get; set; } = false;
 	}
 
 	public static class CheckListLoader
 	{
-		public static List<CheckListModel> LoadCheckList(string jsonPath)
+		private static readonly Dictionary<string, string> DefaultCheckList = new Dictionary<string, string>
 		{
-			if (!File.Exists(jsonPath))
-				return new List<CheckListModel>();
+			{ "Google", "google.com" },
+			{ "Discord", "discord.com" },
+			{ "GitHub", "github.com" },
+			{ "Twitter", "twitter.com" },
+			{ "Reddit", "reddit.com" },
+			{ "LinkedIn", "linkedin.com" },
+			{ "Instagram", "instagram.com" },
+			{ "YouTube", "youtube.com" },
+			{ "Pornhub", "pornhub.com" }
+		};
+
+		public static List<CheckListModel> LoadCheckList()
+		{
+			string path = Constants.CheckListPath;
+
+			if (!File.Exists(path))
+			{
+				CreateDefaultFile(path);
+				return ConvertToModelList(DefaultCheckList);
+			}
 
 			try
 			{
-				var json = File.ReadAllText(jsonPath);
+				var json = File.ReadAllText(path);
 				var dict = JsonSerializer.Deserialize<Dictionary<string, string>>(json);
-				var list = new List<CheckListModel>();
 
-				foreach (var kvp in dict)
+				if (dict == null)
 				{
-					list.Add(new CheckListModel
-					{
-						Name = kvp.Key,
-						Url = kvp.Value
-					});
+					CreateDefaultFile(path);
+					return ConvertToModelList(DefaultCheckList);
 				}
 
-				return list;
+				return ConvertToModelList(dict);
+			}
+			catch
+			{
+				CreateDefaultFile(path);
+				return ConvertToModelList(DefaultCheckList);
+			}
+		}
+
+		private static void CreateDefaultFile(string path)
+		{
+			try
+			{
+				var options = new JsonSerializerOptions { WriteIndented = true };
+				string json = JsonSerializer.Serialize(DefaultCheckList, options);
+				File.WriteAllText(path, json);
 			}
 			catch (Exception ex)
 			{
-				// Error handling: offer to delete corrupted file and restart
-				var result = MessageBox.Show(
-					"Failed to load check list configuration.\nError: " + ex.Message +
-					"\n\nDo you want to delete the file and restart the application?",
-					"Error Loading Check List",
-					MessageBoxButtons.YesNo,
+				MessageBox.Show(
+					"Failed to create check list file.\nError: " + ex.Message,
+					"Error",
+					MessageBoxButtons.OK,
 					MessageBoxIcon.Error);
-
-				if (result == DialogResult.Yes)
-				{
-					try
-					{
-						File.Delete(jsonPath);
-						MessageBox.Show("The configuration file has been deleted.\nPlease restart the application.",
-										"File Deleted",
-										MessageBoxButtons.OK,
-										MessageBoxIcon.Information);
-					}
-					catch (Exception deleteEx)
-					{
-						MessageBox.Show("Failed to delete the configuration file.\nError: " + deleteEx.Message,
-										"Delete Failed",
-										MessageBoxButtons.OK,
-										MessageBoxIcon.Error);
-					}
-
-					// Optionally exit the app so user can restart
-					Application.Exit();
-				}
-
-				return new List<CheckListModel>();
 			}
+		}
+
+		private static List<CheckListModel> ConvertToModelList(Dictionary<string, string> dict)
+		{
+			var list = new List<CheckListModel>();
+			foreach (var kvp in dict)
+			{
+				list.Add(new CheckListModel
+				{
+					Name = kvp.Key,
+					Url = kvp.Value
+				});
+			}
+			return list;
 		}
 	}
 }

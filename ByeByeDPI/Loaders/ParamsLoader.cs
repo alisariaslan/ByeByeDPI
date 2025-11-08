@@ -9,70 +9,77 @@ namespace ByeByeDPI
 	public class ParamModel
 	{
 		public string Name { get; set; }
-		public string Value { get; set; }
+		public string Param { get; set; }
 	}
 
 	public static class ParamsLoader
 	{
-		public static List<ParamModel> LoadParams(string jsonFileName)
+		private static readonly Dictionary<string, string> DefaultParams = new Dictionary<string, string>
 		{
-			string jsonPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, jsonFileName);
+			{ "default", "-5 --set-ttl 5 --dns-addr 77.88.8.8 --dns-port 1253 --dnsv6-addr 2a02:6b8::feed:0ff --dnsv6-port 1253" },
+			{ "ttl3", "--set-ttl 3" },
+			{ "mode5", "-5" },
+			{ "ttl3_full", "--set-ttl 3 --dns-addr 77.88.8.8 --dns-port 1253 --dnsv6-addr 2a02:6b8::feed:0ff --dnsv6-port 1253" },
+			{ "mode5_dns", "-5 --dns-addr 77.88.8.8 --dns-port 1253 --dnsv6-addr 2a02:6b8::feed:0ff --dnsv6-port 1253" },
+			{ "mode9_dns", "-9 --dns-addr 77.88.8.8 --dns-port 1253 --dnsv6-addr 2a02:6b8::feed:0ff --dnsv6-port 1253" },
+			{ "mode9", "-9" }
+		};
 
-			if (!File.Exists(jsonPath))
-				return new List<ParamModel>();
-
+		public static List<ParamModel> LoadParams()
+		{
+			if (!File.Exists(Constants.ParamsPath))
+			{
+				CreateDefaultFile(Constants.ParamsPath);
+				return ConvertToModelList(DefaultParams);
+			}
 			try
 			{
-				var json = File.ReadAllText(jsonPath);
+				var json = File.ReadAllText(Constants.ParamsPath);
 				var dict = JsonSerializer.Deserialize<Dictionary<string, string>>(json);
-				var list = new List<ParamModel>();
-
-				if (dict != null)
+				if (dict == null)
 				{
-					foreach (var kvp in dict)
-					{
-						list.Add(new ParamModel
-						{
-							Name = kvp.Key,
-							Value = kvp.Value
-						});
-					}
+					CreateDefaultFile(Constants.ParamsPath);
+					return ConvertToModelList(DefaultParams);
 				}
+				return ConvertToModelList(dict);
+			}
+			catch
+			{
+				CreateDefaultFile(Constants.ParamsPath);
+				return ConvertToModelList(DefaultParams);
+			}
+		}
 
-				return list;
+		private static void CreateDefaultFile(string path)
+		{
+			try
+			{
+				var options = new JsonSerializerOptions { WriteIndented = true };
+				string json = JsonSerializer.Serialize(DefaultParams, options);
+				File.WriteAllText(path, json);
 			}
 			catch (Exception ex)
 			{
-				var result = MessageBox.Show(
-					"Failed to load parameters configuration.\nError: " + ex.Message +
-					"\n\nDo you want to delete the file and restart the application?",
-					"Error Loading Parameters",
-					MessageBoxButtons.YesNo,
+				MessageBox.Show(
+					"Failed to create parameters file.\nError: " + ex.Message,
+					"Error",
+					MessageBoxButtons.OK,
 					MessageBoxIcon.Error);
-
-				if (result == DialogResult.Yes)
-				{
-					try
-					{
-						File.Delete(jsonPath);
-						MessageBox.Show("The parameters file has been deleted.\nPlease restart the application.",
-										"File Deleted",
-										MessageBoxButtons.OK,
-										MessageBoxIcon.Information);
-					}
-					catch (Exception deleteEx)
-					{
-						MessageBox.Show("Failed to delete the parameters file.\nError: " + deleteEx.Message,
-										"Delete Failed",
-										MessageBoxButtons.OK,
-										MessageBoxIcon.Error);
-					}
-
-					Application.Exit();
-				}
-
-				return new List<ParamModel>();
 			}
+		}
+
+		private static List<ParamModel> ConvertToModelList(Dictionary<string, string> dict)
+		{
+			var list = new List<ParamModel>();
+			foreach (var kvp in dict)
+			{
+				list.Add(new ParamModel
+				{
+					Name = kvp.Key,
+					Param = kvp.Value
+				});
+			}
+			return list;
 		}
 	}
 }

@@ -45,7 +45,10 @@ namespace ByeByeDPI
 
 			if (_viewModel.IsGoodbyeDPIRunning)
 			{
-				MessageWriteLine("Selected parameter: " + SettingsLoader.Current.ChosenParam);
+				if(!string.IsNullOrEmpty(SettingsLoader.Current.ChosenParam))
+					MessageWriteLine("Selected parameter: " + SettingsLoader.Current.ChosenParam);
+				else
+					MessageWriteLine("No parameter selected. It seems your settings are not synced.");
 				MessageWriteLine("GoodbyeDPI is running!");
 			}
 			else

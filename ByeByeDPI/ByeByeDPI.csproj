@@ -137,6 +137,7 @@
     <Compile Include="InfoDialog.Designer.cs">
       <DependentUpon>InfoDialog.cs</DependentUpon>
     </Compile>
+    <Compile Include="CheckListWrapperModel.cs" />
     <Compile Include="Utils\PrivilegesHelper.cs" />
     <Compile Include="Loaders\SettingsLoader.cs" />
     <Compile Include="GoodbyeDPIProcessManager.cs" />
@@ -176,9 +177,6 @@
     <None Include="app.manifest" />
     <None Include="packages.config" />
     <Content Include="icons8_so_so.ico" />
-    <Content Include="params.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -191,15 +189,6 @@
     <None Include="Resources\so_so_64px_ico.ico" />
     <None Include="Resources\icons8_so_so.ico" />
     <Content Include="WinDivert64.sys">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="checklist.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="settings.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="tempconfigs.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
