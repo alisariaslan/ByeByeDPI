@@ -34,9 +34,12 @@ namespace ByeByeDPI
 			_viewModel.LoadCheckList();
 			_viewModel.LoadParams();
 
-			HideToTrayChbox.Checked = SettingsLoader.Current.HideToTray;
-			CheckUpdatesChbox.Checked = SettingsLoader.Current.CheckUpdates;
-			StartWithWindowsChbox.Checked = SettingsLoader.Current.StartWithWindows;
+			if (SettingsLoader.Current.HideToTray)
+				HideToTrayChbox.Checked = true;
+			if (SettingsLoader.Current.CheckUpdates)
+				CheckUpdatesChbox.Checked = true;
+			if (SettingsLoader.Current.StartWithWindows)
+				StartWithWindowsChbox.Checked = true;
 
 			StartStateSync();
 
@@ -44,10 +47,12 @@ namespace ByeByeDPI
 			{
 				MessageWriteLine("Selected parameter: " + SettingsLoader.Current.ChosenParam);
 				MessageWriteLine("GoodbyeDPI is running!");
-			} else
+			}
+			else
 			{
 				MessageWriteLine("GoodbyeDPI is stopped!");
 			}
+
 		}
 
 		private void MessageWriteLine(string msg)
@@ -147,11 +152,13 @@ namespace ByeByeDPI
 			UnlockProcessButtons();
 		}
 
-
 		private void HideToTrayChbox_CheckedChanged(object sender, EventArgs e)
 		{
 			SettingsLoader.Current.HideToTray = HideToTrayChbox.Checked;
 			SettingsLoader.Save();
+			MessageWriteLine(HideToTrayChbox.Checked
+		? "The application will now run in the system tray when closed."
+		: "The application will no longer run in the system tray when closed.");
 		}
 
 		private void CheckUpdatesChbox_CheckedChanged(object sender, EventArgs e)
@@ -162,29 +169,36 @@ namespace ByeByeDPI
 			{
 				_trayApplicationContext.StartAutoUpdateCheck();
 			}
+			MessageWriteLine(CheckUpdatesChbox.Checked
+	  ? "Automatic updates have been enabled."
+	  : "Automatic updates have been disabled.");
 		}
 
-		private void StartWithWindowsChbox_CheckedChanged(object sender, EventArgs e)
+		private async void StartWithWindowsChbox_CheckedChanged(object sender, EventArgs e)
 		{
-			SettingsLoader.Current.StartWithWindows = StartWithWindowsChbox.Checked;
-			SettingsLoader.Save();
-			_viewModel.ToggleStartWithWindows(StartWithWindowsChbox.Checked);
+			StartWithWindowsChbox.Enabled = false;
+			await _viewModel.ToggleStartWithWindows(StartWithWindowsChbox.Checked);
+			StartWithWindowsChbox.Enabled = true;
 		}
 
 		private async void CheckUpdateNow_Click(object sender, EventArgs e)
 		{
 			CheckUpdateNowBtn.Enabled = false;
 			string currentVersion = Application.ProductVersion;
-			bool updateAvailable = await UpdateService.CheckForUpdateAsync(currentVersion);
-			if (updateAvailable)
+			var update = await UpdateService.CheckForUpdateAsync(currentVersion);
+			if (update != null)
 			{
 				var result = MessageBox.Show(
-					"A new version is available. Do you want to download it now?",
-					"Update Available",
+					"A new version is available. Do you want to download it now? New update features: " + update.Notes,
+					"Update Available v" + update.Version,
 					MessageBoxButtons.YesNo,
 					MessageBoxIcon.Information);
 				if (result == DialogResult.Yes)
 				{
+					if (_viewModel.IsGoodbyeDPIRunning)
+					{
+						await _viewModel.ToggleGoodbyeDPIAsync();
+					}
 					await UpdateService.DownloadAndRunUpdateAsync();
 				}
 			}
@@ -335,6 +349,6 @@ namespace ByeByeDPI
 			}
 		}
 
-	
+
 	}
 }

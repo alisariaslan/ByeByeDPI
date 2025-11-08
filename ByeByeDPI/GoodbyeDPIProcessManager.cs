@@ -57,31 +57,6 @@ namespace ByeByeDPI
 					{
 						action.Path = exePath;
 						action.Arguments = arguments;
-						var logonTriggers = td.Triggers.OfType<LogonTrigger>().ToList();
-						if (logonTriggers.Any())
-						{
-							foreach (var trigger in logonTriggers)
-							{
-								trigger.Enabled = SettingsLoader.Current.StartWithWindows;
-							}
-							if(SettingsLoader.Current.StartWithWindows)
-							{
-								OnMessage?.Invoke($"GoodbyeDPI windows startup enabled.");
-							} else
-							{
-								OnMessage?.Invoke($"GoodbyeDPI windows startup disabled.");
-							}
-						}
-						else if (SettingsLoader.Current.StartWithWindows)
-						{
-							td.Triggers.Add(new LogonTrigger()
-							{
-								UserId = null,
-								//Delay = TimeSpan.FromSeconds(5),
-								Enabled = true
-							});
-							OnMessage?.Invoke("GoodbyeDPI logon trigger added.");
-						}
 						ts.RootFolder.RegisterTaskDefinition(GoodbyeDPITaskName, td);
 						OnMessage?.Invoke($"GoodbyeDPI parameters updated: {arguments}");
 					}
@@ -118,25 +93,6 @@ namespace ByeByeDPI
 
 					if (task != null)
 					{
-						var td = task.Definition;
-						var logonTriggers = td.Triggers.OfType<LogonTrigger>().ToList();
-						if (logonTriggers.Any())
-						{
-							foreach (var trigger in logonTriggers)
-							{
-								trigger.Enabled = SettingsLoader.Current.StartWithWindows;
-							}
-							ts.RootFolder.RegisterTaskDefinition(GoodbyeDPITaskName, td);
-							if (SettingsLoader.Current.StartWithWindows)
-							{
-								OnMessage?.Invoke($"GoodbyeDPI windows startup enabled.");
-							}
-							else
-							{
-								OnMessage?.Invoke($"GoodbyeDPI windows startup disabled.");
-							}
-						}
-
 						if (task.State == TaskState.Running)
 						{
 							task.Stop();
@@ -208,7 +164,7 @@ namespace ByeByeDPI
 			}
 		}
 
-		private async Task<bool> CreateGoodbyeDPIRunnerTask(TaskService ts, string exePath)
+		public async Task<bool> CreateGoodbyeDPIRunnerTask(TaskService ts, string exePath)
 		{
 			if (!await PrivilegesHelper.EnsureAdministrator(onMessage: OnMessage))
 			{

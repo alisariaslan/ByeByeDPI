@@ -38,17 +38,19 @@ namespace ByeByeDPI
 			if (SettingsLoader.Current.HideToTray && !TempConfigLoader.Current.AdminPriviligesRequested)
 			{
 				HideMainWindow();
-			} else
+			}
+			else
 			{
 				ShowMainWindow();
 			}
+
 
 			if (SettingsLoader.Current.CheckUpdates)
 			{
 				StartAutoUpdateCheck();
 			}
 
-			TempConfigLoader.Reset_AdminPriviligesRequested();
+			TempConfigLoader.Reset_AdminPriviliges_Request();
 		}
 
 		public async void StartAutoUpdateCheck()
@@ -60,8 +62,8 @@ namespace ByeByeDPI
 			{
 				try
 				{
-					bool updateAvailable = await UpdateService.CheckForUpdateAsync(Application.ProductVersion);
-					if (updateAvailable)
+					var update = await UpdateService.CheckForUpdateAsync(Application.ProductVersion);
+					if (update != null)
 					{
 						if (!_form.IsDisposed)
 						{
@@ -77,7 +79,7 @@ namespace ByeByeDPI
 					}
 					else
 					{
-						if(!_form.IsDisposed)
+						if (!_form.IsDisposed)
 						{
 							_form.UpdateCheckUpdateNowBtnText("Check Update");
 						}
@@ -98,7 +100,7 @@ namespace ByeByeDPI
 
 		private void ShowMainWindow()
 		{
-			if(_form.IsDisposed)
+			if (_form.IsDisposed)
 			{
 				_form = new MainForm(this);
 			}

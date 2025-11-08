@@ -24,25 +24,27 @@ namespace ByeByeDPI
 			UpdateDownloadUrl = $"https://github.com/alisariaslan/ByeByeDPI/releases/download/v{partialVersionStr}/ByeByeDPI_v{partialVersionStr}.zip";
 		}
 
-		public static async Task<bool> CheckForUpdateAsync(string currentVersion)
+		public static async Task<UpdateInfo> CheckForUpdateAsync(string currentVersion)
 		{
 			try
 			{
 				 HttpClient client = new HttpClient();
 				var json = await client.GetStringAsync(UpdateCheckUrl);
 				var info = JsonSerializer.Deserialize<UpdateInfo>(json);
-				if (info == null) return false;
+				if (info == null)
+					throw new Exception("Failed to parse update information.");
 				SetUpdateDownloadUrl(info.Version);
 				Version latest = new Version(info.Version);
 				Version current = new Version(currentVersion);
 				client.Dispose();
-				return latest > current;
+				if(latest > current)
+					return info;
 			}
 			catch (Exception ex)
 			{
 				MessageBox.Show($"Failed to check updates.\nError: {ex.Message}", "Update Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-				return false;
 			}
+			return null;
 		}
 
 		public static async Task DownloadAndRunUpdateAsync()

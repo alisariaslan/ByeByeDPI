@@ -1,6 +1,8 @@
 ﻿using Microsoft.Win32;
+using Microsoft.Win32.TaskScheduler;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -49,7 +51,7 @@ namespace ByeByeDPI
 			OnMessage?.Invoke("Parameters loaded.");
 		}
 
-		public async Task ClearSelectedParam()
+		public async System.Threading.Tasks.Task ClearSelectedParam()
 		{
 			try
 			{
@@ -69,7 +71,7 @@ namespace ByeByeDPI
 			}
 		}
 
-		public async Task BeginCheckDomainListAsync()
+		public async System.Threading.Tasks.Task BeginCheckDomainListAsync()
 		{
 			if (_isCheckListRunnig) return;
 			_isCheckListRunnig = true;
@@ -106,7 +108,7 @@ namespace ByeByeDPI
 			_isCheckListRunnig = false;
 		}
 
-		public async Task ToggleGoodbyeDPIAsync()
+		public async System.Threading.Tasks.Task ToggleGoodbyeDPIAsync()
 		{
 			if (IsGoodbyeDPIRunning)
 			{
@@ -125,7 +127,7 @@ namespace ByeByeDPI
 			}
 		}
 
-		public async Task RunParamSelectionWorkflowAsync()
+		public async System.Threading.Tasks.Task RunParamSelectionWorkflowAsync()
 		{
 			if (_isWorkflowRunning || _isCheckListRunnig)
 				return;
@@ -166,8 +168,12 @@ namespace ByeByeDPI
 			_isWorkflowRunning = false;
 		}
 
-		public void ToggleStartWithWindows(bool newState)
+		public async System.Threading.Tasks.Task ToggleStartWithWindows(bool newState)
 		{
+			if (!await PrivilegesHelper.EnsureAdministrator(onMessage: OnMessage))
+				return;
+			SettingsLoader.Current.StartWithWindows = newState;
+			SettingsLoader.Save();
 			string appName = Constants.RegistryAppName;
 			string exePath = $"\"{Application.ExecutablePath}\"";
 			try
@@ -185,13 +191,45 @@ namespace ByeByeDPI
 							key.DeleteValue(appName);
 					}
 				}
+				OnMessage?.Invoke(newState
+					? "Application will start with Windows (Registry updated)."
+					: "Application will not start with Windows (Registry updated).");
 			}
 			catch (Exception ex)
 			{
-				MessageBox.Show($"Failed to update Windows startup.\nError: {ex.Message}",
-								"Startup Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+				OnMessage?.Invoke($"Failed to update application startup (Registry): {ex.Message}");
+			}
+
+			try
+			{
+				using (TaskService ts = new TaskService())
+				{
+					var task = ts.GetTask("GoodbyeDPI_Runner");
+					if (task == null)
+					{
+						_dpiManager.CreateGoodbyeDPIRunnerTask(ts, Constants.GoodbyeDPIPath).Wait();
+						task = ts.GetTask("GoodbyeDPI_Runner");
+					}
+					if (task != null)
+					{
+						var td = task.Definition;
+						var logonTriggers = td.Triggers.OfType<LogonTrigger>();
+						foreach (var trigger in logonTriggers)
+							trigger.Enabled = newState;
+
+						ts.RootFolder.RegisterTaskDefinition("GoodbyeDPI_Runner", td);
+						OnMessage?.Invoke(newState
+							? "GoodbyeDPI will start with Windows (Task Scheduler updated)."
+							: "GoodbyeDPI will not start with Windows (Task Scheduler updated).");
+					}
+				}
+			}
+			catch (Exception ex)
+			{
+				OnMessage?.Invoke($"Failed to update GoodbyeDPI startup (Task Scheduler): {ex.Message}");
 			}
 		}
+
 
 		public void Dispose()
 		{

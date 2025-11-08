@@ -9,13 +9,14 @@ namespace ByeByeDPI
 	public class TempConfigModel
 	{
 		public bool AdminPriviligesRequested { get; set; } = false;
+
 	}
 
 	public static class TempConfigLoader
 	{
 		public static TempConfigModel Current { get; set; }
 
-		public static void Reset_AdminPriviligesRequested()
+		public static void Reset_AdminPriviliges_Request()
 		{
 			Current.AdminPriviligesRequested = new TempConfigModel().AdminPriviligesRequested;
 			Save();
