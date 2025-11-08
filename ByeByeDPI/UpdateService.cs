@@ -21,7 +21,7 @@ namespace ByeByeDPI
 
 		public static void SetUpdateDownloadUrl(string partialVersionStr)
 		{
-			UpdateDownloadUrl = $"https://github.com/alisariaslan/ByeByeDPI/releases/download/v{partialVersionStr}/ByeByeDPI_v{partialVersionStr}.zip";
+			UpdateDownloadUrl = "https://github.com/alisariaslan/ByeByeDPI/releases/download/latest/ByeByeDPI_Installer.exe";
 		}
 
 		public static async Task<UpdateInfo> CheckForUpdateAsync(string currentVersion)
@@ -51,26 +51,52 @@ namespace ByeByeDPI
 		{
 			try
 			{
-				 HttpClient client = new HttpClient();
-				var bytes = await client.GetByteArrayAsync(UpdateDownloadUrl);
+				MessageBox.Show(
+					"Before proceeding, please temporarily disable your antivirus software.\n" +
+					"Some antivirus programs may falsely block the update installer.",
+					"Antivirus Warning",
+					MessageBoxButtons.OK,
+					MessageBoxIcon.Warning
+				);
 
-				string fileName = Path.GetFileName(new Uri(UpdateDownloadUrl).LocalPath);
-				string tempPath = Path.Combine(Path.GetTempPath(), fileName);
-
-				File.WriteAllBytes(tempPath, bytes);
-				MessageBox.Show($"Update downloaded to {tempPath}. The application will now close and run the update.",
-								"Update Ready", MessageBoxButtons.OK, MessageBoxIcon.Information);
-				client.Dispose();
-				Process.Start(new ProcessStartInfo
+				using (HttpClient client = new HttpClient())
 				{
-					FileName = tempPath,
-					UseShellExecute = true
-				});
-				Application.Exit();
+					var bytes = await client.GetByteArrayAsync(UpdateDownloadUrl);
+
+					string fileName = Path.GetFileName(new Uri(UpdateDownloadUrl).LocalPath);
+
+					string downloadsPath = Path.Combine(
+						Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
+						"Downloads"
+					);
+					string targetPath = Path.Combine(downloadsPath, fileName);
+
+					File.WriteAllBytes(targetPath, bytes);
+
+					MessageBox.Show(
+						$"Update downloaded to:\n{targetPath}\n\nThe application will now close and start the installer.",
+						"Update Ready",
+						MessageBoxButtons.OK,
+						MessageBoxIcon.Information
+					);
+
+					Process.Start(new ProcessStartInfo
+					{
+						FileName = targetPath,
+						UseShellExecute = true
+					});
+
+					Application.Exit();
+				}
 			}
 			catch (Exception ex)
 			{
-				MessageBox.Show($"Failed to download or run update.\nError: {ex.Message}", "Update Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+				MessageBox.Show(
+					$"Failed to download or run the update.\n\nError: {ex.Message}",
+					"Update Error",
+					MessageBoxButtons.OK,
+					MessageBoxIcon.Error
+				);
 			}
 		}
 	}

@@ -3,12 +3,13 @@
 [Setup]
 AppName=ByeByeDPI
 AppVersion=1.0.0.8
-DefaultDirName={pf}\ByeByeDPI
+DefaultDirName={commonpf}\ByeByeDPI
 DefaultGroupName=ByeByeDPI
-OutputBaseFilename=setup
+OutputBaseFilename=ByeByeDPI_Installer
 Compression=lzma
 SolidCompression=yes
 PrivilegesRequired=admin
+DisableDirPage=yes
 
 [Files]
 ; Main executables and config
