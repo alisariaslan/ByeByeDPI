@@ -416,5 +416,6 @@ FodyWeavers.xsd
 *.msix
 *.msm
 *.msp
-/Output/setup.exe
+*.csv
+/Output/ByeByeDPI_Installer.exe
 pfx_password.txt
