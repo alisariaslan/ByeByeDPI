@@ -1,12 +1,12 @@
-# save as sign_installer.ps1
+# save as sign_with_timestamp.ps1
 param(
-    [string] $installerPath = "ByeByeDPI\bin\Release\Output\ByeByeDPI_Installer.exe",
+    [string] $releasePath = "ByeByeDPI\bin\Release",
     [string] $pfxPasswordFile = "pfx_password.txt",
-    [string] $pfxOut = "ByeByeDPI_Installer_codesign.pfx",
+    [string] $pfxOut = "ByeByeDPI_files_codesign.pfx",
     [string] $certSubject = "CN=ByeByeDPI Code Signing",
-    [string] $signtoolPath = "signtool",   # veya signtool.exe tam yolu
-    [string] $timestampUrl = "http://timestamp.sectigo.com", 
-    [int] $delaySeconds = 5
+    [string] $signtoolPath = "signtool",   # or full path to signtool.exe
+    [string] $timestampUrl = "http://timestamp.sectigo.com", # or http://timestamp.digicert.com
+    [int] $delaySeconds = 20
 )
 
 # 1) Read password from text file
@@ -18,7 +18,7 @@ if ([string]::IsNullOrWhiteSpace($pfxPassword)) {
     throw "Password file is empty or invalid."
 }
 
-# 2) Create self-signed code signing certificate
+# 2) Create a self-signed code signing certificate
 Write-Host "Creating self-signed code signing certificate..."
 $cert = New-SelfSignedCertificate -Type CodeSigningCert -Subject $certSubject -CertStoreLocation "Cert:\CurrentUser\My" -KeyExportPolicy Exportable -NotAfter (Get-Date).AddYears(2)
 if (-not $cert) { throw "Certificate creation failed." }
@@ -30,48 +30,65 @@ $securePwd = ConvertTo-SecureString -String $pfxPassword -Force -AsPlainText
 Export-PfxCertificate -Cert "Cert:\CurrentUser\My\$($cert.Thumbprint)" -FilePath $pfxOut -Password $securePwd | Out-Null
 Write-Host "Exported PFX."
 
-# 4) Check if installer exists
-if (-not (Test-Path $installerPath)) {
-    Write-Host "Installer not found: $installerPath"
-    exit 1
+# 4) Build list of files to sign (only necessary executables, driver, DLL)
+$files = @()
+$files += Join-Path $releasePath "ByeByeDPI.exe"
+$files += Join-Path $releasePath "goodbyedpi.exe"
+$files += Join-Path $releasePath "WinDivert64.sys"
+$files += Join-Path $releasePath "WinDivert.dll"
+
+# Sadece var olan dosyaları filtrele
+$files = $files | Where-Object { Test-Path $_ }
+
+if ($files.Count -eq 0) {
+    Write-Host "No matching files found in $releasePath"
+    exit 0
 }
 
-# 5) Sign the installer if not already signed
-$signature = Get-AuthenticodeSignature $installerPath
-if ($signature.Status -eq 'Valid') {
-    Write-Host "$installerPath already signed. Skipping..."
-}
-else {
-    Write-Host "Signing: $installerPath"
+
+# 5) Sign each file if not already signed
+$results = @()
+foreach ($filePath in $files) {
+    $signature = Get-AuthenticodeSignature $filePath
+    if ($signature.Status -eq 'Valid') {
+        Write-Host "$filePath already signed. Skipping..."
+        continue
+    }
+
+    Write-Host "Signing: $filePath"
     $args = @(
         "sign", "/f", $pfxOut, "/p", $pfxPassword,
         "/fd", "SHA256", "/td", "SHA256",
-        "/tr", $timestampUrl, $installerPath
+        "/tr", $timestampUrl, $filePath
     )
 
     $proc = Start-Process -FilePath $signtoolPath -ArgumentList $args -NoNewWindow -Wait -PassThru -ErrorAction SilentlyContinue
     if ($proc.ExitCode -ne 0) {
-        Write-Warning "signtool returned exit code $($proc.ExitCode) for $installerPath"
+        Write-Warning "signtool returned exit code $($proc.ExitCode) for $filePath"
     }
     else {
         Write-Host "Signed OK."
     }
 
+    $sha256 = (Get-FileHash -Algorithm SHA256 -Path $filePath).Hash
+    $results += [PSCustomObject]@{
+        File             = $filePath
+        SHA256           = $sha256
+        SigntoolExitCode = $proc.ExitCode
+        TimestampServer  = $timestampUrl
+        Time             = (Get-Date).ToString("o")
+    }
+
+    Write-Host "Waiting $delaySeconds seconds before next sign (to avoid TSA throttling)..."
     Start-Sleep -Seconds $delaySeconds
 }
 
 # 6) Save results CSV
-$outCsv = Join-Path -Path (Split-Path $installerPath) -ChildPath "signing_result_$(Get-Date -Format yyyyMMdd_HHmmss).csv"
-$sha256 = (Get-FileHash -Algorithm SHA256 -Path $installerPath).Hash
-[PSCustomObject]@{
-    File             = $installerPath
-    SHA256           = $sha256
-    SigntoolExitCode = if ($proc) { $proc.ExitCode } else { 0 }
-    TimestampServer  = $timestampUrl
-    Time             = (Get-Date).ToString("o")
-} | Export-Csv -Path $outCsv -NoTypeInformation -Encoding UTF8
-
+$outCsv = Join-Path -Path $releasePath -ChildPath "signing_results_$(Get-Date -Format yyyyMMdd_HHmmss).csv"
+$results | Export-Csv -Path $outCsv -NoTypeInformation -Encoding UTF8
 Write-Host "Signing finished. Results written to $outCsv"
 Write-Host "PFX exported at: $pfxOut"
+
+# Optional: display certificate details
 Write-Host "Certificate thumbprint: $($cert.Thumbprint)"
 Write-Host "To trust this cert locally, import it into Trusted Root Certification Authorities."
