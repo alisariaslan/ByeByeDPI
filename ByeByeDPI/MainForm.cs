@@ -34,12 +34,17 @@ namespace ByeByeDPI
 			_viewModel.LoadCheckList();
 			_viewModel.LoadParams();
 
-			if (SettingsLoader.Current.HideToTray)
-				HideToTrayChbox.Checked = true;
-			if (SettingsLoader.Current.CheckUpdates)
-				CheckUpdatesChbox.Checked = true;
-			if (SettingsLoader.Current.StartWithWindows)
-				StartWithWindowsChbox.Checked = true;
+			HideToTrayChbox.CheckedChanged -= HideToTrayChbox_CheckedChanged;
+			CheckUpdatesChbox.CheckedChanged -= CheckUpdatesChbox_CheckedChanged;
+			StartWithWindowsChbox.CheckedChanged -= StartWithWindowsChbox_CheckedChanged;
+
+			HideToTrayChbox.Checked = SettingsLoader.Current.HideToTray;
+			CheckUpdatesChbox.Checked = SettingsLoader.Current.CheckUpdates;
+			StartWithWindowsChbox.Checked = SettingsLoader.Current.StartWithWindows;
+
+			HideToTrayChbox.CheckedChanged += HideToTrayChbox_CheckedChanged;
+			CheckUpdatesChbox.CheckedChanged += CheckUpdatesChbox_CheckedChanged;
+			StartWithWindowsChbox.CheckedChanged += StartWithWindowsChbox_CheckedChanged;
 
 			StartStateSync();
 
