@@ -1,8 +1,13 @@
 ﻿Clear-Host
 Write-Host "-----------------------------------------------"
 Write-Host "create_commit_with_ai.ps1"
-Write-Host "Automatically generate a git commit message using Ollama CodeLlama:7b"
+Write-Host "Automatically generate a git commit message using Ollama AI"
 Write-Host "-----------------------------------------------`n"
+
+# --- CONFIGURATION ---
+# Model to use
+$model = "codellama:7b"
+# ----------------------
 
 # Check if git is installed
 if (-not (Get-Command git -ErrorAction SilentlyContinue)) {
@@ -12,7 +17,7 @@ if (-not (Get-Command git -ErrorAction SilentlyContinue)) {
 
 # Get unstaged and staged files
 $unstaged = git diff --name-only
-$staged = git diff --cached --name-only
+$staged = git diff --cached
 
 # If nothing staged, ask user if they want to stage all
 if (-not $staged) {
@@ -40,14 +45,8 @@ if (-not $staged) {
 $changes = ($staged) -join ", "
 $prompt = "Generate git commit message for these: $changes"
 
-# Try with 'generate', fallback to 'run' if needed
-Write-Host "`n🤖 Generating commit message with CodeLlama..."
-$commit_message = & ollama generate codellama:7b --no-stream --prompt $prompt --max-tokens 100 2>$null
-
-if (-not $commit_message) {
-    Write-Host "⚠️  No response from 'generate', trying fallback method..."
-    $commit_message = & ollama run codellama:7b "$prompt" 2>$null
-}
+# Generate commit message using Ollama
+$commit_message = & ollama run $model "$prompt" 2>$null
 
 if (-not $commit_message) {
     Write-Host "`n❌ Failed to get response from Ollama."
