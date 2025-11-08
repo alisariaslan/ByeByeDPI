@@ -27,7 +27,7 @@ This graphical interface allows you to start, stop, and manage the DPI bypass pr
 - If installation fails with an error about WinDivert64.sys being in use, stop the driver first with using cmd (as an Admin):
 - sc stop WinDivert
 - Then rerun the installer.
-- **Optional:** You can also use `setup_helper.bat` as a last resort. It will automatically check the WinDivert driver and run `setup.exe`.
+- **Optional:** You can also use `fix_setup_issues.bat` as a last resort. It will automatically check the WinDivert driver and run `setup.exe`.
 - **NOTE:**  If you see the message: "You cannot start application ByeByeDPI from this location because it is already installed from a different location." It means the application is already installed from another folder. You can either: Start it from the original installation location. / Uninstall the old version and reinstall from this folder.
 
 ## Contact
