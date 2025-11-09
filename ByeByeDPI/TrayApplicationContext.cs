@@ -9,10 +9,20 @@ namespace ByeByeDPI
 		private NotifyIcon _trayIcon;
 		private MainForm _form;
 		private bool _updateChecksStarted;
+		private bool _applicationExiting;
+
+		public static TrayApplicationContext Instance { get; private set; }
 
 		public TrayApplicationContext()
 		{
+			Instance = this;
+
 			_form = new MainForm(this);
+
+			if (!_form.IsHandleCreated)
+			{
+				var handle = _form.Handle;
+			}
 
 			_trayIcon = new NotifyIcon()
 			{
@@ -98,6 +108,12 @@ namespace ByeByeDPI
 
 		public void ShowMainWindow()
 		{
+			if (_form.InvokeRequired)
+			{
+				_form.Invoke(new MethodInvoker(ShowMainWindow));
+				return;
+			}
+
 			if (_form.IsDisposed)
 			{
 				_form = new MainForm(this);
@@ -105,19 +121,28 @@ namespace ByeByeDPI
 			_form.Show();
 			_form.WindowState = FormWindowState.Normal;
 			_form.ShowInTaskbar = true;
+			_form.BringToFront();
 		}
 
 		public void HideMainWindow()
 		{
-			//_form.Close();
 			_form?.Hide();
 			_trayIcon.ShowBalloonTip(1000, "ByeByeDPI", "Application minimized to tray.", ToolTipIcon.Info);
 		}
 
 		public void ExitApplication()
 		{
+			if (_applicationExiting)
+				return;
+			_applicationExiting = true;
+			if (_form != null && !_form.IsDisposed)
+			{
+				_form.Close();
+				_form.Dispose();
+			}
 			_trayIcon.Visible = false;
-			Application.Exit();
+			_trayIcon.Dispose();
+			ExitThread();
 		}
 	}
 }

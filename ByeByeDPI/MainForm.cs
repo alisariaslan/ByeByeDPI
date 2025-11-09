@@ -60,7 +60,6 @@ namespace ByeByeDPI
 			{
 				MessageWriteLine("GoodbyeDPI is stopped!");
 			}
-
 		}
 
 		private void MessageWriteLine(string msg)
@@ -359,17 +358,6 @@ namespace ByeByeDPI
 				_trayApplicationContext.HideMainWindow();
 			}
 		}
-
-		//protected override void OnHandleDestroyed(EventArgs e)
-		//{
-		//	base.OnHandleDestroyed(e);
-
-		//	if (!SettingsLoader.Current.HideToTray || TempConfigLoader.Current.AdminPriviligesRequested)
-		//	{
-		//		_trayApplicationContext.ExitApplication();
-		//	}
-		//}
-
 
 	}
 }
