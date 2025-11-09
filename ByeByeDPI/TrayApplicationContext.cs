@@ -9,6 +9,7 @@ namespace ByeByeDPI
 		private NotifyIcon _trayIcon;
 		private MainForm _form;
 		private bool _updateChecksStarted;
+		private bool _trayMinimizedNotifyShown;
 		public bool ApplicationExiting;
 
 		public static TrayApplicationContext Instance { get; private set; }
@@ -134,7 +135,11 @@ namespace ByeByeDPI
 		public void HideMainWindow()
 		{
 			_form?.Hide();
-			_trayIcon.ShowBalloonTip(1000, "ByeByeDPI", "Application minimized to tray.", ToolTipIcon.Info);
+			if(!_trayMinimizedNotifyShown)
+			{
+				_trayIcon.ShowBalloonTip(1000, "ByeByeDPI", "Application minimized to tray.", ToolTipIcon.Info);
+				_trayMinimizedNotifyShown = true;
+			}
 		}
 
 		public void ExitApplication()
