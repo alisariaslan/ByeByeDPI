@@ -117,10 +117,17 @@ namespace ByeByeDPI
 			if (_form.IsDisposed)
 			{
 				_form = new MainForm(this);
+				if (!_form.IsHandleCreated)
+				{
+					var handle = _form.Handle;
+				}
 			}
+
 			_form.Show();
 			_form.WindowState = FormWindowState.Normal;
 			_form.ShowInTaskbar = true;
+
+			_form.Activate();
 			_form.BringToFront();
 		}
 
