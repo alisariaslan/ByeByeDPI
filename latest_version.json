@@ -1,4 +1,4 @@
 {
     "Version": "1.0.0.8",
-    "Notes": "The application is now stable and responsive on subsequent launches; fixed the freezing issue by ensuring proper UI thread synchronization via Named Pipes, and improved system cleanup by rigorously disposing all resources on exit."
+    "Notes": "Update 1.0.0.9 is out! For 1.0.0.9: The application is now stable and responsive on subsequent launches; fixed the freezing issue by ensuring proper UI thread synchronization via Named Pipes, and improved system cleanup by rigorously disposing all resources on exit."
 }
