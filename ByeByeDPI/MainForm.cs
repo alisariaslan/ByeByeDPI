@@ -50,7 +50,7 @@ namespace ByeByeDPI
 
 			if (_viewModel.IsGoodbyeDPIRunning)
 			{
-				if(!string.IsNullOrEmpty(SettingsLoader.Current.ChosenParam))
+				if (!string.IsNullOrEmpty(SettingsLoader.Current.ChosenParam))
 					MessageWriteLine("Selected parameter: " + SettingsLoader.Current.ChosenParam);
 				else
 					MessageWriteLine("No parameter selected. It seems your settings are not synced.");
@@ -348,6 +348,11 @@ namespace ByeByeDPI
 
 		protected override void OnFormClosing(FormClosingEventArgs e)
 		{
+			if (_trayApplicationContext.ApplicationExiting)
+			{
+				base.OnFormClosing(e);
+				return;
+			}
 			if (!SettingsLoader.Current.HideToTray || TempConfigLoader.Current.AdminPriviligesRequested)
 			{
 				_trayApplicationContext.ExitApplication();

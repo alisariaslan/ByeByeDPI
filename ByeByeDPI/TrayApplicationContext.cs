@@ -9,7 +9,7 @@ namespace ByeByeDPI
 		private NotifyIcon _trayIcon;
 		private MainForm _form;
 		private bool _updateChecksStarted;
-		private bool _applicationExiting;
+		public bool ApplicationExiting;
 
 		public static TrayApplicationContext Instance { get; private set; }
 
@@ -139,9 +139,9 @@ namespace ByeByeDPI
 
 		public void ExitApplication()
 		{
-			if (_applicationExiting)
+			if (ApplicationExiting)
 				return;
-			_applicationExiting = true;
+			ApplicationExiting = true;
 			if (_form != null && !_form.IsDisposed)
 			{
 				_form.Close();

@@ -2,7 +2,7 @@
 
 [Setup]
 AppName=ByeByeDPI
-AppVersion=1.0.0.8
+AppVersion=1.0.0.9
 DefaultDirName={commonpf}\ByeByeDPI
 DefaultGroupName=ByeByeDPI
 OutputBaseFilename=ByeByeDPI_Installer

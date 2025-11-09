@@ -46,7 +46,7 @@ namespace ByeByeDPI
 
 				Process.Start(psi);
 				onMessage?.Invoke("Application is restarting with administrator privileges...");
-				Application.Exit();
+				TrayApplicationContext.Instance?.ExitApplication();
 			}
 			catch
 			{
