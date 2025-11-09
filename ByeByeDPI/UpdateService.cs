@@ -86,7 +86,7 @@ namespace ByeByeDPI
 						UseShellExecute = true
 					});
 
-					Application.Exit();
+					TrayApplicationContext.Instance?.ExitApplication();
 				}
 			}
 			catch (Exception ex)
