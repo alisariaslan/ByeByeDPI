@@ -347,15 +347,28 @@ namespace ByeByeDPI
 			}
 		}
 
-		protected override void OnHandleDestroyed(EventArgs e)
+		protected override void OnFormClosing(FormClosingEventArgs e)
 		{
-			base.OnHandleDestroyed(e);
-
 			if (!SettingsLoader.Current.HideToTray || TempConfigLoader.Current.AdminPriviligesRequested)
 			{
 				_trayApplicationContext.ExitApplication();
 			}
+			else
+			{
+				e.Cancel = true;
+				_trayApplicationContext.HideMainWindow();
+			}
 		}
+
+		//protected override void OnHandleDestroyed(EventArgs e)
+		//{
+		//	base.OnHandleDestroyed(e);
+
+		//	if (!SettingsLoader.Current.HideToTray || TempConfigLoader.Current.AdminPriviligesRequested)
+		//	{
+		//		_trayApplicationContext.ExitApplication();
+		//	}
+		//}
 
 
 	}

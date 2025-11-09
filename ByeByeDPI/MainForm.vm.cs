@@ -39,14 +39,12 @@ namespace ByeByeDPI
 			SettingsLoader.LoadSettings();
 			OnMessage?.Invoke("Settings loaded.");
 		}
-
 		public void LoadCheckList()
 		{
 			var rawList = CheckListLoader.LoadCheckList();
 			_checkList = rawList.Select(x => new CheckListWrapperModel { Item = x, IsAccesible = false }).ToList();
 			OnMessage?.Invoke("Check list loaded.");
 		}
-
 
 		public void LoadParams()
 		{

@@ -29,10 +29,7 @@ namespace ByeByeDPI
 
 			_trayIcon.DoubleClick += (s, e) =>
 			{
-				if (_form.Visible)
-					HideMainWindow();
-				else
-					ShowMainWindow();
+				ShowMainWindow();
 			};
 
 			if (SettingsLoader.Current.HideToTray && !TempConfigLoader.Current.AdminPriviligesRequested)
@@ -99,7 +96,7 @@ namespace ByeByeDPI
 			ShowMainWindow();
 		}
 
-		private void ShowMainWindow()
+		public void ShowMainWindow()
 		{
 			if (_form.IsDisposed)
 			{
@@ -112,21 +109,14 @@ namespace ByeByeDPI
 
 		public void HideMainWindow()
 		{
-			if (_form.IsDisposed)
-			{
-				_form.Hide();
-				_form.ShowInTaskbar = false;
-			}
+			//_form.Close();
+			_form?.Hide();
 			_trayIcon.ShowBalloonTip(1000, "ByeByeDPI", "Application minimized to tray.", ToolTipIcon.Info);
 		}
 
 		public void ExitApplication()
 		{
 			_trayIcon.Visible = false;
-			if (!_form.IsDisposed)
-			{
-				_form.Close();
-			}
 			Application.Exit();
 		}
 	}
