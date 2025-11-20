@@ -75,14 +75,14 @@ namespace ByeByeDPI
 					var now = DateTime.UtcNow;
 					var last = TempConfigLoader.Current.LastUpdateCheck;
 
-					if (last == default || (now - last) >= TimeSpan.FromHours(2))
+					if (last == default || (now - last) >= Constants.applicationUpdateInterval)
 					{
 						await DoUpdateCheck();
 						TempConfigLoader.Current.LastUpdateCheck = DateTime.UtcNow;
 						TempConfigLoader.Save();
 					}
 
-					var remaining = TimeSpan.FromHours(2) - (now - last);
+					var remaining = Constants.applicationUpdateInterval - (now - last);
 					if (remaining < TimeSpan.Zero)
 						remaining = TimeSpan.Zero;
 

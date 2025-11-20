@@ -13,6 +13,7 @@ namespace ByeByeDPI
 		public static readonly string UserDataDir =
 	   Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), AppName);
 
+		public static TimeSpan applicationUpdateInterval = TimeSpan.FromHours(6);
 
 		private const string _goodbyeDPIFileName = "goodbyedpi.exe";
 		private const string _checkListFileName = "checklist.json";

@@ -5,7 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace ByeByeDPI
@@ -32,6 +31,12 @@ namespace ByeByeDPI
 			_httpClient.DefaultRequestHeaders.AcceptLanguage.ParseAdd("en-US,en;q=0.9");
 			_httpClient.DefaultRequestHeaders.AcceptEncoding.ParseAdd("gzip, deflate, br");
 			_httpClient.DefaultRequestHeaders.Connection.ParseAdd("keep-alive");
+		}
+
+		private string GetParamValue(string paramName)
+		{
+			return _paramList
+				.FirstOrDefault(x => x.Name == paramName)?.Param;
 		}
 
 		public void LoadSettings()
@@ -130,9 +135,11 @@ namespace ByeByeDPI
 			}
 			else
 			{
+				var chosenParam = SettingsLoader.Current.ChosenParam;
+				var paramValue = GetParamValue(chosenParam);
 				if (!String.IsNullOrWhiteSpace(SettingsLoader.Current.ChosenParam))
 				{
-					await _dpiManager.StartAsync(Constants.GoodbyeDPIPath, SettingsLoader.Current.ChosenParam);
+					await _dpiManager.StartAsync(Constants.GoodbyeDPIPath, paramValue);
 				}
 				else
 				{
