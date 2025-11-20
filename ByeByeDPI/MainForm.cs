@@ -192,7 +192,7 @@ namespace ByeByeDPI
 		{
 			CheckUpdateNowBtn.Enabled = false;
 			string currentVersion = Application.ProductVersion;
-			var update = await UpdateService.CheckForUpdateAsync(currentVersion);
+			var update = await UpdateService.CheckForUpdateAsync(currentVersion,false);
 			if (update != null)
 			{
 				var result = MessageBox.Show(

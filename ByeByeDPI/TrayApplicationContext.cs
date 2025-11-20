@@ -29,7 +29,7 @@ namespace ByeByeDPI
 			{
 				Icon = Properties.Resources.icons8_so_so,
 				Visible = true,
-				Text = "ByeByeDPI"
+				Text = $"{Constants.AppName}"
 			};
 
 			var trayMenu = new ContextMenuStrip();
@@ -67,39 +67,56 @@ namespace ByeByeDPI
 			if (_updateChecksStarted)
 				return;
 			_updateChecksStarted = true;
+
 			while (SettingsLoader.Current.CheckUpdates)
 			{
 				try
 				{
-					var update = await UpdateService.CheckForUpdateAsync(Application.ProductVersion);
-					if (update != null)
+					var now = DateTime.UtcNow;
+					var last = TempConfigLoader.Current.LastUpdateCheck;
+
+					if (last == default || (now - last) >= TimeSpan.FromHours(2))
 					{
-						if (!_form.IsDisposed)
-						{
-							_form.UpdateCheckUpdateNowBtnText("Update Now");
-						}
-						_trayIcon.BalloonTipTitle = "ByeByeDPI Update";
-						_trayIcon.BalloonTipText = "A new version is available. Click to \"Update Now\" for update.";
-						_trayIcon.BalloonTipIcon = ToolTipIcon.Info;
-						_trayIcon.Visible = true;
-						_trayIcon.ShowBalloonTip(5000);
-						_trayIcon.BalloonTipClicked -= TrayIcon_BalloonTipClicked;
-						_trayIcon.BalloonTipClicked += TrayIcon_BalloonTipClicked;
+						await DoUpdateCheck();
+						TempConfigLoader.Current.LastUpdateCheck = DateTime.UtcNow;
+						TempConfigLoader.Save();
 					}
-					else
-					{
-						if (!_form.IsDisposed)
-						{
-							_form.UpdateCheckUpdateNowBtnText("Check Update");
-						}
-					}
+
+					var remaining = TimeSpan.FromHours(2) - (now - last);
+					if (remaining < TimeSpan.Zero)
+						remaining = TimeSpan.Zero;
+
+					await Task.Delay(remaining);
 				}
 				catch
 				{
 				}
-				await Task.Delay(TimeSpan.FromHours(1));
 			}
 			_updateChecksStarted = false;
+		}
+
+		private async Task DoUpdateCheck()
+		{
+			var update = await UpdateService.CheckForUpdateAsync(Application.ProductVersion, true);
+
+			if (update != null)
+			{
+				if (!_form.IsDisposed)
+					_form.UpdateCheckUpdateNowBtnText("Update Now");
+
+				_trayIcon.BalloonTipTitle = $"{Constants.AppName} Update";
+				_trayIcon.BalloonTipText = "A new version is available. Click \"Update Now\".";
+				_trayIcon.BalloonTipIcon = ToolTipIcon.Info;
+				_trayIcon.ShowBalloonTip(5000);
+
+				_trayIcon.BalloonTipClicked -= TrayIcon_BalloonTipClicked;
+				_trayIcon.BalloonTipClicked += TrayIcon_BalloonTipClicked;
+			}
+			else
+			{
+				if (!_form.IsDisposed)
+					_form.UpdateCheckUpdateNowBtnText("Check Update");
+			}
 		}
 
 		private void TrayIcon_BalloonTipClicked(object sender, EventArgs e)
@@ -137,7 +154,7 @@ namespace ByeByeDPI
 			_form?.Hide();
 			if(!_trayMinimizedNotifyShown)
 			{
-				_trayIcon.ShowBalloonTip(1000, "ByeByeDPI", "Application minimized to tray.", ToolTipIcon.Info);
+				_trayIcon.ShowBalloonTip(1000, $"{Constants.AppName}", "Application minimized to tray.", ToolTipIcon.Info);
 				_trayMinimizedNotifyShown = true;
 			}
 		}

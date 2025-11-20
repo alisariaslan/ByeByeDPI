@@ -24,11 +24,11 @@ namespace ByeByeDPI
 			UpdateDownloadUrl = "https://github.com/alisariaslan/ByeByeDPI/releases/download/latest/ByeByeDPI_Installer.exe";
 		}
 
-		public static async Task<UpdateInfo> CheckForUpdateAsync(string currentVersion)
+		public static async Task<UpdateInfo> CheckForUpdateAsync(string currentVersion, bool silent)
 		{
 			try
 			{
-				 HttpClient client = new HttpClient();
+				HttpClient client = new HttpClient();
 				var json = await client.GetStringAsync(UpdateCheckUrl);
 				var info = JsonSerializer.Deserialize<UpdateInfo>(json);
 				if (info == null)
@@ -37,12 +37,15 @@ namespace ByeByeDPI
 				Version latest = new Version(info.Version);
 				Version current = new Version(currentVersion);
 				client.Dispose();
-				if(latest > current)
+				TempConfigLoader.Current.LastUpdateCheck = DateTime.UtcNow;
+				TempConfigLoader.Save();
+				if (latest > current)
 					return info;
 			}
 			catch (Exception ex)
 			{
-				MessageBox.Show($"Failed to check updates.\nError: {ex.Message}", "Update Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+				if (!silent)
+					MessageBox.Show($"Failed to check updates.\nError: {ex.Message}", "Update Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
 			}
 			return null;
 		}

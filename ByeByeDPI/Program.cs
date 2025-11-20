@@ -12,11 +12,11 @@ namespace ByeByeDPI
 		{
 			TempConfigLoader.LoadSettings();
 			bool skipMutexCheck = TempConfigLoader.Current.AdminPriviligesRequested;
-			using (Mutex mutex = new Mutex(true, "ByeByeDPI_SingleInstance", out bool isNewInstance))
+			using (Mutex mutex = new Mutex(true, $"{Constants.AppName}_SingleInstance", out bool isNewInstance))
 			{
 				if (!isNewInstance && !skipMutexCheck)
 				{
-					using (var client = new NamedPipeClientStream(".", "ByeByeDPI_ShowWindow", PipeDirection.Out))
+					using (var client = new NamedPipeClientStream(".", $"{Constants.AppName}_ShowWindow", PipeDirection.Out))
 					{
 						try
 						{
@@ -39,7 +39,7 @@ namespace ByeByeDPI
 			while (true)
 			{
 				using (
-					var server = new NamedPipeServerStream("ByeByeDPI_ShowWindow", PipeDirection.In))
+					var server = new NamedPipeServerStream($"{Constants.AppName}_ShowWindow", PipeDirection.In))
 				{
 					server.WaitForConnection();
 					using (var reader = new System.IO.StreamReader(server))

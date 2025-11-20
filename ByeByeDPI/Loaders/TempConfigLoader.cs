@@ -8,6 +8,8 @@ namespace ByeByeDPI
 	public class TempConfigModel
 	{
 		public bool AdminPriviligesRequested { get; set; } = false;
+
+		public DateTime LastUpdateCheck { get; set; }
 	}
 
 	public static class TempConfigLoader
