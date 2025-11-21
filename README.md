@@ -22,21 +22,15 @@ This graphical interface allows you to start, stop, and manage the DPI bypass pr
 ⚙️ Installation Notes
 
 Download “ByeByeDPI_Installer.exe” from the “latest” release on GitHub.
-
 Run the installer and follow the instructions.
 
 🗑️ Uninstallation Notes
 
 Click “Stop Access” or “Reset” inside ByeByeDPI.
-
 If the app is running in the system tray, exit it from the tray icon.
-
 Open “Add or Remove Programs” in Windows.
-
 Select “ByeByeDPI” and click Uninstall.
-
 If the installation folder still remains after uninstalling, run the following command in CMD or PowerShell (as Administrator) to stop the background service:
-
 sc stop WinDivert
 
 ## Contact
