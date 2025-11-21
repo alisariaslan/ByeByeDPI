@@ -31,6 +31,7 @@ This graphical interface allows you to start, stop, and manage the DPI bypass pr
 - Open “Add or Remove Programs” in Windows.
 - Select “ByeByeDPI” and click Uninstall.
 - If the installation folder still remains after uninstalling, run the following command in CMD or PowerShell (as Administrator) to stop the background service: sc stop WinDivert
+- Then you can delete it manually
 
 ## Contact
 
