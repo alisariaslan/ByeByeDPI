@@ -19,15 +19,25 @@ This graphical interface allows you to start, stop, and manage the DPI bypass pr
 ## 🖼️ Screenshots
 <img width="536" height="799" alt="image" src="https://github.com/user-attachments/assets/c263e152-6b36-4227-bfe5-6b2b4516950d" />
 
-## ⚙️ Installation Notes
+⚙️ Installation Notes
 
-- Extract all files from the .zip archive to a regular folder. Do not run the installer directly from inside the compressed archive.
-- Run setup.exe
-- If installation fails with an error about WinDivert64.sys being in use, stop the driver first with using cmd (as an Admin):
-- sc stop WinDivert
-- Then rerun the installer.
-- **Optional:** You can also use `fix_setup_issues.bat` as a last resort. It will automatically check the WinDivert driver and run `setup.exe`.
-- **NOTE:**  If you see the message: "You cannot start application ByeByeDPI from this location because it is already installed from a different location." It means the application is already installed from another folder. You can either: Start it from the original installation location. / Uninstall the old version and reinstall from this folder.
+Download “ByeByeDPI_Installer.exe” from the “latest” release on GitHub.
+
+Run the installer and follow the instructions.
+
+🗑️ Uninstallation Notes
+
+Click “Stop Access” or “Reset” inside ByeByeDPI.
+
+If the app is running in the system tray, exit it from the tray icon.
+
+Open “Add or Remove Programs” in Windows.
+
+Select “ByeByeDPI” and click Uninstall.
+
+If the installation folder still remains after uninstalling, run the following command in CMD or PowerShell (as Administrator) to stop the background service:
+
+sc stop WinDivert
 
 ## Contact
 
