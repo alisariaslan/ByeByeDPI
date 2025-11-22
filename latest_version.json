@@ -1,4 +1,4 @@
 {
-    "Version": "1.0.0.10",
-    "Notes": "-The 'Application minimized to tray' notification will no longer be shown more than once. -Update checks are now performed once every two hours. -Update check timing is no longer affected by application shutdown or restart."
+    "Version": "1.0.0.11",
+    "Notes": "- ('Start Access' button not starting GoodbyeDPI after 'Stop Access' button pressed) fixed."
 }
