@@ -18,7 +18,7 @@ This graphical interface allows you to start, stop, and manage the DPI bypass pr
 
 ## ⚙️ Installation Notes
 
-1. Download installer from latest tag.
+1. Download installer from [latest tag](https://github.com/alisariaslan/ByeByeDPI/releases/tag/latest).
 2. Run `ByeByeDPI_Installer.exe`.
 
 ## Contact
