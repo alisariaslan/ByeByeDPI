@@ -1,4 +1,6 @@
-﻿using System;
+﻿using ByeByeDPI.Constants;
+using ByeByeDPI.Models;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
@@ -6,11 +8,7 @@ using System.Windows.Forms;
 
 namespace ByeByeDPI
 {
-	public class CheckListModel
-	{
-		public string Name { get; set; }
-		public string Url { get; set; }
-	}
+
 
 	public static class CheckListLoader
 	{
@@ -29,7 +27,7 @@ namespace ByeByeDPI
 
 		public static List<CheckListModel> LoadCheckList()
 		{
-			string path = Constants.CheckListPath;
+			string path = AppConstants.CheckListPath;
 
 			if (!File.Exists(path))
 			{

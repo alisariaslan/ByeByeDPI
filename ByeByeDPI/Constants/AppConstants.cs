@@ -1,9 +1,9 @@
 ﻿using System;
 using System.IO;
 
-namespace ByeByeDPI
+namespace ByeByeDPI.Constants
 {
-	public static class Constants
+	public static class AppConstants
 	{
 
 		public static readonly string AppName = "ByeByeDPI";
@@ -13,9 +13,10 @@ namespace ByeByeDPI
 		public static readonly string UserDataDir =
 	   Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), AppName);
 
-		public static TimeSpan applicationUpdateInterval = TimeSpan.FromHours(6);
+        public static readonly TimeSpan ApplicationUpdateInterval = TimeSpan.FromHours(2);
 
-		private const string _goodbyeDPIFileName = "goodbyedpi.exe";
+
+        private const string _goodbyeDPIFileName = "goodbyedpi.exe";
 		private const string _checkListFileName = "checklist.json";
 		private const string _paramsFileName = "params.json";
 		private const string _appSettingsFileName = "settings.json";

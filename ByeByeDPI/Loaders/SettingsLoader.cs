@@ -1,4 +1,6 @@
-﻿using System;
+﻿using ByeByeDPI.Constants;
+using ReaLTaiizor.Enum.Poison;
+using System;
 using System.IO;
 using System.Text.Json;
 using System.Windows.Forms;
@@ -11,7 +13,11 @@ namespace ByeByeDPI
 		public bool HideToTray { get; set; } = false;
 		public bool CheckUpdates { get; set; } = true;
 		public bool StartWithWindows { get; set; } = false;
-	}
+        public bool ShowInTaskbar { get; set; } = false;
+        public bool AlwaysTopMost { get; set; } = true;
+        public bool AutoHideWhenUnfocus { get; set; } = true;
+        public ThemeStyle SelectedTheme { get; set; } = ThemeStyle.Default;
+    }
 
 	public static class SettingsLoader
 	{
@@ -19,7 +25,7 @@ namespace ByeByeDPI
 
 		public static void LoadSettings()
 		{
-			string path = Constants.AppSettingsPath;
+			string path = AppConstants.AppSettingsPath;
 
 			if (!File.Exists(path))
 			{
@@ -43,7 +49,7 @@ namespace ByeByeDPI
 		{
 			try
 			{
-				string path = Constants.AppSettingsPath;
+				string path = AppConstants.AppSettingsPath;
 				string folder = Path.GetDirectoryName(path);
 
 				if (!Directory.Exists(folder))

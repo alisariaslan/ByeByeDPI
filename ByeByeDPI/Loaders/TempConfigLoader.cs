@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ByeByeDPI.Constants;
+using System;
 using System.IO;
 using System.Text.Json;
 using System.Windows.Forms;
@@ -8,8 +9,13 @@ namespace ByeByeDPI
 	public class TempConfigModel
 	{
 		public bool AdminPriviligesRequested { get; set; } = false;
+        public DateTime LastUpdateCheck { get; set; }
 
-		public DateTime LastUpdateCheck { get; set; }
+        public int MainFormX { get; set; } = -1;
+        public int MainFormY { get; set; } = -1;
+        public int MainFormWidth { get; set; } = -1;
+        public int MainFormHeight { get; set; } = -1;
+
 	}
 
 	public static class TempConfigLoader
@@ -18,7 +24,7 @@ namespace ByeByeDPI
 
 		public static void LoadSettings()
 		{
-			string path = Constants.TempConfigsPath;
+			string path = AppConstants.TempConfigsPath;
 
 			if (!File.Exists(path))
 			{
@@ -44,7 +50,7 @@ namespace ByeByeDPI
 		{
 			try
 			{
-				string path = Constants.TempConfigsPath;
+				string path = AppConstants.TempConfigsPath;
 				string folder = Path.GetDirectoryName(path);
 
 				if (!Directory.Exists(folder))

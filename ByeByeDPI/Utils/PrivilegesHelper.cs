@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ByeByeDPI.Core;
+using System;
 using System.Diagnostics;
 using System.Security.Principal;
 using System.Threading.Tasks;

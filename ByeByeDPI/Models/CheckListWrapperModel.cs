@@ -1,4 +1,4 @@
-﻿namespace ByeByeDPI.Loaders
+﻿namespace ByeByeDPI.Models
 {
 	public class CheckListWrapperModel
 	{

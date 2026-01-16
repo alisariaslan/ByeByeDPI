@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ByeByeDPI.Constants;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
@@ -27,25 +28,25 @@ namespace ByeByeDPI
 
 		public static List<ParamModel> LoadParams()
 		{
-			if (!File.Exists(Constants.ParamsPath))
+			if (!File.Exists(AppConstants.ParamsPath))
 			{
-				CreateDefaultFile(Constants.ParamsPath);
+				CreateDefaultFile(AppConstants.ParamsPath);
 				return ConvertToModelList(DefaultParams);
 			}
 			try
 			{
-				var json = File.ReadAllText(Constants.ParamsPath);
+				var json = File.ReadAllText(AppConstants.ParamsPath);
 				var dict = JsonSerializer.Deserialize<Dictionary<string, string>>(json);
 				if (dict == null)
 				{
-					CreateDefaultFile(Constants.ParamsPath);
+					CreateDefaultFile(AppConstants.ParamsPath);
 					return ConvertToModelList(DefaultParams);
 				}
 				return ConvertToModelList(dict);
 			}
 			catch
 			{
-				CreateDefaultFile(Constants.ParamsPath);
+				CreateDefaultFile(AppConstants.ParamsPath);
 				return ConvertToModelList(DefaultParams);
 			}
 		}
