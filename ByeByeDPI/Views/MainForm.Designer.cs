@@ -46,6 +46,8 @@
             checkUpdateToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             poisonStyleManager1 = new ReaLTaiizor.Manager.PoisonStyleManager(components);
             poisonStyleExtender1 = new ReaLTaiizor.Controls.PoisonStyleExtender(components);
+            statusStrip1 = new System.Windows.Forms.StatusStrip();
+            toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
             parrotCircleProgressBar1 = new ReaLTaiizor.Controls.ParrotCircleProgressBar();
             royalEllipseButton1_toggle = new ReaLTaiizor.Controls.RoyalEllipseButton();
             royalEllipseButton2_reset = new ReaLTaiizor.Controls.RoyalEllipseButton();
@@ -55,18 +57,20 @@
             listContextMenuStrip.SuspendLayout();
             menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)poisonStyleManager1).BeginInit();
+            statusStrip1.SuspendLayout();
             SuspendLayout();
             // 
             // listBox1_results
             // 
             listBox1_results.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
             listBox1_results.ContextMenuStrip = listContextMenuStrip;
-            listBox1_results.Font = new System.Drawing.Font("Segoe UI Light", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, 0);
+            listBox1_results.Font = new System.Drawing.Font("Segoe UI Light", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, 0);
             listBox1_results.FormattingEnabled = true;
-            listBox1_results.Location = new System.Drawing.Point(20, 110);
+            listBox1_results.Location = new System.Drawing.Point(20, 100);
             listBox1_results.Margin = new System.Windows.Forms.Padding(2);
             listBox1_results.Name = "listBox1_results";
-            listBox1_results.Size = new System.Drawing.Size(200, 172);
+            listBox1_results.SelectionMode = System.Windows.Forms.SelectionMode.None;
+            listBox1_results.Size = new System.Drawing.Size(200, 191);
             listBox1_results.TabIndex = 999;
             listBox1_results.TabStop = false;
             listBox1_results.Visible = false;
@@ -108,6 +112,7 @@
             aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
             aboutToolStripMenuItem.Size = new System.Drawing.Size(111, 22);
             aboutToolStripMenuItem.Text = "About";
+            aboutToolStripMenuItem.Click += aboutToolStripMenuItem_Click;
             // 
             // toolStripMenuItem31
             // 
@@ -119,20 +124,23 @@
             // settingsToolStripMenuItem1
             // 
             settingsToolStripMenuItem1.Name = "settingsToolStripMenuItem1";
-            settingsToolStripMenuItem1.Size = new System.Drawing.Size(178, 22);
+            settingsToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
             settingsToolStripMenuItem1.Text = "Open Settings";
+            settingsToolStripMenuItem1.Click += settingsToolStripMenuItem1_Click;
             // 
             // logsToolStripMenuItem1
             // 
             logsToolStripMenuItem1.Name = "logsToolStripMenuItem1";
-            logsToolStripMenuItem1.Size = new System.Drawing.Size(178, 22);
+            logsToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
             logsToolStripMenuItem1.Text = "Open Logs";
+            logsToolStripMenuItem1.Click += logsToolStripMenuItem1_Click;
             // 
             // paramsToolStripMenuItem1
             // 
             paramsToolStripMenuItem1.Name = "paramsToolStripMenuItem1";
-            paramsToolStripMenuItem1.Size = new System.Drawing.Size(178, 22);
+            paramsToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
             paramsToolStripMenuItem1.Text = "Open Parameters";
+            paramsToolStripMenuItem1.Click += paramsToolStripMenuItem1_Click;
             // 
             // toolStripMenuItem32
             // 
@@ -146,11 +154,32 @@
             checkUpdateToolStripMenuItem1.Name = "checkUpdateToolStripMenuItem1";
             checkUpdateToolStripMenuItem1.Size = new System.Drawing.Size(157, 22);
             checkUpdateToolStripMenuItem1.Text = "Check Update";
+            checkUpdateToolStripMenuItem1.Click += checkUpdateToolStripMenuItem1_Click;
             // 
             // poisonStyleManager1
             // 
             poisonStyleManager1.Owner = this;
             poisonStyleManager1.Style = ReaLTaiizor.Enum.Poison.ColorStyle.Orange;
+            // 
+            // statusStrip1
+            // 
+            poisonStyleExtender1.SetApplyPoisonTheme(statusStrip1, true);
+            statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { toolStripStatusLabel1 });
+            statusStrip1.Location = new System.Drawing.Point(16, 382);
+            statusStrip1.Name = "statusStrip1";
+            statusStrip1.RenderMode = System.Windows.Forms.ToolStripRenderMode.Professional;
+            statusStrip1.Size = new System.Drawing.Size(208, 22);
+            statusStrip1.SizingGrip = false;
+            statusStrip1.TabIndex = 1010;
+            statusStrip1.Text = "statusStrip1";
+            // 
+            // toolStripStatusLabel1
+            // 
+            toolStripStatusLabel1.Font = new System.Drawing.Font("Segoe UI Semilight", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, 0);
+            toolStripStatusLabel1.ForeColor = System.Drawing.Color.DarkOrange;
+            toolStripStatusLabel1.Name = "toolStripStatusLabel1";
+            toolStripStatusLabel1.Size = new System.Drawing.Size(102, 17);
+            toolStripStatusLabel1.Text = "toolStripStatusLabel1";
             // 
             // parrotCircleProgressBar1
             // 
@@ -162,7 +191,7 @@
             parrotCircleProgressBar1.FilledThickness = 40;
             parrotCircleProgressBar1.InterpolationType = System.Drawing.Drawing2D.InterpolationMode.HighQualityBilinear;
             parrotCircleProgressBar1.IsAnimated = false;
-            parrotCircleProgressBar1.Location = new System.Drawing.Point(20, 110);
+            parrotCircleProgressBar1.Location = new System.Drawing.Point(20, 100);
             parrotCircleProgressBar1.Name = "parrotCircleProgressBar1";
             parrotCircleProgressBar1.Percentage = 50;
             parrotCircleProgressBar1.PixelOffsetType = System.Drawing.Drawing2D.PixelOffsetMode.HighQuality;
@@ -184,12 +213,12 @@
             royalEllipseButton1_toggle.BorderColor = System.Drawing.Color.FromArgb(180, 180, 180);
             royalEllipseButton1_toggle.BorderThickness = 3;
             royalEllipseButton1_toggle.DrawBorder = true;
-            royalEllipseButton1_toggle.Font = new System.Drawing.Font("Segoe UI Light", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, 0);
+            royalEllipseButton1_toggle.Font = new System.Drawing.Font("Segoe UI Semilight", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, 0);
             royalEllipseButton1_toggle.ForeColor = System.Drawing.Color.FromArgb(31, 31, 31);
             royalEllipseButton1_toggle.HotTrackColor = System.Drawing.Color.Black;
             royalEllipseButton1_toggle.Image = null;
             royalEllipseButton1_toggle.LayoutFlags = ReaLTaiizor.Util.RoyalLayoutFlags.ImageBeforeText;
-            royalEllipseButton1_toggle.Location = new System.Drawing.Point(20, 110);
+            royalEllipseButton1_toggle.Location = new System.Drawing.Point(20, 100);
             royalEllipseButton1_toggle.Name = "royalEllipseButton1_toggle";
             royalEllipseButton1_toggle.PressedColor = System.Drawing.Color.FromArgb(51, 102, 255);
             royalEllipseButton1_toggle.PressedForeColor = System.Drawing.Color.White;
@@ -212,7 +241,7 @@
             royalEllipseButton2_reset.HotTrackColor = System.Drawing.Color.Transparent;
             royalEllipseButton2_reset.Image = null;
             royalEllipseButton2_reset.LayoutFlags = ReaLTaiizor.Util.RoyalLayoutFlags.ImageBeforeText;
-            royalEllipseButton2_reset.Location = new System.Drawing.Point(20, 330);
+            royalEllipseButton2_reset.Location = new System.Drawing.Point(20, 310);
             royalEllipseButton2_reset.Name = "royalEllipseButton2_reset";
             royalEllipseButton2_reset.PressedColor = System.Drawing.Color.FromArgb(51, 102, 255);
             royalEllipseButton2_reset.PressedForeColor = System.Drawing.Color.White;
@@ -226,16 +255,16 @@
             // 
             royalEllipseButton3_apply.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             royalEllipseButton3_apply.BackColor = System.Drawing.Color.White;
-            royalEllipseButton3_apply.BorderColor = System.Drawing.Color.FromArgb(180, 180, 180);
+            royalEllipseButton3_apply.BorderColor = System.Drawing.Color.DarkOrange;
             royalEllipseButton3_apply.BorderThickness = 3;
             royalEllipseButton3_apply.DrawBorder = true;
             royalEllipseButton3_apply.Enabled = false;
             royalEllipseButton3_apply.Font = new System.Drawing.Font("Segoe UI Semilight", 9.75F);
-            royalEllipseButton3_apply.ForeColor = System.Drawing.Color.FromArgb(31, 31, 31);
+            royalEllipseButton3_apply.ForeColor = System.Drawing.Color.DarkOrange;
             royalEllipseButton3_apply.HotTrackColor = System.Drawing.Color.Transparent;
             royalEllipseButton3_apply.Image = null;
             royalEllipseButton3_apply.LayoutFlags = ReaLTaiizor.Util.RoyalLayoutFlags.ImageBeforeText;
-            royalEllipseButton3_apply.Location = new System.Drawing.Point(90, 330);
+            royalEllipseButton3_apply.Location = new System.Drawing.Point(90, 310);
             royalEllipseButton3_apply.Name = "royalEllipseButton3_apply";
             royalEllipseButton3_apply.PressedColor = System.Drawing.Color.FromArgb(51, 102, 255);
             royalEllipseButton3_apply.PressedForeColor = System.Drawing.Color.White;
@@ -258,7 +287,7 @@
             royalEllipseButton4_next.HotTrackColor = System.Drawing.Color.Transparent;
             royalEllipseButton4_next.Image = null;
             royalEllipseButton4_next.LayoutFlags = ReaLTaiizor.Util.RoyalLayoutFlags.ImageBeforeText;
-            royalEllipseButton4_next.Location = new System.Drawing.Point(160, 330);
+            royalEllipseButton4_next.Location = new System.Drawing.Point(160, 310);
             royalEllipseButton4_next.Name = "royalEllipseButton4_next";
             royalEllipseButton4_next.PressedColor = System.Drawing.Color.FromArgb(51, 102, 255);
             royalEllipseButton4_next.PressedForeColor = System.Drawing.Color.White;
@@ -273,13 +302,14 @@
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             ClientSize = new System.Drawing.Size(240, 420);
+            Controls.Add(statusStrip1);
             Controls.Add(royalEllipseButton4_next);
             Controls.Add(royalEllipseButton3_apply);
             Controls.Add(royalEllipseButton2_reset);
             Controls.Add(menuStrip1);
+            Controls.Add(listBox1_results);
             Controls.Add(parrotCircleProgressBar1);
             Controls.Add(royalEllipseButton1_toggle);
-            Controls.Add(listBox1_results);
             Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, 0);
             Icon = (System.Drawing.Icon)resources.GetObject("$this.Icon");
             MainMenuStrip = menuStrip1;
@@ -295,6 +325,8 @@
             menuStrip1.ResumeLayout(false);
             menuStrip1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)poisonStyleManager1).EndInit();
+            statusStrip1.ResumeLayout(false);
+            statusStrip1.PerformLayout();
             ResumeLayout(false);
             PerformLayout();
 
@@ -326,6 +358,8 @@
         private System.Windows.Forms.ToolStripMenuItem paramsToolStripMenuItem1;
         private System.Windows.Forms.ToolStripMenuItem checkUpdateToolStripMenuItem1;
         private System.Windows.Forms.ToolTip toolTip1;
+        private System.Windows.Forms.StatusStrip statusStrip1;
+        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel1;
     }
 }
 

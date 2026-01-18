@@ -8,17 +8,29 @@ namespace ByeByeDPI.Utils
 {
     public static class AccessibilityChecker
     {
+        /// <summary>
+        /// Checks the accessibility of a list of URLs.
+        /// </summary>
+        /// <param name="client"></param>
+        /// <param name="list"></param>
+        /// <param name="onMessage"></param>
+        /// <param name="onProgress"></param>
+        /// <param name="onStatus"></param>
+        /// <returns></returns>
         public static async Task CheckAsync(
             HttpClient client,
             List<CheckListWrapperModel> list,
             Action<string> onMessage,
-            Action<int, int> onProgress)
+            Action<int, int> onProgress,
+            Action<string> onStatus)
         {
             int total = list.Count;
             int done = 0;
 
             foreach (var item in list)
             {
+                onStatus?.Invoke($"Checking {item.Item.Name}...");
+
                 bool accessible = false;
                 try
                 {

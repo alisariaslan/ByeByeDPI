@@ -10,13 +10,16 @@ namespace ByeByeDPI
 	public class SettingsModel
 	{
 		public string ChosenParam { get; set; } = "";
-		public bool HideToTray { get; set; } = false;
+		public bool HideToTray { get; set; } = true;
 		public bool CheckUpdates { get; set; } = true;
 		public bool StartWithWindows { get; set; } = false;
         public bool ShowInTaskbar { get; set; } = false;
         public bool AlwaysTopMost { get; set; } = true;
-        public bool AutoHideWhenUnfocus { get; set; } = true;
+        public bool AutoHideWhenUnfocus { get; set; } = true; 
+		public bool EnableGlobalHotkey { get; set; } = false;
         public ThemeStyle SelectedTheme { get; set; } = ThemeStyle.Default;
+        public System.Windows.Forms.Keys HotkeyModifiers { get; set; } = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Shift;
+        public System.Windows.Forms.Keys HotkeyKey { get; set; } = System.Windows.Forms.Keys.B;
     }
 
 	public static class SettingsLoader

@@ -1,4 +1,5 @@
 ﻿using ByeByeDPI.Constants;
+using ByeByeDPI.Services;
 using ByeByeDPI.Utils;
 using System;
 using System.Windows.Forms;
@@ -13,6 +14,7 @@ namespace ByeByeDPI.Core
         private TrayIconManager _trayManager;
         private bool _trayMinimizedNotifyShown;
         private readonly UpdateService _updateService = new UpdateService();
+        private readonly HotkeyService _hotkeyService = new HotkeyService();
 
         public TrayApplicationContext()
 		{
@@ -93,6 +95,7 @@ namespace ByeByeDPI.Core
 
             // Cleanup services and resources
             _updateService.StopPeriodicCheck();
+            _hotkeyService.Dispose();
             _trayManager.Dispose();
 
             if (_form != null && !_form.IsDisposed)
@@ -123,6 +126,28 @@ namespace ByeByeDPI.Core
         }
 
         public UpdateService GetUpdateService() => _updateService;
+
+        #region Global Hotkey
+
+        public bool ReloadGlobalHotkey() => TryRegisterGlobalHotkey();
+
+        private bool TryRegisterGlobalHotkey()
+        {
+            if (!SettingsLoader.Current.EnableGlobalHotkey || SettingsLoader.Current.HotkeyKey == Keys.None)
+                return false;
+
+            _hotkeyService.HotkeyPressed -= ToggleMainWindowFromHotkey;
+            _hotkeyService.HotkeyPressed += ToggleMainWindowFromHotkey;
+            return _hotkeyService.Register(SettingsLoader.Current.HotkeyModifiers, SettingsLoader.Current.HotkeyKey);
+        }
+
+        private void ToggleMainWindowFromHotkey()
+        {
+            if (ApplicationExiting) return;
+            if (_form.Visible) HideMainWindow(); else ShowMainWindow();
+        }
+
+        #endregion
 
     }
 }

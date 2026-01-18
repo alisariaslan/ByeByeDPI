@@ -1,8 +1,10 @@
 ﻿using ByeByeDPI.Constants;
 using ByeByeDPI.Core;
+using ByeByeDPI.Html;
 using ByeByeDPI.Models;
 using ByeByeDPI.Services;
 using ByeByeDPI.Utils;
+using ByeByeDPI.Views;
 using ReaLTaiizor.Forms;
 using System;
 using System.Diagnostics;
@@ -24,7 +26,11 @@ namespace ByeByeDPI
 
             _trayApplicationContext = trayApplicationContext;
             _viewModel = new MainFormViewModel(trayApplicationContext);
-            _viewModel.OnMessage += MessageWriteLine;
+            _viewModel.OnMessage += message =>
+            {
+                listBox1_results.Items.Add(message);
+                listBox1_results.TopIndex = listBox1_results.Items.Count - 1;
+            };
 
             _viewModel.OnStageChanged += stage =>
             {
@@ -41,9 +47,12 @@ namespace ByeByeDPI
                 RunOnSafeUI(() => listBox1_results.Items.Clear());
             };
 
-            _viewModel.LoadData();
+            _viewModel.OnStatusChanged += newStatus =>
+            {
+                RunOnSafeUI(() => toolStripStatusLabel1.Text = newStatus);
+            };
 
-            ThemeHelper.ApplySavedThemeToForm(this, poisonStyleManager1);
+            _viewModel.LoadData();
 
             UpdateStage(FormStage.Toggle);
 
@@ -58,10 +67,14 @@ namespace ByeByeDPI
             _layoutManager = new FormLayoutManager(this);
         }
 
+        public void ResetFormPositionAndSize() => _layoutManager.ResetToDefault();
         private bool IsFirtTime => string.IsNullOrWhiteSpace(SettingsLoader.Current.ChosenParam);
         private bool IsRunning => _viewModel.IsGoodbyeDPIRunning;
 
-
+        /// <summary>
+        /// Safely runs an action on the UI thread
+        /// </summary>
+        /// <param name="action"></param>
         private void RunOnSafeUI(Action action)
         {
             if (IsDisposed || !IsHandleCreated)
@@ -73,12 +86,11 @@ namespace ByeByeDPI
                 action();
         }
 
-
         #region FORM LIFECYCLE
         private async void MainForm_Load(object sender, EventArgs e)
         {
             _layoutManager.OnLoad();
-
+            ApplyFormBehaviorSettings();
         }
         private void MainForm_Shown(object sender, EventArgs e)
         {
@@ -127,8 +139,11 @@ namespace ByeByeDPI
         }
         #endregion
 
-
-
+        /// <summary>
+        /// Updates the progress bar based on current and total values
+        /// </summary>
+        /// <param name="current"></param>
+        /// <param name="total"></param>
         private void UpdateProgressBar(int current, int total)
         {
             if (total <= 0) return;
@@ -148,10 +163,23 @@ namespace ByeByeDPI
             }
         }
 
+        /// <summary>
+        /// Refreshes the current stage of the form
+        /// </summary>
+        public void RefreshStage()
+        {
+            var latestStage = _viewModel.CurrentStage;
+            UpdateStage(latestStage);
+        }
 
-
+        /// <summary>
+        /// Updates the form's UI based on the current stage
+        /// </summary>
+        /// <param name="stage"></param>
         private void UpdateStage(FormStage stage)
         {
+            toolStripStatusLabel1.Text = "";
+
             royalEllipseButton1_toggle.Visible = false;
             parrotCircleProgressBar1.Visible = false;
             listBox1_results.Visible = false;
@@ -200,42 +228,45 @@ namespace ByeByeDPI
             UpdateTheme(stage);
         }
 
+        /// <summary>
+        /// Updates the form's theme based on the current stage
+        /// </summary>
+        /// <param name="stage"></param>
         private void UpdateTheme(FormStage stage)
         {
+            ThemeHelper.ApplySavedThemeToForm(this, poisonStyleManager1);
+
             parrotCircleProgressBar1.FilledColor = AppColors.MainColor;
 
             royalEllipseButton1_toggle.BackColor = AppColors.GetFormColor();
             royalEllipseButton1_toggle.ForeColor = royalEllipseButton1_toggle.Enabled ? AppColors.GetForeColor() : AppColors.GetAlternateColor();
-            royalEllipseButton1_toggle.HotTrackColor = AppColors.GetBackControlColor();
+            royalEllipseButton1_toggle.HotTrackColor = AppColors.GetButtonBackColor();
             royalEllipseButton1_toggle.PressedColor = AppColors.GetButtonActiveColor();
             royalEllipseButton1_toggle.BorderColor = royalEllipseButton1_toggle.Enabled ? AppColors.GetForeColor() : AppColors.GetAlternateColor();
 
             royalEllipseButton2_reset.BackColor = AppColors.GetFormColor();
             royalEllipseButton2_reset.ForeColor = royalEllipseButton2_reset.Enabled ? AppColors.GetForeColor() : AppColors.GetAlternateColor();
-            royalEllipseButton2_reset.HotTrackColor = AppColors.GetBackControlColor();
+            royalEllipseButton2_reset.HotTrackColor = AppColors.GetButtonBackColor();
             royalEllipseButton2_reset.PressedColor = AppColors.GetButtonActiveColor();
             royalEllipseButton2_reset.BorderColor = royalEllipseButton2_reset.Enabled ? AppColors.GetForeColor() : AppColors.GetAlternateColor();
 
             royalEllipseButton3_apply.BackColor = AppColors.GetFormColor();
-            royalEllipseButton3_apply.ForeColor = royalEllipseButton3_apply.Enabled ? AppColors.GetForeColor() : AppColors.GetAlternateColor();
-            royalEllipseButton3_apply.HotTrackColor = AppColors.GetBackControlColor();
+            royalEllipseButton3_apply.ForeColor = royalEllipseButton3_apply.Enabled ? AppColors.MainColor : AppColors.GetAlternateColor();
+            royalEllipseButton3_apply.HotTrackColor = AppColors.GetButtonBackColor();
             royalEllipseButton3_apply.PressedColor = AppColors.GetButtonActiveColor();
-            royalEllipseButton3_apply.BorderColor = royalEllipseButton3_apply.Enabled ? AppColors.GetForeColor() : AppColors.GetAlternateColor();
+            royalEllipseButton3_apply.BorderColor = royalEllipseButton3_apply.Enabled ? AppColors.MainColor : AppColors.GetAlternateColor();
 
             royalEllipseButton4_next.BackColor = AppColors.GetFormColor();
             royalEllipseButton4_next.ForeColor = royalEllipseButton4_next.Enabled ? AppColors.GetForeColor() : AppColors.GetAlternateColor();
-            royalEllipseButton4_next.HotTrackColor = AppColors.GetBackControlColor();
+            royalEllipseButton4_next.HotTrackColor = AppColors.GetButtonBackColor();
             royalEllipseButton4_next.PressedColor = AppColors.GetButtonActiveColor();
             royalEllipseButton4_next.BorderColor = royalEllipseButton4_next.Enabled ? AppColors.GetForeColor() : AppColors.GetAlternateColor();
 
             listBox1_results.BackColor = AppColors.GetBackColor();
             listBox1_results.ForeColor = AppColors.GetForeColor();
 
-
             if (stage == FormStage.Toggle)
             {
-
-                // --- Toggle text / renk mantığı
                 if (IsFirtTime && !IsRunning)
                 {
                     royalEllipseButton1_toggle.ForeColor = AppColors.GetForeColor();
@@ -257,24 +288,11 @@ namespace ByeByeDPI
             }
         }
 
-        private void MessageWriteLine(string msg)
-        {
-            if (IsDisposed || !IsHandleCreated)
-                return;
-
-            if (InvokeRequired)
-            {
-                BeginInvoke(new Action(() => MessageWriteLine(msg)));
-                return;
-            }
-
-            listBox1_results.Items.Add(msg);
-            listBox1_results.TopIndex = listBox1_results.Items.Count - 1;
-        }
-
-
-        public void ResetFormPositionAndSize() => _layoutManager.ResetToDefault();
-
+        /// <summary>
+        /// Toggles the GoodbyeDPI state when the toggle button is clicked
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private async void royalEllipseButton1_toggle_Click(object sender, EventArgs e)
         {
             if (!(await PrivilegesHelper.EnsureAdministrator()))
@@ -310,6 +328,11 @@ namespace ByeByeDPI
             }
         }
 
+        /// <summary>
+        /// Closes dpi, then resets all parameter settings when the reset button is clicked
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private async void royalEllipseButton2_reset_Click(object sender, EventArgs e)
         {
             if (!(await PrivilegesHelper.EnsureAdministrator()))
@@ -338,6 +361,11 @@ namespace ByeByeDPI
             }
         }
 
+        /// <summary>
+        /// Applies the current parameter when the apply button is clicked
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private async void royalEllipseButton3_apply_Click(object sender, EventArgs e)
         {
             var (reachable, unreachable) = _viewModel.GetAccessibilityStats();
@@ -371,9 +399,13 @@ namespace ByeByeDPI
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Error);
             }
-
         }
 
+        /// <summary>
+        /// Next parameter testing when the next button is clicked
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private async void royalEllipseButton4_next_Click(object sender, EventArgs e)
         {
             if (_viewModel.CurrentStage == FormStage.Loading)
@@ -397,6 +429,115 @@ namespace ByeByeDPI
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Error);
             }
+        }
+
+        private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ShowHtmlDialog(AboutHtml.GetTitle(), AboutHtml.GetHtml());
+        }
+
+        private void ShowHtmlDialog(string title, string html)
+        {
+            _suppressAutoHide = true;
+            using (var dlg = new WebDialog(title, html))
+            {
+                dlg.StartPosition = FormStartPosition.CenterParent;
+                dlg.TopMost = true;
+                dlg.ShowDialog(this);
+            }
+            _suppressAutoHide = false;
+        }
+
+        private void settingsToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            _suppressAutoHide = true;
+            using (var f = new SettingsForm(this))
+            {
+                f.StartPosition = FormStartPosition.CenterParent;
+                f.TopMost = true;
+                f.ShowDialog(this); // parent VERME
+            }
+            _suppressAutoHide = false;
+        }
+
+        private async void checkUpdateToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            checkUpdateToolStripMenuItem1.Enabled = false;
+
+            try
+            {
+                var updateService = _trayApplicationContext.GetUpdateService();
+                var updateWrapper = await updateService.CheckForUpdateAsync(false);
+
+                if (!updateWrapper.Success)
+                {
+                    MessageBox.Show(
+                        $"Failed to check updates:\n{updateWrapper.ErrorMessage}",
+                        "Update Error",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Error);
+                }
+                else if (updateWrapper.UpdateInfo != null)
+                {
+                    var info = updateWrapper.UpdateInfo;
+                    var result = MessageBox.Show(
+                        $"New version v{info.Version} ({info.BuildNumber}) is available!\n\nNotes: {info.Notes}\n\nDownload now?",
+                        "Update Found",
+                        MessageBoxButtons.YesNo,
+                        MessageBoxIcon.Information);
+
+                    if (result == DialogResult.Yes)
+                        await updateService.DownloadAndRunUpdateAsync();
+                }
+                else
+                {
+                    MessageBox.Show(
+                        "Your application is up to date.",
+                        "No Update",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Information);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(
+                    $"Unexpected error:\n{ex.Message}",
+                    "Error",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+            }
+            finally
+            {
+                checkUpdateToolStripMenuItem1.Enabled = true;
+            }
+        }
+
+
+
+        public void ApplyFormBehaviorSettings(bool showWarnings = false)
+        {
+            this.TopMost = SettingsLoader.Current.AlwaysTopMost;
+            this.ShowInTaskbar = SettingsLoader.Current.ShowInTaskbar;
+            if (SettingsLoader.Current.AutoHideWhenUnfocus && showWarnings)
+            {
+                MessageBox.Show(
+                    "Auto-hide is enabled. App will temporarily minimize when it loses focus.",
+                    "Info",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Information
+                );
+            }
+            _suppressAutoHide = false;
+        }
+
+        private void logsToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void paramsToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

@@ -13,10 +13,11 @@ namespace ByeByeDPI.Constants
         // ----- Light Theme -----
         public static Color LightFormColor { get; } = Color.White;
         public static Color LightBackColor { get; } = Color.White;
-        public static Color LightForeColor { get; } = Color.Black;
+        public static Color LightForeColor { get; } = Color.FromArgb(90, 90, 90);
         public static Color LightAlternateColor { get; } = Color.FromArgb(230, 245, 255); // Zebra
         public static Color LightLineNumberBackground { get; } = Color.FromArgb(220, 220, 220);
         public static Color LightButtonActive { get; } = Color.Orange;
+        public static Color LightButtonBackColor { get; } = Color.FromArgb(255, 230, 210);
         public static Color LightSelection { get; } = Color.LightSkyBlue;
 
         // ----- Dark Theme -----
@@ -26,6 +27,7 @@ namespace ByeByeDPI.Constants
         public static Color DarkAlternateColor { get; } = Color.FromArgb(35, 35, 35); // Zebra
         public static Color DarkLineNumberBackground { get; } = Color.FromArgb(50, 50, 50);
         public static Color DarkButtonActive { get; } = Color.DarkOrange;
+        public static Color DarkButtonBackColor { get; } = Color.FromArgb(30, 30, 30);
         public static Color DarkSelection { get; } = Color.DodgerBlue;
 
         // ----- Highlight / Selection -----
@@ -42,6 +44,7 @@ namespace ByeByeDPI.Constants
         public static Color GetAlternateColor() => IsDark ? DarkAlternateColor : LightAlternateColor;
         public static Color GetBackControlColor() => IsDark ? DarkLineNumberBackground : LightBackColor;
         public static Color GetButtonActiveColor() => IsDark ? DarkButtonActive : LightButtonActive;
+        public static Color GetButtonBackColor() => IsDark ? DarkButtonBackColor : LightButtonBackColor;
         public static Color GetSelectionColor() => IsDark ? DarkSelection : LightSelection;
         public static Color GetLineNumberBackground() => IsDark ? DarkLineNumberBackground : LightLineNumberBackground;
 

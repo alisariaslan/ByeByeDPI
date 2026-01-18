@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(WebDialog));
             poisonStyleManager1 = new ReaLTaiizor.Manager.PoisonStyleManager(components);
             poisonStyleExtender1 = new ReaLTaiizor.Controls.PoisonStyleExtender(components);
             ((System.ComponentModel.ISupportInitialize)poisonStyleManager1).BeginInit();
@@ -43,11 +44,18 @@
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             ClientSize = new System.Drawing.Size(540, 420);
+            Icon = (System.Drawing.Icon)resources.GetObject("$this.Icon");
+            MaximizeBox = false;
+            MaximumSize = new System.Drawing.Size(540, 420);
+            MinimizeBox = false;
             MinimumSize = new System.Drawing.Size(540, 420);
             Name = "WebDialog";
             ShadowType = ReaLTaiizor.Enum.Poison.FormShadowType.AeroShadow;
+            ShowIcon = false;
+            ShowInTaskbar = false;
             StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             Text = "Title";
+            TopMost = true;
             ((System.ComponentModel.ISupportInitialize)poisonStyleManager1).EndInit();
             ResumeLayout(false);
         }

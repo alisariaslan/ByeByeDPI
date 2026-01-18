@@ -14,6 +14,7 @@ namespace ByeByeDPI.Core
 
     public class MainFormViewModel : IDisposable
     {
+        public event Action<string> OnStatusChanged;
         public event Action<string> OnMessage;
         public event Action<FormStage> OnStageChanged;
         public event Action<int, int> OnProgressChanged;
@@ -125,7 +126,7 @@ namespace ByeByeDPI.Core
                     citem.IsAccesible = false;
                 using var httpClient = HttpClientFactory.CreateNoRedirectClient();
                 Debug.WriteLine($"Warmup started: {item.Name}");
-                bool ready = await NetworkWarmupHelper.WaitAsync(httpClient);
+                bool ready = await NetworkWarmupHelper.WaitAsync(httpClient, OnStatusChanged);
                 if (!ready)
                 {
                     Debug.WriteLine($"Warmup failed: {item.Name}");
@@ -139,7 +140,8 @@ namespace ByeByeDPI.Core
                     httpClient,
                     _checkList,
                     OnMessage,
-                    OnProgressChanged
+                    OnProgressChanged,
+                    OnStatusChanged
                 );
                 await CleanupAsync();
                 OnProgressChanged?.Invoke(0, 1);
@@ -147,19 +149,18 @@ namespace ByeByeDPI.Core
                 Debug.WriteLine($"Test completed: {item.Name}");
                 return true;
             }
-            catch (TaskCanceledException)
+            catch (TaskCanceledException )
             {
                 Debug.WriteLine($"⚠ Warmup or network request timed out: {item.Name}");
                 await CleanupAsync();
                 CurrentStage = FormStage.Result;
                 return false;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                MessageBox.Show($"❌ An error occurred: {ex.Message}");
                 await CleanupAsync();
                 CurrentStage = FormStage.Result;
-                return false;
+                throw;
             }
         }
 

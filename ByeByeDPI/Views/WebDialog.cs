@@ -156,42 +156,42 @@ namespace ByeByeDPI.Views
         }
 
         #region UI LOGIC (RESIZE & DRAG)
-        protected override void OnResize(EventArgs e)
-        {
-            try
-            {
-                base.OnResize(e);
-                if (this.WindowState == FormWindowState.Maximized)
-                {
-                    var screen = Screen.FromControl(this).WorkingArea;
-                    this.Bounds = screen;
-                }
-            }
-            catch { /* Non-critical error */ }
-        }
+        //protected override void OnResize(EventArgs e)
+        //{
+        //    try
+        //    {
+        //        base.OnResize(e);
+        //        if (this.WindowState == FormWindowState.Maximized)
+        //        {
+        //            var screen = Screen.FromControl(this).WorkingArea;
+        //            this.Bounds = screen;
+        //        }
+        //    }
+        //    catch { /* Non-critical error */ }
+        //}
 
-        protected override void WndProc(ref Message m)
-        {
-            const int WM_NCHITTEST = 0x84;
-            const int HTCLIENT = 1;
+        //protected override void WndProc(ref Message m)
+        //{
+        //    const int WM_NCHITTEST = 0x84;
+        //    const int HTCLIENT = 1;
 
-            if (m.Msg == WM_NCHITTEST)
-            {
-                base.WndProc(ref m);
-                if ((int)m.Result == HTCLIENT)
-                {
-                    Point cursor = PointToClient(Cursor.Position);
-                    IntPtr hit = ResizeHitTestHelper.GetHitTest(this, cursor, 8);
-                    if (hit != IntPtr.Zero)
-                    {
-                        m.Result = hit;
-                        return;
-                    }
-                }
-                return;
-            }
-            base.WndProc(ref m);
-        }
+        //    if (m.Msg == WM_NCHITTEST)
+        //    {
+        //        base.WndProc(ref m);
+        //        if ((int)m.Result == HTCLIENT)
+        //        {
+        //            Point cursor = PointToClient(Cursor.Position);
+        //            IntPtr hit = ResizeHitTestHelper.GetHitTest(this, cursor, 8);
+        //            if (hit != IntPtr.Zero)
+        //            {
+        //                m.Result = hit;
+        //                return;
+        //            }
+        //        }
+        //        return;
+        //    }
+        //    base.WndProc(ref m);
+        //}
         #endregion
     }
 }
