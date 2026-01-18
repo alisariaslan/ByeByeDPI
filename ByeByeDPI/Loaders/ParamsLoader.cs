@@ -10,7 +10,7 @@ namespace ByeByeDPI
 	public class ParamModel
 	{
 		public string Name { get; set; }
-		public string Param { get; set; }
+		public string Value { get; set; }
 	}
 
 	public static class ParamsLoader
@@ -77,7 +77,7 @@ namespace ByeByeDPI
 				list.Add(new ParamModel
 				{
 					Name = kvp.Key,
-					Param = kvp.Value
+					Value = kvp.Value
 				});
 			}
 			return list;

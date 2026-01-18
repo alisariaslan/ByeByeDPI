@@ -103,7 +103,7 @@ namespace ByeByeDPI.Views
         {
             try
             {
-                string backColor = ColorTranslator.ToHtml(AppColors.GetDeeperBackColor());
+                string backColor = ColorTranslator.ToHtml(AppColors.GetFormColor());
                 string foreColor = ColorTranslator.ToHtml(AppColors.GetForeColor());
                 const string linkColor = "#2196F3";
 

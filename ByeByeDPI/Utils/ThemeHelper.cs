@@ -27,19 +27,16 @@ namespace ByeByeDPI.Utils
             return savedTheme;
         }
 
-        public static void ApplySavedThemeToForm(Form form, PoisonStyleManager poisonStyleManager)
+        public static void ApplySavedThemeToForm(PoisonForm form, PoisonStyleManager poisonStyleManager)
         {
             if (form is null) throw new Exception("Form is null");
             if (poisonStyleManager is null) throw new Exception("PoisonStyleManager is null");
 
             var theme = GetTheme();
-            if (form is PoisonForm poisonForm)
-            {
-                poisonForm.Theme = theme;
-                poisonStyleManager.Theme = theme;
-            }
-            else
-                throw new Exception("Form is not a PoisonForm");
+
+            form.Theme = theme;
+            poisonStyleManager.Theme = theme;
+            form.Style = AppColors.MainStyle;
 
             switch (theme)
             {
@@ -98,7 +95,7 @@ namespace ByeByeDPI.Utils
                     }
                 }
             }
-            catch {  }
+            catch { }
 
             return ThemeStyle.Light;
         }

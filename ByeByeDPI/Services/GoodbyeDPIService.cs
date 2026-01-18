@@ -3,13 +3,14 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace ByeByeDPI.Services
 {
     public class GoodbyeDPIService
     {
         private const string GoodbyeDPITaskName = "GoodbyeDPI_Runner";
+
 
         public event Action<string> OnMessage;
 
@@ -20,28 +21,20 @@ namespace ByeByeDPI.Services
 
         public async System.Threading.Tasks.Task ToggleAsync(
             string exePath,
-            string? chosenParamName,
-            Func<string, string?> paramResolver,
-            Func<System.Threading.Tasks.Task> runParamSelectionWorkflow)
+            string paramName,
+            string paramValue)
         {
             if (IsRunning)
             {
                 await StopAsync();
-                return;
-            }
-
-            if (!string.IsNullOrWhiteSpace(chosenParamName))
-            {
-                var param = paramResolver(chosenParamName);
-                await StartAsync(exePath, param);
             }
             else
             {
-                await runParamSelectionWorkflow();
+                await StartAsync(exePath, paramName, paramValue);
             }
         }
 
-        public async System.Threading.Tasks.Task StartAsync(string exePath, string arguments = "")
+        public async System.Threading.Tasks.Task StartAsync(string exePath, string paramName, string arguments)
         {
             if (IsRunning)
             {
@@ -49,7 +42,7 @@ namespace ByeByeDPI.Services
                 return;
             }
 
-            if (!await PrivilegesHelper.EnsureAdministrator(OnMessage))
+            if (!await PrivilegesHelper.EnsureAdministrator())
                 return;
 
             try
@@ -81,18 +74,16 @@ namespace ByeByeDPI.Services
 
                 ts.RootFolder.RegisterTaskDefinition(GoodbyeDPITaskName, task.Definition);
                 task.Run();
-
-                OnMessage?.Invoke($"GoodbyeDPI started with parameters: {arguments}");
             }
             catch (Exception ex)
             {
-                OnMessage?.Invoke($"Failed to start GoodbyeDPI: {ex.Message}");
+                MessageBox.Show($"Failed to start GoodbyeDPI: {ex.Message}");
             }
         }
 
         public async System.Threading.Tasks.Task StopAsync()
         {
-            if (!await PrivilegesHelper.EnsureAdministrator(OnMessage))
+            if (!await PrivilegesHelper.EnsureAdministrator())
                 return;
 
             try
@@ -103,7 +94,7 @@ namespace ByeByeDPI.Services
                 if (task?.State == TaskState.Running)
                 {
                     task.Stop();
-                    OnMessage?.Invoke("GoodbyeDPI task stopped.");
+                    Console.WriteLine("GoodbyeDPI task stopped.");
                 }
 
                 foreach (var p in Process.GetProcessesByName("goodbyedpi"))
@@ -115,13 +106,13 @@ namespace ByeByeDPI.Services
             }
             catch (Exception ex)
             {
-                OnMessage?.Invoke($"Failed to stop GoodbyeDPI: {ex.Message}");
+                Console.WriteLine($"Failed to stop GoodbyeDPI: {ex.Message}");
             }
         }
 
         public async System.Threading.Tasks.Task DeleteTaskAsync()
         {
-            if (!await PrivilegesHelper.EnsureAdministrator(OnMessage))
+            if (!await PrivilegesHelper.EnsureAdministrator())
                 return;
 
             try
@@ -130,12 +121,12 @@ namespace ByeByeDPI.Services
                 if (ts.GetTask(GoodbyeDPITaskName) != null)
                 {
                     ts.RootFolder.DeleteTask(GoodbyeDPITaskName);
-                    OnMessage?.Invoke("GoodbyeDPI task deleted.");
+                    Debug.WriteLine($"{GoodbyeDPITaskName} task deleted.");
                 }
             }
             catch (Exception ex)
             {
-                OnMessage?.Invoke($"Failed to delete task: {ex.Message}");
+                MessageBox.Show($"Failed to delete task: {ex.Message}");
             }
         }
 
@@ -145,7 +136,7 @@ namespace ByeByeDPI.Services
 
         private async System.Threading.Tasks.Task CreateRunnerTaskAsync(TaskService ts, string exePath)
         {
-            if (!await PrivilegesHelper.EnsureAdministrator(OnMessage))
+            if (!await PrivilegesHelper.EnsureAdministrator())
                 return;
 
             var td = ts.NewTask();
