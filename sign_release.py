@@ -6,8 +6,8 @@ from datetime import datetime
 from config import PFX_PASSWORD
 
 # --- CONFIGURATION ---
-release_path = r"HelloClipboard\bin\Release\net10.0-windows"
-pfx_out = r"HelloClipboard_files_codesign.pfx"
+release_path = r"ByeByeDPI\bin\Release\net10.0-windows"
+pfx_out = r"ByeByeDPI_files_codesign.pfx"
 cert_subject = "CN=Ali SARIASLAN"
 signtool_path = "signtool"  # veya tam yolu: r"C:\Program Files (x86)\Windows Kits\10\bin\x64\signtool.exe"
 timestamp_url = "http://timestamp.sectigo.com"
@@ -40,7 +40,7 @@ print("Exported PFX.")
 
 # 3) Build list of files to sign
 files_to_sign = [
-    os.path.join(release_path, "HelloClipboard.exe"),
+    os.path.join(release_path, "ByeByeDPI.exe"),
     os.path.join(release_path, "goodbyedpi.exe"),
     os.path.join(release_path, "WinDivert64.sys"),
     os.path.join(release_path, "WinDivert.dll")

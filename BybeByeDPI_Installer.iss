@@ -2,7 +2,7 @@
 
 [Setup]
 AppName=ByeByeDPI
-AppVersion=1.0.0.11
+AppVersion=1.1.0.12
 DefaultDirName={commonpf}\ByeByeDPI
 DefaultGroupName=ByeByeDPI
 OutputBaseFilename=ByeByeDPI_Installer
@@ -13,17 +13,17 @@ DisableDirPage=yes
 
 [Files]
 ; Main executables and config
-Source: "C:\Users\yearn\source\repos\ByeByeDPI\ByeByeDPI\bin\Release\ByeByeDPI.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\yearn\source\repos\ByeByeDPI\ByeByeDPI\bin\Release\ByeByeDPI.exe.config"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\yearn\source\repos\ByeByeDPI\ByeByeDPI\bin\Release\ByeByeDPI.exe.manifest"; DestDir: "{app}"; Flags: ignoreversion
-
-; GoodbyeDPI executable
-Source: "C:\Users\yearn\source\repos\ByeByeDPI\ByeByeDPI\bin\Release\goodbyedpi.exe"; DestDir: "{app}"; Flags: ignoreversion restartreplace
+Source: ".\ByeByeDPI\bin\Release\net10.0-windows\ByeByeDPI.exe"; DestDir: "{app}"; Flags: ignoreversion
 
 ; DLLs and support files
-Source: "C:\Users\yearn\source\repos\ByeByeDPI\ByeByeDPI\bin\Release\*.dll"; DestDir: "{app}"; Flags: ignoreversion restartreplace
-Source: "C:\Users\yearn\source\repos\ByeByeDPI\ByeByeDPI\bin\Release\*.pdb"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\yearn\source\repos\ByeByeDPI\ByeByeDPI\bin\Release\*.sys"; DestDir: "{app}"; Flags: ignoreversion restartreplace
+Source: ".\ByeByeDPI\bin\Release\net10.0-windows\*.dll"; DestDir: "{app}"; Flags: ignoreversion restartreplace
+
+; Framework JSON's (Required)
+Source: ".\ByeByeDPI\bin\Release\net10.0-windows\ByeByeDPI.runtimeconfig.json"; DestDir: "{app}"; Flags: ignoreversion
+Source: ".\ByeByeDPI\bin\Release\net10.0-windows\ByeByeDPI.deps.json"; DestDir: "{app}"; Flags: ignoreversion
+
+; GoodbyeDPI executable
+Source: ".\ByeByeDPI\bin\Release\net10.0-windows\goodbyedpi.exe"; DestDir: "{app}"; Flags: ignoreversion restartreplace
 
 [Icons]
 Name: "{group}\ByeByeDPI"; Filename: "{app}\ByeByeDPI.exe"

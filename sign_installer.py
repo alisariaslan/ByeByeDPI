@@ -7,8 +7,8 @@ import config  # burada config.py'de PFX_PASSWORD tanımlı olmalı
 import sys
 
 # ---------------- CONFIG ----------------
-installer_path = Path("Output/HelloClipboard_Installer.exe")
-pfx_out = Path("HelloClipboard_Installer_codesign.pfx")
+installer_path = Path("Output/ByeByeDPI_Installer.exe")
+pfx_out = Path("ByeByeDPI_Installer_codesign.pfx")
 cert_subject = "CN=Ali SARIASLAN"
 signtool_path = "signtool"  # veya signtool.exe tam yolu
 timestamp_url = "http://timestamp.sectigo.com"
