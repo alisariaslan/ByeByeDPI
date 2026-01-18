@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ByeByeDPI.Core;
+using System;
 using System.Diagnostics;
 using System.Security.Principal;
 using System.Threading.Tasks;
@@ -22,7 +23,7 @@ namespace ByeByeDPI
 			}
 		}
 
-		public static Task<bool> EnsureAdministrator(Action<string> onMessage)
+		public static Task<bool> EnsureAdministrator()
 		{
 			if (IsAdministrator())
 			{
@@ -30,7 +31,7 @@ namespace ByeByeDPI
 				return Task.FromResult(true);
 			}
 
-			onMessage?.Invoke("Administrator privileges are required to continue.");
+            Debug.WriteLine("Administrator privileges are required to continue.");
 
 			try
 			{
@@ -45,12 +46,12 @@ namespace ByeByeDPI
 				};
 
 				Process.Start(psi);
-				onMessage?.Invoke("Application is restarting with administrator privileges...");
+                Debug.WriteLine("Application is restarting with administrator privileges...");
 				TrayApplicationContext.Instance?.ExitApplication();
 			}
 			catch
 			{
-				onMessage?.Invoke("User declined to grant administrator privileges.");
+                Debug.WriteLine("User declined to grant administrator privileges.");
 				TempConfigLoader.Current.AdminPriviligesRequested = false;
 				TempConfigLoader.Save();
 			}

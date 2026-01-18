@@ -1,0 +1,4 @@
+{
+    "Version": "1.0.0.11",
+    "Notes": "- ('Start Access' button not starting GoodbyeDPI after 'Stop Access' button pressed) fixed."
+}

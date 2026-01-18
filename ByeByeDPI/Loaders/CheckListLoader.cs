@@ -1,4 +1,6 @@
-﻿using System;
+﻿using ByeByeDPI.Constants;
+using ByeByeDPI.Models;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
@@ -6,13 +8,9 @@ using System.Windows.Forms;
 
 namespace ByeByeDPI
 {
-	public class CheckListModel
-	{
-		public string Name { get; set; }
-		public string Url { get; set; }
-	}
 
-	public static class CheckListLoader
+
+	public static class DomainLoader
 	{
 		private static readonly Dictionary<string, string> DefaultCheckList = new Dictionary<string, string>
 		{
@@ -27,9 +25,9 @@ namespace ByeByeDPI
 			{ "Pornhub", "pornhub.com" }
 		};
 
-		public static List<CheckListModel> LoadCheckList()
+		public static List<CheckListModel> LoadDomains()
 		{
-			string path = Constants.CheckListPath;
+			string path = AppConstants.DomainListPath;
 
 			if (!File.Exists(path))
 			{
