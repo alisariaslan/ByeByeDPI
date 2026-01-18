@@ -1,37 +1,39 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net10.0-windows</TargetFramework>
-    <OutputType>WinExe</OutputType>
-    <IsWebBootstrapper>false</IsWebBootstrapper>
-    <PublishUrl>C:\Users\yearn\Downloads\</PublishUrl>
-    <Install>true</Install>
-    <InstallFrom>Disk</InstallFrom>
-    <UpdateEnabled>false</UpdateEnabled>
-    <UpdateMode>Foreground</UpdateMode>
-    <UpdateInterval>7</UpdateInterval>
-    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
-    <UpdatePeriodically>false</UpdatePeriodically>
-    <UpdateRequired>false</UpdateRequired>
-    <MapFileExtensions>true</MapFileExtensions>
-    <ApplicationRevision>0</ApplicationRevision>
-    <ApplicationVersion>1.0.0.0</ApplicationVersion>
-    <UseApplicationTrust>false</UseApplicationTrust>
-    <PublishWizardCompleted>true</PublishWizardCompleted>
-    <BootstrapperEnabled>true</BootstrapperEnabled>
-    <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
-    <UseWindowsForms>true</UseWindowsForms>
-    <ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
-    <UseWinFormsOutOfProcDesigner>True</UseWinFormsOutOfProcDesigner>
+	  <TargetFramework>net10.0-windows</TargetFramework>
+	  <OutputType>WinExe</OutputType>
+
+	  <IsWebBootstrapper>false</IsWebBootstrapper>
+	  <PublishUrl>C:\Users\yearn\Downloads\</PublishUrl>
+	  <Install>true</Install>
+	  <InstallFrom>Disk</InstallFrom>
+	  <UpdateEnabled>false</UpdateEnabled>
+	  <UpdateMode>Foreground</UpdateMode>
+	  <UpdateInterval>7</UpdateInterval>
+	  <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+	  <UpdatePeriodically>false</UpdatePeriodically>
+	  <UpdateRequired>false</UpdateRequired>
+	  <MapFileExtensions>true</MapFileExtensions>
+
+	  <Version>1.1.0.12</Version>
+
+
+	  <UseApplicationTrust>false</UseApplicationTrust>
+	  <BootstrapperEnabled>true</BootstrapperEnabled>
+	  <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
+
+	  <UseWindowsForms>true</UseWindowsForms>
+	  <ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
     <StartupObject>ByeByeDPI.Program</StartupObject>
-    <ApplicationIcon>Resources\favicon.ico</ApplicationIcon>
-    <ApplicationManifest>app.manifest</ApplicationManifest>
-    <SignManifests>true</SignManifests>
+	  <ApplicationIcon>Resources/favicon.ico</ApplicationIcon>
+	  <ApplicationManifest>app.manifest</ApplicationManifest>
+	  <SignManifests>true</SignManifests>
     <ManifestCertificateThumbprint>8E34D6F0D97BA0AEBAD438E9F6FE4C3AFA111FF9</ManifestCertificateThumbprint>
     <ManifestTimestampUrl>http://timestamp.digicert.com</ManifestTimestampUrl>
-    <SignAssembly>true</SignAssembly>
-    <AssemblyOriginatorKeyFile />
-    <TargetZone>LocalIntranet</TargetZone>
-    <GenerateManifests>true</GenerateManifests>
+	  <SignAssembly>true</SignAssembly>
+	  <AssemblyOriginatorKeyFile />
+	  <TargetZone>LocalIntranet</TargetZone>
+	  <GenerateManifests>true</GenerateManifests>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'x64|AnyCPU'">
     <OutputPath>bin\x64\</OutputPath>
