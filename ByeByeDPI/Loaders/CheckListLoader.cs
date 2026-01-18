@@ -10,7 +10,7 @@ namespace ByeByeDPI
 {
 
 
-	public static class CheckListLoader
+	public static class DomainLoader
 	{
 		private static readonly Dictionary<string, string> DefaultCheckList = new Dictionary<string, string>
 		{
@@ -25,9 +25,9 @@ namespace ByeByeDPI
 			{ "Pornhub", "pornhub.com" }
 		};
 
-		public static List<CheckListModel> LoadCheckList()
+		public static List<CheckListModel> LoadDomains()
 		{
-			string path = AppConstants.CheckListPath;
+			string path = AppConstants.DomainListPath;
 
 			if (!File.Exists(path))
 			{

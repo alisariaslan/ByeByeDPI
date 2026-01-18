@@ -38,6 +38,13 @@
             menuStrip1 = new System.Windows.Forms.MenuStrip();
             toolStripMenuItem30 = new System.Windows.Forms.ToolStripMenuItem();
             aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            presetsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            superonlineToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            commandsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            applyGoogleDNSToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            flushDNCCacheToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            resetDNSConfigToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             toolStripMenuItem31 = new System.Windows.Forms.ToolStripMenuItem();
             settingsToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             logsToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
@@ -54,6 +61,7 @@
             royalEllipseButton3_apply = new ReaLTaiizor.Controls.RoyalEllipseButton();
             royalEllipseButton4_next = new ReaLTaiizor.Controls.RoyalEllipseButton();
             toolTip1 = new System.Windows.Forms.ToolTip(components);
+            openDomainsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             listContextMenuStrip.SuspendLayout();
             menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)poisonStyleManager1).BeginInit();
@@ -102,21 +110,70 @@
             // 
             // toolStripMenuItem30
             // 
-            toolStripMenuItem30.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { aboutToolStripMenuItem });
+            toolStripMenuItem30.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { aboutToolStripMenuItem, presetsToolStripMenuItem, commandsToolStripMenuItem, helpToolStripMenuItem });
             toolStripMenuItem30.Name = "toolStripMenuItem30";
-            toolStripMenuItem30.Size = new System.Drawing.Size(42, 21);
-            toolStripMenuItem30.Text = "Info";
+            toolStripMenuItem30.Size = new System.Drawing.Size(44, 21);
+            toolStripMenuItem30.Text = "App";
             // 
             // aboutToolStripMenuItem
             // 
             aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            aboutToolStripMenuItem.Size = new System.Drawing.Size(111, 22);
+            aboutToolStripMenuItem.Size = new System.Drawing.Size(118, 22);
             aboutToolStripMenuItem.Text = "About";
             aboutToolStripMenuItem.Click += aboutToolStripMenuItem_Click;
             // 
+            // presetsToolStripMenuItem
+            // 
+            presetsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { superonlineToolStripMenuItem });
+            presetsToolStripMenuItem.Name = "presetsToolStripMenuItem";
+            presetsToolStripMenuItem.Size = new System.Drawing.Size(118, 22);
+            presetsToolStripMenuItem.Text = "Presets";
+            // 
+            // superonlineToolStripMenuItem
+            // 
+            superonlineToolStripMenuItem.Name = "superonlineToolStripMenuItem";
+            superonlineToolStripMenuItem.Size = new System.Drawing.Size(211, 22);
+            superonlineToolStripMenuItem.Text = "SUPERONLINE - Turkey";
+            superonlineToolStripMenuItem.Click += superonlineToolStripMenuItem_Click;
+            // 
+            // commandsToolStripMenuItem
+            // 
+            commandsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { applyGoogleDNSToolStripMenuItem, flushDNCCacheToolStripMenuItem, resetDNSConfigToolStripMenuItem });
+            commandsToolStripMenuItem.Name = "commandsToolStripMenuItem";
+            commandsToolStripMenuItem.Size = new System.Drawing.Size(118, 22);
+            commandsToolStripMenuItem.Text = "DNS";
+            // 
+            // applyGoogleDNSToolStripMenuItem
+            // 
+            applyGoogleDNSToolStripMenuItem.Name = "applyGoogleDNSToolStripMenuItem";
+            applyGoogleDNSToolStripMenuItem.Size = new System.Drawing.Size(186, 22);
+            applyGoogleDNSToolStripMenuItem.Text = "Apply Google DNS";
+            applyGoogleDNSToolStripMenuItem.Click += applyGoogleDNSToolStripMenuItem_Click;
+            // 
+            // flushDNCCacheToolStripMenuItem
+            // 
+            flushDNCCacheToolStripMenuItem.Name = "flushDNCCacheToolStripMenuItem";
+            flushDNCCacheToolStripMenuItem.Size = new System.Drawing.Size(186, 22);
+            flushDNCCacheToolStripMenuItem.Text = "Flush DNS Cache";
+            flushDNCCacheToolStripMenuItem.Click += flushDNCCacheToolStripMenuItem_Click;
+            // 
+            // resetDNSConfigToolStripMenuItem
+            // 
+            resetDNSConfigToolStripMenuItem.Name = "resetDNSConfigToolStripMenuItem";
+            resetDNSConfigToolStripMenuItem.Size = new System.Drawing.Size(186, 22);
+            resetDNSConfigToolStripMenuItem.Text = "Reset DNS";
+            resetDNSConfigToolStripMenuItem.Click += resetDNSConfigToolStripMenuItem_Click;
+            // 
+            // helpToolStripMenuItem
+            // 
+            helpToolStripMenuItem.Name = "helpToolStripMenuItem";
+            helpToolStripMenuItem.Size = new System.Drawing.Size(118, 22);
+            helpToolStripMenuItem.Text = "Help";
+            helpToolStripMenuItem.Click += helpToolStripMenuItem_Click;
+            // 
             // toolStripMenuItem31
             // 
-            toolStripMenuItem31.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { settingsToolStripMenuItem1, logsToolStripMenuItem1, paramsToolStripMenuItem1 });
+            toolStripMenuItem31.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { settingsToolStripMenuItem1, logsToolStripMenuItem1, paramsToolStripMenuItem1, openDomainsToolStripMenuItem });
             toolStripMenuItem31.Name = "toolStripMenuItem31";
             toolStripMenuItem31.Size = new System.Drawing.Size(66, 21);
             toolStripMenuItem31.Text = "Settings";
@@ -297,6 +354,13 @@
             royalEllipseButton4_next.Text = "Next";
             royalEllipseButton4_next.Click += royalEllipseButton4_next_Click;
             // 
+            // openDomainsToolStripMenuItem
+            // 
+            openDomainsToolStripMenuItem.Name = "openDomainsToolStripMenuItem";
+            openDomainsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            openDomainsToolStripMenuItem.Text = "Open Domains";
+            openDomainsToolStripMenuItem.Click += openDomainsToolStripMenuItem_Click;
+            // 
             // MainForm
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
@@ -360,6 +424,14 @@
         private System.Windows.Forms.ToolTip toolTip1;
         private System.Windows.Forms.StatusStrip statusStrip1;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel1;
+        private System.Windows.Forms.ToolStripMenuItem presetsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem superonlineToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem commandsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem flushDNCCacheToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem applyGoogleDNSToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem resetDNSConfigToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem helpToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem openDomainsToolStripMenuItem;
     }
 }
 

@@ -463,7 +463,6 @@ namespace ByeByeDPI
         private async void checkUpdateToolStripMenuItem1_Click(object sender, EventArgs e)
         {
             checkUpdateToolStripMenuItem1.Enabled = false;
-
             try
             {
                 var updateService = _trayApplicationContext.GetUpdateService();
@@ -512,8 +511,6 @@ namespace ByeByeDPI
             }
         }
 
-
-
         public void ApplyFormBehaviorSettings(bool showWarnings = false)
         {
             this.TopMost = SettingsLoader.Current.AlwaysTopMost;
@@ -532,12 +529,91 @@ namespace ByeByeDPI
 
         private void logsToolStripMenuItem1_Click(object sender, EventArgs e)
         {
-
+            ShowHtmlDialog(UnderDevelopmentHtml.GetTitle(), UnderDevelopmentHtml.GetHtml("Logs"));
         }
 
         private void paramsToolStripMenuItem1_Click(object sender, EventArgs e)
         {
+            var result = MessageBox.Show(
+          "⚠️ You are about to open the parameter file.\n" +
+          "Be careful when editing it, incorrect values may break the application.\n\n" +
+          "Do you want to continue?",
+          "Warning - Edit Params Carefully",
+          MessageBoxButtons.YesNo,
+          MessageBoxIcon.Warning
+      );
 
+            if (result == DialogResult.Yes)
+            {
+                FileOpener.OpenFile(AppConstants.ParamsPath);
+            }
+        }
+
+        private async void flushDNCCacheToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (!(await PrivilegesHelper.EnsureAdministrator()))
+                return;
+            var result = await NetworkHelper.FlushDNSAsync();
+            MessageBox.Show(result.Message, "Operation Summary", MessageBoxButtons.OK,
+                            result.Success ? MessageBoxIcon.Information : MessageBoxIcon.Error);
+        }
+
+        private async void applyGoogleDNSToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (!(await PrivilegesHelper.EnsureAdministrator()))
+                return;
+            var result = await NetworkHelper.ApplyGoogleDNSAsync();
+            MessageBox.Show(result.Message, "Operation Summary", MessageBoxButtons.OK,
+                            result.Success ? MessageBoxIcon.Information : MessageBoxIcon.Error);
+        }
+
+        private async void superonlineToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (!(await PrivilegesHelper.EnsureAdministrator()))
+                return;
+            try
+            {
+                _viewModel.SetCurrentStage(FormStage.Loading);
+                await NetworkHelper.FlushDNSAsync();
+                await NetworkHelper.ApplyGoogleDNSAsync();
+                bool success = await _viewModel.TestParamByNameAsync("mode5");
+                _viewModel.SetCurrentStage(success ? FormStage.Result : FormStage.Toggle);
+            }
+            catch
+            {
+                _viewModel.SetCurrentStage(FormStage.Toggle);
+            }
+        }
+
+        private async void resetDNSConfigToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (!(await PrivilegesHelper.EnsureAdministrator()))
+                return;
+            var result = await NetworkHelper.SetDNSToAutomaticAsync();
+            MessageBox.Show(result.Message, "Operation Summary", MessageBoxButtons.OK,
+                            result.Success ? MessageBoxIcon.Information : MessageBoxIcon.Error);
+        }
+
+        private void helpToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ShowHtmlDialog(HelpHTML.GetTitle(), HelpHTML.GetHtml());
+        }
+
+        private void openDomainsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var result = MessageBox.Show(
+"⚠️ You are about to open the domains file.\n" +
+"Be careful when editing it, incorrect values may break the application.\n\n" +
+"Do you want to continue?",
+"Warning - Edit Domains Carefully",
+MessageBoxButtons.YesNo,
+MessageBoxIcon.Warning
+);
+
+            if (result == DialogResult.Yes)
+            {
+                FileOpener.OpenFile(AppConstants.DomainListPath);
+            }
         }
     }
 }

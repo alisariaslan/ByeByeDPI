@@ -42,7 +42,7 @@ namespace ByeByeDPI.Core
         /// </summary>
         public void LoadData()
         {
-            _checkList = CheckListLoader.LoadCheckList().Select(x => new CheckListWrapperModel { Item = x }).ToList();
+            _checkList = DomainLoader.LoadDomains().Select(x => new CheckListWrapperModel { Item = x }).ToList();
             _paramList = ParamsLoader.LoadParams();
         }
 
@@ -241,6 +241,26 @@ namespace ByeByeDPI.Core
             _currentParamIndex = -1;
             OnProgressChanged?.Invoke(0, 1);
         }
+
+        public ParamModel GetParamByName(string name)
+        {
+            return _paramList.FirstOrDefault(x => x.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
+        }
+
+        public async Task ToggleGoodbyeDPIAsync(string paramName, string paramValue)
+        {
+            await _goodbyeDPIService.StartAsync(AppConstants.GoodbyeDPIPath, paramName, paramValue);
+        }
+        public async Task<bool> TestParamByNameAsync(string paramName)
+        {
+            var index = _paramList.FindIndex(x => x.Name.Equals(paramName, StringComparison.OrdinalIgnoreCase));
+            if (index < 0)
+                return false;
+
+            _currentParamIndex = index;
+            return await TestCurrentParameterAsync();
+        }
+
 
         public void Dispose()
         {
