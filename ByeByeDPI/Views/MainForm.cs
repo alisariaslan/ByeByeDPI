@@ -109,6 +109,7 @@ namespace ByeByeDPI
             _layoutManager.OnClosing();
             if (_trayApplicationContext.ApplicationExiting)
             {
+                e.Cancel = true;
                 return;
             }
             if (!SettingsLoader.Current.HideToTray || TempConfigLoader.Current.AdminPriviligesRequested)

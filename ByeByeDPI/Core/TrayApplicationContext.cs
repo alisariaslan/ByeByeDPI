@@ -15,6 +15,7 @@ namespace ByeByeDPI.Core
         private bool _trayMinimizedNotifyShown;
         private readonly UpdateService _updateService = new UpdateService();
         private readonly HotkeyService _hotkeyService = new HotkeyService();
+        private bool _startupWarningShown;
 
         public TrayApplicationContext()
 		{
