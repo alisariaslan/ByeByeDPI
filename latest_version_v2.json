@@ -1,4 +1,4 @@
 {
-    "Version": "1.1.0.12",
-    "Notes": ""
+    "Version": "1.1.1.13",
+    "Notes": "## \ud83d\ude80 Features\n\n- **Version Number Update**: Updated the version number to `1.1.1.13` and added constants for application paths and user data directory.\n- **MainFormViewModel Enhancements**: Added handling for running state changes and improved task management in MainFormViewModel.\n- **Tray Notification Message**: Updated the tray notification message to include a startup warning shown flag.\n\n## \ud83d\udc1e Bug Fixes\n\n- **PrivilegesHelper.cs Exception Handling**: Fixed an exception handling issue for declining admin privileges request.\n- **MainForm.cs Bug Fixes**: Added functionality to toggle StartWithWindows and AutoRunOnLogin settings in the SettingsForm.cs file.\n- **TaskMonitor Service**: Updated the TaskMonitor service to monitor task running status.\n\n## \ud83d\udee0\ufe0f Maintenance & Refactoring\n\n- **update tray application context**: Added a startup warning shown flag to the tray application context.\n- **MainForm.cs**: Cancel closing when admin privileges are requested."
 }
