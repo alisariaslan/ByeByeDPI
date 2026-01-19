@@ -1,107 +1,132 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Linq;
-using System.Management;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace ByeByeDPI.Utils
 {
     public static class NetworkHelper
     {
-        /// <summary>
-        /// Automatically finds the active NIC connected to the internet
-        /// </summary>
-        private static ManagementObject? GetActiveNetworkAdapter()
-        {
-            ManagementClass mc = new ManagementClass("Win32_NetworkAdapterConfiguration");
-            foreach (ManagementObject mo in mc.GetInstances())
-            {
-                if ((bool)mo["IPEnabled"])
-                {
-                    var ips = (string[])mo["IPAddress"];
-                    if (ips != null && ips.Any(ip => ip.StartsWith("192.") || ip.StartsWith("10.") || ip.StartsWith("172.")))
-                    {
-                        // Adapter connected to internet via IPv4 found
-                        return mo;
-                    }
-                }
-            }
-            return null;
-        }
+        // -------------------------
+        // Public API
+        // -------------------------
 
-        /// <summary>
-        /// Sets the DNS to obtain automatically (DHCP)
-        /// </summary>
         public static async Task<(bool Success, string Message)> SetDNSToAutomaticAsync()
         {
-            try
-            {
-                var mo = GetActiveNetworkAdapter();
-                if (mo == null)
-                    return (false, "❌ No active network adapter found.");
+            var adapter = await GetRealActiveInterfaceAsync();
+            if (adapter == null)
+                return (false, "❌ Active network adapter not found.");
 
-                ManagementBaseObject newDNS = mo.GetMethodParameters("SetDNSServerSearchOrder");
-                newDNS["DNSServerSearchOrder"] = null;
-                mo.InvokeMethod("SetDNSServerSearchOrder", newDNS, null);
+            await RunNetshAsync(
+                $"interface ip set dns name=\"{adapter}\" source=dhcp");
 
-                return (true, "✅ DNS set to obtain automatically.");
-            }
-            catch (Exception ex)
-            {
-                return (false, $"❌ Failed to set DNS automatically: {ex.Message}");
-            }
+            await FlushDNSInternalAsync();
+
+            return (true, "✅ DNS set to automatic (DHCP).");
         }
 
-        /// <summary>
-        /// Applies Google DNS
-        /// </summary>
         public static async Task<(bool Success, string Message)> ApplyGoogleDNSAsync()
         {
-            try
-            {
-                var mo = GetActiveNetworkAdapter();
-                if (mo == null)
-                    return (false, "❌ No active network adapter found.");
+            var adapter = await GetRealActiveInterfaceAsync();
+            if (adapter == null)
+                return (false, "❌ Active network adapter not found.");
 
-                ManagementBaseObject newDNS = mo.GetMethodParameters("SetDNSServerSearchOrder");
-                newDNS["DNSServerSearchOrder"] = new string[] { "8.8.8.8", "8.8.4.4" };
-                mo.InvokeMethod("SetDNSServerSearchOrder", newDNS, null);
+            await RunNetshAsync(
+                $"interface ip set dns name=\"{adapter}\" static 8.8.8.8 primary");
 
-                return (true, "✅ Google DNS applied successfully.");
-            }
-            catch (Exception ex)
-            {
-                return (false, $"❌ Failed to apply Google DNS: {ex.Message}");
-            }
+            await RunNetshAsync(
+                $"interface ip add dns name=\"{adapter}\" 8.8.4.4 index=2");
+
+            await FlushDNSInternalAsync();
+
+            return (true, "✅ Google DNS applied successfully.");
         }
 
-        /// <summary>
-        /// Flushes DNS cache
-        /// </summary>
         public static async Task<(bool Success, string Message)> FlushDNSAsync()
         {
-            try
-            {
-                var process = new System.Diagnostics.Process
-                {
-                    StartInfo = new System.Diagnostics.ProcessStartInfo
-                    {
-                        FileName = "ipconfig",
-                        Arguments = "/flushdns",
-                        Verb = "runas",
-                        CreateNoWindow = true,
-                        UseShellExecute = true,
-                    }
-                };
-                process.Start();
-                await process.WaitForExitAsync();
+            await FlushDNSInternalAsync();
+            return (true, "✅ DNS cache flushed.");
+        }
 
-                return (true, "✅ DNS cache flushed successfully.");
-            }
-            catch (Exception ex)
+        // -------------------------
+        // Internal helpers
+        // -------------------------
+
+private static async Task<string?> GetRealActiveInterfaceAsync()
+    {
+        var psi = new ProcessStartInfo
+        {
+            FileName = "netsh",
+            Arguments = "interface ip show addresses",
+            UseShellExecute = false,
+            RedirectStandardOutput = true,
+            CreateNoWindow = true
+        };
+
+        using var process = Process.Start(psi);
+        string output = await process.StandardOutput.ReadToEndAsync();
+        await process.WaitForExitAsync();
+
+        string? currentInterface = null;
+
+        foreach (var line in output.Split(Environment.NewLine))
+        {
+            // Interface adı
+            var ifaceMatch = Regex.Match(
+                line,
+                @"^Configuration for interface ""(.+)""");
+
+            if (ifaceMatch.Success)
             {
-                return (false, $"❌ Failed to flush DNS cache: {ex.Message}");
+                currentInterface = ifaceMatch.Groups[1].Value;
+                continue;
+            }
+
+            // Default Gateway varsa → gerçek adaptör
+            if (currentInterface != null &&
+                line.TrimStart().StartsWith("Default Gateway", StringComparison.OrdinalIgnoreCase))
+            {
+                return currentInterface;
             }
         }
 
+        return null;
+    }
+
+
+    private static async Task RunNetshAsync(string arguments)
+        {
+            var psi = new ProcessStartInfo
+            {
+                FileName = "netsh",
+                Arguments = arguments,
+                UseShellExecute = true,
+                Verb = "runas",
+                CreateNoWindow = true
+            };
+
+            using var process = Process.Start(psi);
+            await process.WaitForExitAsync();
+        }
+
+
+        private static async Task FlushDNSInternalAsync()
+        {
+            var psi = new ProcessStartInfo
+            {
+                FileName = "ipconfig",
+                Arguments = "/flushdns",
+                UseShellExecute = true,
+                Verb = "runas",
+                CreateNoWindow = true
+            };
+
+            using var process = Process.Start(psi);
+            await process.WaitForExitAsync();
+        }
+
+
+       
     }
 }

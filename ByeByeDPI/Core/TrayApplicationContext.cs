@@ -12,7 +12,6 @@ namespace ByeByeDPI.Core
         public bool ApplicationExiting { get; private set; }
         private MainForm _form;
         private TrayIconManager _trayManager;
-        private bool _trayMinimizedNotifyShown;
         private readonly UpdateService _updateService = new UpdateService();
         private readonly HotkeyService _hotkeyService = new HotkeyService();
         private bool _startupWarningShown;
@@ -68,11 +67,6 @@ namespace ByeByeDPI.Core
                     if (owned != null && !owned.IsDisposed) try { owned.Close(); } catch { }
 
                 _form.Hide();
-                if (!_trayMinimizedNotifyShown)
-                {
-                    _trayManager.ShowNotification(AppConstants.AppName, "Minimized to tray.");
-                    _trayMinimizedNotifyShown = true;
-                }
             });
         }
         private void ResetFormPositionAndSize()
@@ -149,6 +143,7 @@ namespace ByeByeDPI.Core
         }
 
         #endregion
+
 
     }
 }

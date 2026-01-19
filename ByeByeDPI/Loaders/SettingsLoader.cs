@@ -13,6 +13,7 @@ namespace ByeByeDPI
 		public bool HideToTray { get; set; } = true;
 		public bool CheckUpdates { get; set; } = true;
 		public bool StartWithWindows { get; set; } = false;
+		public bool AutoRunGoodbyeDPI { get; set; } = false;
         public bool ShowInTaskbar { get; set; } = false;
         public bool AlwaysTopMost { get; set; } = true;
         public bool AutoHideWhenUnfocus { get; set; } = true; 

@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Windows.Forms;
 
 namespace ByeByeDPI.Core
 {
@@ -19,23 +18,72 @@ namespace ByeByeDPI.Core
         public event Action<FormStage> OnStageChanged;
         public event Action<int, int> OnProgressChanged;
         public event Action OnClearRequested;
-        public bool IsGoodbyeDPIRunning => _goodbyeDPIService.IsRunning;
+        public event Action<bool> OnRunningStateChanged;
+
+        public bool IsGoodbyeDPIRunning => _taskService.IsRunning;
         private FormStage _currentStage = FormStage.Toggle;
         public FormStage CurrentStage
         {
             get => _currentStage;
             private set { _currentStage = value; OnStageChanged?.Invoke(value); }
         }
-        private readonly GoodbyeDPIService _goodbyeDPIService;
+        private readonly TaskService _taskService;
+        private readonly TaskMonitor _taskMonitor;
         private List<CheckListWrapperModel> _checkList = new();
         private List<ParamModel> _paramList = new();
         private int _currentParamIndex = -1;
 
+        public TaskService TaskService => _taskService;
         public MainFormViewModel(TrayApplicationContext trayApplicationContext)
         {
-            _goodbyeDPIService = new GoodbyeDPIService();
-            _goodbyeDPIService.OnMessage += msg => OnMessage?.Invoke(msg);
+            _taskService = new TaskService();
+            _taskService.OnMessage += msg => OnMessage?.Invoke(msg);
+            _taskMonitor = new TaskMonitor(_taskService);
+            _taskMonitor.OnRunningStateChanged += HandleRunningStateChanged;
+            _taskMonitor.Start();
         }
+
+        /// <summary>
+        /// Waits asynchronously for GoodbyeDPI to reach the expected running state within a specified timeout period.
+        /// </summary>
+        /// <param name="expectedState"></param>
+        /// <param name="timeoutMs"></param>
+        /// <param name="pollMs"></param>
+        /// <returns></returns>
+        public async Task<bool> WaitForRunningStateAsync(
+    bool expectedState,
+    int timeoutMs = 3000,
+    int pollMs = 200)
+        {
+            var sw = Stopwatch.StartNew();
+
+            while (sw.ElapsedMilliseconds < timeoutMs)
+            {
+                if (IsGoodbyeDPIRunning == expectedState)
+                    return true;
+
+                await Task.Delay(pollMs);
+            }
+
+            return false;
+        }
+
+
+        /// <summary>
+        /// Handles changes to the running state by notifying listeners and updating the application stage.
+        /// </summary>
+        /// <remarks>This method triggers status and stage change events to update the user interface and
+        /// inform subscribers of the current running state.</remarks>
+        /// <param name="isRunning">Indicates whether the process is currently running. If <see langword="true"/>, the process is running;
+        /// otherwise, it is stopped.</param>
+        private void HandleRunningStateChanged(bool isRunning)
+        {
+            OnStatusChanged?.Invoke(
+                isRunning ? "GoodbyeDPI is running" : "GoodbyeDPI stopped"
+            );
+            OnRunningStateChanged?.Invoke(isRunning);
+        }
+
 
         /// <summary>
         /// Loads checklist and parameter list
@@ -64,7 +112,7 @@ namespace ByeByeDPI.Core
             var param = _paramList.FirstOrDefault(x => x.Name == savedParam);
             if (param != null)
             {
-                await _goodbyeDPIService.ToggleAsync(
+                await _taskService.ToggleAsync(
                     AppConstants.GoodbyeDPIPath,
                     param.Name,
                     param.Value
@@ -117,7 +165,7 @@ namespace ByeByeDPI.Core
             var item = _paramList[_currentParamIndex];
             try
             {
-                await _goodbyeDPIService.StartAsync(
+                await _taskService.StartAsync(
                     AppConstants.GoodbyeDPIPath,
                     item.Name,
                     item.Value
@@ -170,8 +218,8 @@ namespace ByeByeDPI.Core
         /// <returns></returns>
         private async Task CleanupAsync()
         {
-            await _goodbyeDPIService.StopAsync();
-            await _goodbyeDPIService.DeleteTaskAsync();
+            await _taskService.StopAsync();
+            await _taskService.DeleteTaskAsync();
         }
 
         /// <summary>
@@ -234,8 +282,8 @@ namespace ByeByeDPI.Core
         /// <returns></returns>
         public async Task ResetWorkflowAsync()
         {
-            await _goodbyeDPIService.StopAsync();
-            await _goodbyeDPIService.DeleteTaskAsync();
+            await _taskService.StopAsync();
+            await _taskService.DeleteTaskAsync();
             SettingsLoader.Current.ChosenParam = "";
             SettingsLoader.Save();
             _currentParamIndex = -1;
@@ -249,7 +297,7 @@ namespace ByeByeDPI.Core
 
         public async Task ToggleGoodbyeDPIAsync(string paramName, string paramValue)
         {
-            await _goodbyeDPIService.StartAsync(AppConstants.GoodbyeDPIPath, paramName, paramValue);
+            await _taskService.StartAsync(AppConstants.GoodbyeDPIPath, paramName, paramValue);
         }
         public async Task<bool> TestParamByNameAsync(string paramName)
         {

@@ -49,7 +49,7 @@ namespace ByeByeDPI
                 Debug.WriteLine("Application is restarting with administrator privileges...");
 				TrayApplicationContext.Instance?.ExitApplication();
 			}
-			catch
+			catch (Exception)
 			{
                 Debug.WriteLine("User declined to grant administrator privileges.");
 				TempConfigLoader.Current.AdminPriviligesRequested = false;

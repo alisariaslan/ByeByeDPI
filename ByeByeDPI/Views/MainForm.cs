@@ -19,6 +19,7 @@ namespace ByeByeDPI
         private readonly MainFormViewModel _viewModel;
         private FormLayoutManager _layoutManager;
         private bool _suppressAutoHide = false;
+        public MainFormViewModel ViewModel => _viewModel; 
 
         public MainForm(TrayApplicationContext trayApplicationContext)
         {
@@ -50,6 +51,11 @@ namespace ByeByeDPI
             _viewModel.OnStatusChanged += newStatus =>
             {
                 RunOnSafeUI(() => toolStripStatusLabel1.Text = newStatus);
+            };
+
+            _viewModel.OnRunningStateChanged += newStatus =>
+            {
+                RunOnSafeUI(() => RefreshStage());
             };
 
             _viewModel.LoadData();
@@ -299,12 +305,25 @@ namespace ByeByeDPI
             if (!(await PrivilegesHelper.EnsureAdministrator()))
                 return;
 
+            royalEllipseButton1_toggle.Enabled = false;
+            royalEllipseButton2_reset.Enabled = false;
+            toolStripStatusLabel1.Text = "Checking status...";
+
             try
             {
+                bool wasRunning = IsRunning;
+
                 var toggleResult = await _viewModel.ToggleGoodbyeDPIAsync();
+
+                // param scan durumları aynen kalsın
                 if (toggleResult == -1)
                 {
-                    MessageBox.Show("Unfortunately, no parameter in the list could establish a connection.", "No Result Found", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    MessageBox.Show(
+                        "Unfortunately, no parameter in the list could establish a connection.",
+                        "No Result Found",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Information);
+                    return;
                 }
                 else if (toggleResult == 1)
                 {
@@ -315,19 +334,41 @@ namespace ByeByeDPI
                 {
                     MessageBox.Show("Looks like your dpi settings lost. Returning to Installation sequence.");
                 }
+
+                // 🔍 Gerçek state değişimini bekle
+                bool expectedState = !wasRunning;
+
+                bool ok = await _viewModel.WaitForRunningStateAsync(expectedState);
+
+                if (!ok)
+                {
+                    MessageBox.Show(
+                        "GoodbyeDPI state could not be verified.\n" +
+                        "The process may have failed to start or stop.",
+                        "Operation Timeout",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Warning);
+                }
+
                 _viewModel.SetCurrentStage(FormStage.Toggle);
             }
             catch (Exception ex)
             {
                 Debug.WriteLine($"Toggle failed: {ex}");
                 MessageBox.Show(
-                    "An error occurred while toggle dpi.",
+                    "An error occurred while toggling dpi.",
                     "Error",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Error);
-                _viewModel.SetCurrentStage(FormStage.Toggle);
+            }
+            finally
+            {
+                royalEllipseButton1_toggle.Enabled = true;
+                royalEllipseButton2_reset.Enabled = true;
+                toolStripStatusLabel1.Text = "";
             }
         }
+
 
         /// <summary>
         /// Closes dpi, then resets all parameter settings when the reset button is clicked
@@ -456,7 +497,7 @@ namespace ByeByeDPI
             {
                 f.StartPosition = FormStartPosition.CenterParent;
                 f.TopMost = true;
-                f.ShowDialog(this); // parent VERME
+                f.ShowDialog(this);
             }
             _suppressAutoHide = false;
         }
@@ -516,15 +557,16 @@ namespace ByeByeDPI
         {
             this.TopMost = SettingsLoader.Current.AlwaysTopMost;
             this.ShowInTaskbar = SettingsLoader.Current.ShowInTaskbar;
-            if (SettingsLoader.Current.AutoHideWhenUnfocus && showWarnings)
-            {
-                MessageBox.Show(
-                    "Auto-hide is enabled. App will temporarily minimize when it loses focus.",
-                    "Info",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Information
-                );
-            }
+    //        if (SettingsLoader.Current.FocusDetailWindow && SettingsLoader.Current.QuickPasteOnEnter)
+    //        {
+    //            MessageBox.Show(
+    //    "When the detail window is focused, the Enter key is handled by that window.\n" +
+    //    "Quick Paste with Enter wont work in this state.",
+    //    "Warning",
+    //    MessageBoxButtons.OK,
+    //    MessageBoxIcon.Information
+    //);
+    //        }
             _suppressAutoHide = false;
         }
 
@@ -550,23 +592,6 @@ namespace ByeByeDPI
             }
         }
 
-        private async void flushDNCCacheToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (!(await PrivilegesHelper.EnsureAdministrator()))
-                return;
-            var result = await NetworkHelper.FlushDNSAsync();
-            MessageBox.Show(result.Message, "Operation Summary", MessageBoxButtons.OK,
-                            result.Success ? MessageBoxIcon.Information : MessageBoxIcon.Error);
-        }
-
-        private async void applyGoogleDNSToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (!(await PrivilegesHelper.EnsureAdministrator()))
-                return;
-            var result = await NetworkHelper.ApplyGoogleDNSAsync();
-            MessageBox.Show(result.Message, "Operation Summary", MessageBoxButtons.OK,
-                            result.Success ? MessageBoxIcon.Information : MessageBoxIcon.Error);
-        }
 
         private async void superonlineToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -580,19 +605,57 @@ namespace ByeByeDPI
                 bool success = await _viewModel.TestParamByNameAsync("mode5");
                 _viewModel.SetCurrentStage(success ? FormStage.Result : FormStage.Toggle);
             }
-            catch
+            catch (Exception ex)
             {
+                MessageBox.Show(ex.Message, "Error occured while applying preset", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 _viewModel.SetCurrentStage(FormStage.Toggle);
             }
         }
+        private async void applyGoogleDNSToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (!(await PrivilegesHelper.EnsureAdministrator()))
+                return;
+            try
+            {
+                var result = await NetworkHelper.ApplyGoogleDNSAsync();
+                MessageBox.Show(result.Message, "Operation Summary", MessageBoxButtons.OK,
+                                result.Success ? MessageBoxIcon.Information : MessageBoxIcon.Error);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Error occured while applying google dns", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
 
+        private async void flushDNCCacheToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (!(await PrivilegesHelper.EnsureAdministrator()))
+                return;
+            try
+            {
+                var result = await NetworkHelper.FlushDNSAsync();
+                MessageBox.Show(result.Message, "Operation Summary", MessageBoxButtons.OK,
+                                result.Success ? MessageBoxIcon.Information : MessageBoxIcon.Error);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Error occured while flushing dns", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
         private async void resetDNSConfigToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (!(await PrivilegesHelper.EnsureAdministrator()))
                 return;
-            var result = await NetworkHelper.SetDNSToAutomaticAsync();
-            MessageBox.Show(result.Message, "Operation Summary", MessageBoxButtons.OK,
-                            result.Success ? MessageBoxIcon.Information : MessageBoxIcon.Error);
+            try
+            {
+                var result = await NetworkHelper.SetDNSToAutomaticAsync();
+                MessageBox.Show(result.Message, "Operation Summary", MessageBoxButtons.OK,
+                                result.Success ? MessageBoxIcon.Information : MessageBoxIcon.Error);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Error occured while resetting dns", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         private void helpToolStripMenuItem_Click(object sender, EventArgs e)
@@ -602,6 +665,7 @@ namespace ByeByeDPI
 
         private void openDomainsToolStripMenuItem_Click(object sender, EventArgs e)
         {
+
             var result = MessageBox.Show(
 "⚠️ You are about to open the domains file.\n" +
 "Be careful when editing it, incorrect values may break the application.\n\n" +

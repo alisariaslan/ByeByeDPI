@@ -2,7 +2,7 @@
 
 [Setup]
 AppName=ByeByeDPI
-AppVersion=1.1.0.12
+AppVersion=1.1.1.13
 DefaultDirName={commonpf}\ByeByeDPI
 DefaultGroupName=ByeByeDPI
 OutputBaseFilename=ByeByeDPI_Installer
@@ -17,6 +17,7 @@ Source: ".\ByeByeDPI\bin\Release\net10.0-windows\ByeByeDPI.exe"; DestDir: "{app}
 
 ; DLLs and support files
 Source: ".\ByeByeDPI\bin\Release\net10.0-windows\*.dll"; DestDir: "{app}"; Flags: ignoreversion restartreplace
+Source: ".\ByeByeDPI\bin\Release\net10.0-windows\*.sys"; DestDir: "{app}"; Flags: ignoreversion restartreplace
 
 ; Framework JSON's (Required)
 Source: ".\ByeByeDPI\bin\Release\net10.0-windows\ByeByeDPI.runtimeconfig.json"; DestDir: "{app}"; Flags: ignoreversion

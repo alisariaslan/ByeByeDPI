@@ -15,7 +15,7 @@
 	  <UpdateRequired>false</UpdateRequired>
 	  <MapFileExtensions>true</MapFileExtensions>
 
-	  <Version>1.1.0.12</Version>
+	  <Version>1.1.1.13</Version>
 
 
 	  <UseApplicationTrust>false</UseApplicationTrust>
@@ -44,7 +44,6 @@
     <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.3650.58" />
     <PackageReference Include="ReaLTaiizor" Version="3.8.1.4" />
     <PackageReference Include="System.Data.DataSetExtensions" Version="4.5.0" />
-    <PackageReference Include="System.Management" Version="10.0.2" />
     <PackageReference Include="TaskScheduler" Version="2.12.2" />
   </ItemGroup>
   <ItemGroup>

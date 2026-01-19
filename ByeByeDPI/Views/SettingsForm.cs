@@ -1,7 +1,6 @@
 ﻿using ByeByeDPI.Constants;
 using ByeByeDPI.Core;
 using ByeByeDPI.Utils;
-using Microsoft.Win32;
 using ReaLTaiizor.Enum.Poison;
 using ReaLTaiizor.Forms;
 using System;
@@ -30,6 +29,7 @@ namespace ByeByeDPI.Views
             //GENERAL
             poisonToggle1_checkUpdates.Checked = SettingsLoader.Current.CheckUpdates;
             poisonToggle1_startWithWindows.Checked = SettingsLoader.Current.StartWithWindows;
+            poisonToggle2_autoRun.Checked = SettingsLoader.Current.AutoRunGoodbyeDPI;
             //APPEARANCE
             poisonToggle1_alwaysTopMost.Checked = SettingsLoader.Current.AlwaysTopMost;
             poisonToggle1_showInTaskbar.Checked = SettingsLoader.Current.ShowInTaskbar;
@@ -51,6 +51,7 @@ namespace ByeByeDPI.Views
             //GENERAL
             poisonToggle1_checkUpdates.CheckedChanged -= poisonToggle1_checkUpdates_CheckedChanged;
             poisonToggle1_startWithWindows.CheckedChanged -= poisonToggle1_startWithWindows_CheckedChanged;
+            poisonToggle2_autoRun.CheckedChanged -= poisonToggle2_autoRun_CheckedChanged;
             //APPEARANCE
             poisonToggle1_alwaysTopMost.CheckedChanged -= poisonToggle1_alwaysTopMost_CheckedChanged;
             poisonToggle1_showInTaskbar.CheckedChanged -= poisonToggle1_showInTaskbar_CheckedChanged;
@@ -67,6 +68,7 @@ namespace ByeByeDPI.Views
             //GENERAL
             poisonToggle1_checkUpdates.CheckedChanged += poisonToggle1_checkUpdates_CheckedChanged;
             poisonToggle1_startWithWindows.CheckedChanged += poisonToggle1_startWithWindows_CheckedChanged;
+            poisonToggle2_autoRun.CheckedChanged += poisonToggle2_autoRun_CheckedChanged;
             //APPEARANCE
             poisonToggle1_alwaysTopMost.CheckedChanged += poisonToggle1_alwaysTopMost_CheckedChanged;
             poisonToggle1_showInTaskbar.CheckedChanged += poisonToggle1_showInTaskbar_CheckedChanged;
@@ -100,6 +102,7 @@ namespace ByeByeDPI.Views
             //GENERAL
             poisonToggle1_checkUpdates.Checked = def.CheckUpdates;
             poisonToggle1_startWithWindows.Checked = def.StartWithWindows;
+            poisonToggle2_autoRun.Checked = def.AutoRunGoodbyeDPI;
             //APPEARANCE
             poisonToggle1_alwaysTopMost.Checked = def.AlwaysTopMost;
             poisonToggle1_showInTaskbar.Checked = def.ShowInTaskbar;
@@ -111,30 +114,24 @@ namespace ByeByeDPI.Views
             poisonTextBox1_showWindowHotkey.Text = FormatHotkey(def.HotkeyModifiers, def.HotkeyKey);
             poisonTextBox1_showWindowHotkey.Enabled = def.EnableGlobalHotkey;
 
-            AddSettingEvents();
-            SettingsLoader.Current = def;
-            SettingsLoader.Save();
-            TrayApplicationContext.Instance?.ReloadGlobalHotkey();
             try
             {
-                string appName = AppConstants.AppName;
-                using (RegistryKey key = Registry.CurrentUser.OpenSubKey(
-                           @"Software\Microsoft\Windows\CurrentVersion\Run", writable: true))
-                {
-                    if (def.StartWithWindows)
-                        key.SetValue(appName, $"\"{Application.ExecutablePath}\"");
-                    else if (key.GetValue(appName) != null)
-                        key.DeleteValue(appName);
-                }
+                await _mainForm.ViewModel.TaskService.SetStartWithWindowsAsync(def.StartWithWindows);
+                await _mainForm.ViewModel.TaskService.SetAutoRunOnLoginAsync(def.AutoRunGoodbyeDPI);
             }
             catch (Exception ex)
             {
                 MessageBox.Show(
                     ex.Message,
-                    "Failed to update application startup (Registry)",
+                    "Failed to update registry for StartWithWindows or AutoRunOnLogin",
                     MessageBoxButtons.OK);
             }
-            MessageBox.Show("All settings have been reset to default.", "Defaults", MessageBoxButtons.OK);
+
+            AddSettingEvents();
+            SettingsLoader.Current = def;
+            SettingsLoader.Save();
+            TrayApplicationContext.Instance?.ReloadGlobalHotkey();
+            MessageBox.Show("Settings have been reset to default.", "Defaults", MessageBoxButtons.OK);
         }
 
         #region GENERAL
@@ -142,40 +139,10 @@ namespace ByeByeDPI.Views
         {
             SettingsLoader.Current.CheckUpdates = poisonToggle1_checkUpdates.Checked;
             SettingsLoader.Save();
+            _mainForm.ApplyFormBehaviorSettings(true);
         }
 
-        private async void poisonToggle1_startWithWindows_CheckedChanged(object sender, EventArgs e)
-        {
-            if (!await PrivilegesHelper.EnsureAdministrator())
-                return;
-            try
-            {
-                string appName = AppConstants.AppName;
-                string exePath = $"\"{Application.ExecutablePath}\"";
-                using (RegistryKey key = Registry.CurrentUser.OpenSubKey(
-                           @"Software\Microsoft\Windows\CurrentVersion\Run", writable: true))
-                {
-                    if (poisonToggle1_startWithWindows.Checked)
-                    {
-                        key.SetValue(appName, exePath);
-                    }
-                    else
-                    {
-                        if (key.GetValue(appName) != null)
-                            key.DeleteValue(appName);
-                    }
-                }
-                SettingsLoader.Current.StartWithWindows = poisonToggle1_startWithWindows.Checked;
-                SettingsLoader.Save();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(
-                ex.Message,
-                    "Failed to update application startup (Registry)",
-                    MessageBoxButtons.OK);
-            }
-        }
+
         #endregion
 
         #region APPARANCE
@@ -373,6 +340,10 @@ namespace ByeByeDPI.Views
             poisonLabel1_showWindowHotkey.Style = mainStyle;
             poisonTextBox1_showWindowHotkey.Style = mainStyle;
 
+            poisonTile1_autoRun.Style = mainStyle;
+            poisonLabel1_autoRun.Style = mainStyle;
+            poisonToggle2_autoRun.Style = mainStyle;
+
         }
 
         private void poisonDropDownButton1_selectTheme_Click(object sender, EventArgs e)
@@ -380,5 +351,69 @@ namespace ByeByeDPI.Views
             poisonDropDownButton1_selectTheme.OpenDropDown();
 
         }
+
+        private void RevertStartWithWindows()
+        {
+            poisonToggle1_startWithWindows.CheckedChanged -= poisonToggle1_startWithWindows_CheckedChanged;
+            poisonToggle1_startWithWindows.Checked = !poisonToggle1_startWithWindows.Checked;
+            poisonToggle1_startWithWindows.CheckedChanged += poisonToggle1_startWithWindows_CheckedChanged;
+        }
+
+        private async void poisonToggle1_startWithWindows_CheckedChanged(object sender, EventArgs e)
+        {
+            if (!await PrivilegesHelper.EnsureAdministrator())
+            {
+                RevertStartWithWindows();
+                return;
+            }
+            try
+            {
+                await _mainForm.ViewModel.TaskService.SetStartWithWindowsAsync(poisonToggle1_startWithWindows.Checked);
+                SettingsLoader.Current.StartWithWindows = poisonToggle1_startWithWindows.Checked;
+                SettingsLoader.Save();
+                _mainForm.ApplyFormBehaviorSettings(true);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(
+                ex.Message,
+                    "Failed to update application startup (Registry)",
+                    MessageBoxButtons.OK);
+                RevertStartWithWindows();
+            }
+        }
+
+        private void RevertAutoRun()
+        {
+            poisonToggle2_autoRun.CheckedChanged -= poisonToggle2_autoRun_CheckedChanged;
+            poisonToggle2_autoRun.Checked = !poisonToggle2_autoRun.Checked;
+            poisonToggle2_autoRun.CheckedChanged += poisonToggle2_autoRun_CheckedChanged;
+        }
+
+        private async void poisonToggle2_autoRun_CheckedChanged(object sender, EventArgs e)
+        {
+            if (!await PrivilegesHelper.EnsureAdministrator())
+            {
+                RevertAutoRun();
+                return;
+            }
+            try
+            {
+                await _mainForm.ViewModel.TaskService.SetAutoRunOnLoginAsync(
+              poisonToggle2_autoRun.Checked
+          );
+
+                SettingsLoader.Current.AutoRunGoodbyeDPI = poisonToggle2_autoRun.Checked;
+                SettingsLoader.Save();
+                _mainForm.ApplyFormBehaviorSettings(true);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Error updating auto-run setting", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                RevertAutoRun();
+            }
+
+        }
+
     }
 }

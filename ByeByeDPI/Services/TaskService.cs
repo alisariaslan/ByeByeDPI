@@ -1,4 +1,6 @@
-﻿using Microsoft.Win32.TaskScheduler;
+﻿using ByeByeDPI.Constants;
+using Microsoft.Win32;
+using Microsoft.Win32.TaskScheduler;
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -7,15 +9,36 @@ using System.Windows.Forms;
 
 namespace ByeByeDPI.Services
 {
-    public class GoodbyeDPIService
+    public class TaskService
     {
-        private const string GoodbyeDPITaskName = "GoodbyeDPI_Runner";
+        public const string GoodbyeDPITaskName = "GoodbyeDPI_Runner";
 
 
         public event Action<string> OnMessage;
 
-        public bool IsRunning =>
-            Process.GetProcessesByName("goodbyedpi").Any();
+        public bool IsRunning
+        {
+            get
+            {
+                try
+                {
+                    return Process.GetProcesses()
+                        .Any(p =>
+                        {
+                            try
+                            {
+                                return p.ProcessName.Equals("goodbyedpi", StringComparison.OrdinalIgnoreCase);
+                            }
+                            catch { return false; }
+                        });
+                }
+                catch
+                {
+                    return false;
+                }
+            }
+        }
+
 
         #region Public API
 
@@ -47,12 +70,16 @@ namespace ByeByeDPI.Services
 
             try
             {
-                using var ts = new TaskService();
+                using var ts = new Microsoft.Win32.TaskScheduler.TaskService();
                 var task = ts.GetTask(GoodbyeDPITaskName);
 
                 if (task == null)
                 {
-                    await CreateRunnerTaskAsync(ts, exePath);
+                    await CreateRunnerTaskAsync(
+     ts,
+     SettingsLoader.Current.AutoRunGoodbyeDPI
+ );
+
                     task = ts.GetTask(GoodbyeDPITaskName);
                 }
 
@@ -71,8 +98,17 @@ namespace ByeByeDPI.Services
 
                 action.Path = exePath;
                 action.Arguments = arguments;
+                action.WorkingDirectory = AppConstants.AppBaseDir;
 
-                ts.RootFolder.RegisterTaskDefinition(GoodbyeDPITaskName, task.Definition);
+                ts.RootFolder.RegisterTaskDefinition(
+     GoodbyeDPITaskName,
+     task.Definition,
+     TaskCreation.CreateOrUpdate,
+     "SYSTEM",
+     null,
+     TaskLogonType.ServiceAccount
+ );
+
                 task.Run();
             }
             catch (Exception ex)
@@ -88,7 +124,7 @@ namespace ByeByeDPI.Services
 
             try
             {
-                using var ts = new TaskService();
+                using var ts = new Microsoft.Win32.TaskScheduler.TaskService();
                 var task = ts.GetTask(GoodbyeDPITaskName);
 
                 if (task?.State == TaskState.Running)
@@ -117,7 +153,7 @@ namespace ByeByeDPI.Services
 
             try
             {
-                using var ts = new TaskService();
+                using var ts = new Microsoft.Win32.TaskScheduler.TaskService();
                 if (ts.GetTask(GoodbyeDPITaskName) != null)
                 {
                     ts.RootFolder.DeleteTask(GoodbyeDPITaskName);
@@ -132,9 +168,76 @@ namespace ByeByeDPI.Services
 
         #endregion
 
-        #region Internal
+        public async System.Threading.Tasks.Task SetStartWithWindowsAsync(bool enable)
+        {
+            if (!await PrivilegesHelper.EnsureAdministrator())
+                return;
 
-        private async System.Threading.Tasks.Task CreateRunnerTaskAsync(TaskService ts, string exePath)
+            string appName = AppConstants.AppName;
+            string exePath = $"\"{Application.ExecutablePath}\"";
+
+            using RegistryKey key = Registry.CurrentUser.OpenSubKey(
+                AppConstants.RunKeyPath,
+                writable: true
+            );
+
+            if (key == null)
+                throw new InvalidOperationException("Startup registry key not found.");
+
+            if (enable)
+            {
+                key.SetValue(appName, exePath);
+            }
+            else
+            {
+                if (key.GetValue(appName) != null)
+                    key.DeleteValue(appName);
+            }
+
+        }
+
+        public async System.Threading.Tasks.Task SetAutoRunOnLoginAsync(
+    bool enable)
+        {
+            if (!await PrivilegesHelper.EnsureAdministrator())
+                return;
+
+            using var ts = new Microsoft.Win32.TaskScheduler.TaskService();
+            var task = ts.GetTask(GoodbyeDPITaskName);
+
+            if (task == null)
+            {
+                await CreateRunnerTaskAsync(ts, enable);
+                return;
+            }
+
+            var td = task.Definition;
+
+            td.Triggers.Clear();
+
+            if (enable)
+            {
+                td.Triggers.Add(new LogonTrigger
+                {
+                    Enabled = true
+                });
+            }
+
+            ts.RootFolder.RegisterTaskDefinition(
+      GoodbyeDPITaskName,
+      td,
+      TaskCreation.CreateOrUpdate,
+      "SYSTEM",
+      null,
+      TaskLogonType.ServiceAccount
+  );
+
+        }
+
+
+        private async System.Threading.Tasks.Task CreateRunnerTaskAsync(
+    Microsoft.Win32.TaskScheduler.TaskService ts,
+    bool autoRunOnLogin)
         {
             if (!await PrivilegesHelper.EnsureAdministrator())
                 return;
@@ -142,22 +245,36 @@ namespace ByeByeDPI.Services
             var td = ts.NewTask();
             td.RegistrationInfo.Description = "Runs GoodbyeDPI with SYSTEM privileges";
 
-            td.Triggers.Add(new LogonTrigger());
+            if (autoRunOnLogin)
+            {
+                td.Triggers.Add(new LogonTrigger
+                {
+                    Enabled = true
+                });
+            }
 
             td.Principal.RunLevel = TaskRunLevel.Highest;
             td.Principal.LogonType = TaskLogonType.ServiceAccount;
             td.Principal.UserId = "SYSTEM";
 
-            string workingDir = Path.GetDirectoryName(exePath)
-                ?? AppDomain.CurrentDomain.BaseDirectory;
+            string exePath = AppConstants.GoodbyeDPIPath;
+            string workingDir = AppConstants.AppBaseDir;
 
             td.Actions.Add(new ExecAction(exePath, "", workingDir));
+
             td.Settings.AllowDemandStart = true;
             td.Settings.MultipleInstances = TaskInstancesPolicy.IgnoreNew;
 
-            ts.RootFolder.RegisterTaskDefinition(GoodbyeDPITaskName, td);
+            ts.RootFolder.RegisterTaskDefinition(
+      GoodbyeDPITaskName,
+      td,
+      TaskCreation.CreateOrUpdate,
+      "SYSTEM",
+      null,
+      TaskLogonType.ServiceAccount
+  );
+
         }
 
-        #endregion
     }
 }

@@ -68,6 +68,10 @@
             poisonLabel1_globalHotkey = new ReaLTaiizor.Controls.PoisonLabel();
             poisonStyleManager1 = new ReaLTaiizor.Manager.PoisonStyleManager(components);
             poisonStyleExtender1 = new ReaLTaiizor.Controls.PoisonStyleExtender(components);
+            poisonTile1_autoRun = new ReaLTaiizor.Controls.PoisonTile();
+            poisonToggle1 = new ReaLTaiizor.Controls.PoisonToggle();
+            poisonLabel1_autoRun = new ReaLTaiizor.Controls.PoisonLabel();
+            poisonToggle2_autoRun = new ReaLTaiizor.Controls.PoisonToggle();
             poisonTabControl1.SuspendLayout();
             tabPage1_general.SuspendLayout();
             poisonTile1_startWithWindows.SuspendLayout();
@@ -83,6 +87,7 @@
             poisonTile1_showWindowHotkey.SuspendLayout();
             poisonTile1_globalHotkey.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)poisonStyleManager1).BeginInit();
+            poisonTile1_autoRun.SuspendLayout();
             SuspendLayout();
             // 
             // poisonButton1_resetDefaults
@@ -114,6 +119,7 @@
             // 
             poisonStyleExtender1.SetApplyPoisonTheme(tabPage1_general, true);
             tabPage1_general.BackColor = System.Drawing.Color.Transparent;
+            tabPage1_general.Controls.Add(poisonTile1_autoRun);
             tabPage1_general.Controls.Add(poisonTile1_startWithWindows);
             tabPage1_general.Controls.Add(poisonTile1_checkUpdates);
             tabPage1_general.Controls.Add(poisonTile1_autoHide);
@@ -271,10 +277,10 @@
             tabPage2_general.Controls.Add(poisonTile1_theme);
             tabPage2_general.Controls.Add(poisonTile1_showInTaskbar);
             tabPage2_general.Controls.Add(poisonTile1_alwaysTopMost);
-            tabPage2_general.Location = new System.Drawing.Point(4, 38);
+            tabPage2_general.Location = new System.Drawing.Point(4, 35);
             tabPage2_general.Name = "tabPage2_general";
             tabPage2_general.Padding = new System.Windows.Forms.Padding(3);
-            tabPage2_general.Size = new System.Drawing.Size(432, 368);
+            tabPage2_general.Size = new System.Drawing.Size(432, 371);
             tabPage2_general.TabIndex = 1;
             tabPage2_general.Text = "Appearance";
             // 
@@ -417,9 +423,9 @@
             tabPage5_hotkey.BackColor = System.Drawing.Color.Transparent;
             tabPage5_hotkey.Controls.Add(poisonTile1_showWindowHotkey);
             tabPage5_hotkey.Controls.Add(poisonTile1_globalHotkey);
-            tabPage5_hotkey.Location = new System.Drawing.Point(4, 38);
+            tabPage5_hotkey.Location = new System.Drawing.Point(4, 35);
             tabPage5_hotkey.Name = "tabPage5_hotkey";
-            tabPage5_hotkey.Size = new System.Drawing.Size(432, 368);
+            tabPage5_hotkey.Size = new System.Drawing.Size(432, 371);
             tabPage5_hotkey.TabIndex = 4;
             tabPage5_hotkey.Text = "Hotkeys";
             // 
@@ -519,6 +525,54 @@
             // 
             poisonStyleManager1.Owner = this;
             // 
+            // poisonTile1_autoRun
+            // 
+            poisonTile1_autoRun.ActiveControl = null;
+            poisonTile1_autoRun.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+            poisonTile1_autoRun.Controls.Add(poisonToggle2_autoRun);
+            poisonTile1_autoRun.Controls.Add(poisonToggle1);
+            poisonTile1_autoRun.Controls.Add(poisonLabel1_autoRun);
+            poisonTile1_autoRun.Location = new System.Drawing.Point(6, 270);
+            poisonTile1_autoRun.Name = "poisonTile1_autoRun";
+            poisonTile1_autoRun.Size = new System.Drawing.Size(420, 60);
+            poisonTile1_autoRun.TabIndex = 27;
+            poisonTile1_autoRun.Text = "Automatically toggles when app is started.";
+            poisonTile1_autoRun.UseSelectable = true;
+            // 
+            // poisonToggle1
+            // 
+            poisonToggle1.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
+            poisonToggle1.AutoSize = true;
+            poisonToggle1.Location = new System.Drawing.Point(675, 8);
+            poisonToggle1.Name = "poisonToggle1";
+            poisonToggle1.Size = new System.Drawing.Size(80, 21);
+            poisonToggle1.TabIndex = 9;
+            poisonToggle1.Text = "Off";
+            poisonToggle1.UseSelectable = true;
+            // 
+            // poisonLabel1_autoRun
+            // 
+            poisonLabel1_autoRun.AutoSize = true;
+            poisonLabel1_autoRun.Font = new System.Drawing.Font("Segoe UI", 14F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Pixel);
+            poisonLabel1_autoRun.FontWeight = ReaLTaiizor.Extension.Poison.PoisonLabelWeight.Bold;
+            poisonLabel1_autoRun.Location = new System.Drawing.Point(4, 8);
+            poisonLabel1_autoRun.Name = "poisonLabel1_autoRun";
+            poisonLabel1_autoRun.Size = new System.Drawing.Size(159, 19);
+            poisonLabel1_autoRun.TabIndex = 5;
+            poisonLabel1_autoRun.Text = "Auto Run GoodbyeDPI";
+            // 
+            // poisonToggle2_autoRun
+            // 
+            poisonToggle2_autoRun.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
+            poisonToggle2_autoRun.AutoSize = true;
+            poisonToggle2_autoRun.Location = new System.Drawing.Point(330, 8);
+            poisonToggle2_autoRun.Name = "poisonToggle2_autoRun";
+            poisonToggle2_autoRun.Size = new System.Drawing.Size(80, 21);
+            poisonToggle2_autoRun.TabIndex = 10;
+            poisonToggle2_autoRun.Text = "Off";
+            poisonToggle2_autoRun.UseSelectable = true;
+            poisonToggle2_autoRun.CheckedChanged += poisonToggle2_autoRun_CheckedChanged;
+            // 
             // SettingsForm
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
@@ -563,6 +617,8 @@
             poisonTile1_globalHotkey.ResumeLayout(false);
             poisonTile1_globalHotkey.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)poisonStyleManager1).EndInit();
+            poisonTile1_autoRun.ResumeLayout(false);
+            poisonTile1_autoRun.PerformLayout();
             ResumeLayout(false);
 
         }
@@ -606,5 +662,9 @@
         private System.Windows.Forms.ToolStripMenuItem darkToolStripMenuItem;
         private ReaLTaiizor.Manager.PoisonStyleManager poisonStyleManager1;
         private ReaLTaiizor.Controls.PoisonStyleExtender poisonStyleExtender1;
+        private ReaLTaiizor.Controls.PoisonTile poisonTile1_autoRun;
+        private ReaLTaiizor.Controls.PoisonToggle poisonToggle1;
+        private ReaLTaiizor.Controls.PoisonLabel poisonLabel1_autoRun;
+        private ReaLTaiizor.Controls.PoisonToggle poisonToggle2_autoRun;
     }
 }
