@@ -1,0 +1,57 @@
+<resources>
+    <string name="app_name">ByeByeDPI</string>
+    <string name="app_subtitle">Android DPI Sansür Aşma Aracı</string>
+    
+    <!-- Connection Status -->
+    <string name="status_disconnected">Bağlantı Kesildi</string>
+    <string name="status_connecting">Bağlanıyor…</string>
+    <string name="status_connected">Korumalı ve Aktif</string>
+    <string name="status_disconnecting">Kapatılıyor…</string>
+    <string name="status_error">Hata Oluştu</string>
+    
+    <!-- Actions -->
+    <string name="action_connect">BAŞLAT</string>
+    <string name="action_disconnect">DURDUR</string>
+    
+    <!-- Navigation -->
+    <string name="nav_home">Ana Sayfa</string>
+    <string name="nav_presets">Modlar</string>
+    <string name="nav_split_tunnel">Uygulamalar</string>
+    <string name="nav_logs">Kayıtlar</string>
+    <string name="nav_settings">Ayarlar</string>
+    
+    <!-- Presets -->
+    <string name="preset_turkey_balanced">Türkiye Standart (Önerilen)</string>
+    <string name="preset_turkey_balanced_desc">Tüm servis sağlayıcılar için dengeli DPI aşma yöntemi. (TLS split + fake)</string>
+    
+    <string name="preset_turkey_aggressive">Türkiye Agresif (Superonline / TT)</string>
+    <string name="preset_turkey_aggressive_desc">Ağır sansürlü ağlar ve Discord ses/bağlantı sorunları için çoklu parçalama.</string>
+    
+    <string name="preset_discord_fix">Discord &amp; Voice Odaklı</string>
+    <string name="preset_discord_fix_desc">Discord metin kanalları, ses sunucuları ve medya akışı için optimize edilmiş mod.</string>
+    
+    <string name="preset_turknet">TurkNet / Vodafone</string>
+    <string name="preset_turknet_desc">Hafif SNI parçalama ile sıfır hız kaybı.</string>
+    
+    <string name="preset_custom">Özel Parametreler</string>
+    <string name="preset_custom_desc">Kendi ByeDPI parametrelerinizi elle belirleyin.</string>
+
+    <!-- Settings -->
+    <string name="settings_auto_start">Cihaz Başlangıcında Otomatik Çalıştır</string>
+    <string name="settings_auto_start_desc">Telefon açıldığında tüneli otomatik olarak aktif eder</string>
+    <string name="settings_dns_title">DNS Sağlayıcısı</string>
+    <string name="settings_dns_cloudflare">Cloudflare (1.1.1.1)</string>
+    <string name="settings_dns_google">Google (8.8.8.8)</string>
+    <string name="settings_dns_adguard">AdGuard DNS (Reklam Engelleyici)</string>
+    <string name="settings_dns_custom">Özel DNS</string>
+    <string name="settings_app_info">Hakkında</string>
+    <string name="settings_version">Sürüm: 1.0.0 (Android)</string>
+    <string name="settings_github">GitHub Deposu (alisariaslan/ByeByeDPI)</string>
+    
+    <!-- Notifications -->
+    <string name="notification_channel_name">ByeByeDPI Servisi</string>
+    <string name="notification_channel_desc">DPI tünel bağlantı durumu bildirimi</string>
+    <string name="notification_title_active">ByeByeDPI Aktif</string>
+    <string name="notification_content_active">Trafik yerel DPI motoru üzerinden yönlendiriliyor.</string>
+    <string name="notification_action_stop">DURDUR</string>
+</resources>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Modern Cyber / Neon Theme Matching ByeByeDPI -->
+    <color name="primary">#00E5FF</color>
+    <color name="on_primary">#00141A</color>
+    <color name="primary_container">#00363F</color>
+    <color name="on_primary_container">#97F0FF</color>
+    
+    <color name="secondary">#7C4DFF</color>
+    <color name="on_secondary">#130043</color>
+    
+    <color name="background_dark">#0D1117</color>
+    <color name="surface_dark">#161B22</color>
+    <color name="surface_variant_dark">#21262D</color>
+    <color name="on_surface_dark">#F0F6FC</color>
+    <color name="on_surface_variant_dark">#8B949E</color>
+    
+    <color name="status_green">#00E676</color>
+    <color name="status_red">#FF1744</color>
+    <color name="status_amber">#FFD600</color>
+</resources>
